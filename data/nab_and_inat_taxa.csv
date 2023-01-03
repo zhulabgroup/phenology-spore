@@ -1,0 +1,143 @@
+taxa_raw,taxa_clean,dataset,kingdom,phylum,class,order,family,genus,species
+Acer,Acer,nab,Viridiplantae,Streptophyta,Magnoliopsida,Sapindales,Sapindaceae,Acer,NA
+Agrocybe-type,Agrocybe,nab,Fungi,Basidiomycota,Agaricomycetes,Agaricales,Strophariaceae,Agrocybe,NA
+Alnus,Alnus,nab,Viridiplantae,Streptophyta,Magnoliopsida,Fagales,Betulaceae,Alnus,NA
+Alternaria,Alternaria,nab,Fungi,Ascomycota,Dothideomycetes,Pleosporales,Pleosporaceae,Alternaria,NA
+Ambrosia,Ambrosia,nab,Viridiplantae,Streptophyta,Magnoliopsida,Asterales,Asteraceae,Ambrosia,NA
+Arecaceae,Arecaceae,nab,Viridiplantae,Streptophyta,Magnoliopsida,Arecales,Arecaceae,NA,NA
+Artemisia,Artemisia,nab,Viridiplantae,Streptophyta,Magnoliopsida,Asterales,Asteraceae,Artemisia,NA
+Undifferentiated Ascospores,Ascomycota,nab,Fungi,Ascomycota,NA,NA,NA,NA,NA
+Ascospores (Undifferentiated),Ascomycota,nab,Fungi,Ascomycota,NA,NA,NA,NA,NA
+Asteraceae (Excluding Ambrosia and Artemisia),Asteraceae,nab,Viridiplantae,Streptophyta,Magnoliopsida,Asterales,Asteraceae,NA,NA
+Undifferentiated Basidiospores,Basidiomycota,nab,Fungi,Basidiomycota,NA,NA,NA,NA,NA
+Basidiospores (Undifferentiated),Basidiomycota,nab,Fungi,Basidiomycota,NA,NA,NA,NA,NA
+Betula,Betula,nab,Viridiplantae,Streptophyta,Magnoliopsida,Fagales,Betulaceae,Betula,NA
+Botrytis,Botrytis,nab,Fungi,Ascomycota,Leotiomycetes,Helotiales,Sclerotiniaceae,Botrytis,NA
+Carpinus/Ostrya,Carpinus,nab,Viridiplantae,Streptophyta,Magnoliopsida,Fagales,Betulaceae,Carpinus,NA
+Carya,Carya,nab,Viridiplantae,Streptophyta,Magnoliopsida,Fagales,Juglandaceae,Carya,NA
+Celtis,Celtis,nab,Viridiplantae,Streptophyta,Magnoliopsida,Rosales,Cannabaceae,Celtis,NA
+Cercospora,Cercospora,nab,Fungi,Ascomycota,Dothideomycetes,Mycosphaerellales,Mycosphaerellaceae,Cercospora,NA
+Chaetomium,Chaetomium,nab,Fungi,Ascomycota,Sordariomycetes,Sordariales,Chaetomiaceae,Chaetomium,NA
+Chenopodiaceae/Amaranthaceae,Chenopodiaceae,nab,Viridiplantae,Streptophyta,Magnoliopsida,Caryophyllales,Chenopodiaceae,NA,NA
+Cladosporium,Cladosporium,nab,Fungi,Ascomycota,Dothideomycetes,Cladosporiales,Cladosporiaceae,Cladosporium,NA
+Coprinus-type,Coprinus,nab,Fungi,Basidiomycota,Agaricomycetes,Agaricales,Agaricaceae,Coprinus,NA
+Corylus,Corylus,nab,Viridiplantae,Streptophyta,Magnoliopsida,Fagales,Betulaceae,Corylus,NA
+Cupressaceae,Cupressaceae,nab,Viridiplantae,Streptophyta,Pinopsida,NA,Cupressaceae,NA,NA
+Curvularia,Curvularia,nab,Fungi,Ascomycota,Dothideomycetes,Pleosporales,Pleosporaceae,Curvularia,NA
+Cyperaceae,Cyperaceae,nab,Viridiplantae,Streptophyta,Magnoliopsida,Poales,Cyperaceae,NA,NA
+Diatrypaceae,Diatrypaceae,nab,Fungi,Ascomycota,Sordariomycetes,Xylariales,Diatrypaceae,NA,NA
+Epicoccum,Epicoccum,nab,Fungi,Ascomycota,Dothideomycetes,Pleosporales,Didymellaceae,Epicoccum,NA
+Eupatorium,Eupatorium,nab,Viridiplantae,Streptophyta,Magnoliopsida,Asterales,Asteraceae,Eupatorium,NA
+Fagus,Fagus,nab,Viridiplantae,Streptophyta,Magnoliopsida,Fagales,Fagaceae,Fagus,NA
+Fraxinus,Fraxinus,nab,Viridiplantae,Streptophyta,Magnoliopsida,Lamiales,Oleaceae,Fraxinus,NA
+Other Fungi,Fungi,nab,Fungi,NA,NA,NA,NA,NA,NA
+Unidentified Fungi,Fungi,nab,Fungi,NA,NA,NA,NA,NA,NA
+Fusarium,Fusarium,nab,Fungi,Ascomycota,Sordariomycetes,Hypocreales,Nectriaceae,Fusarium,NA
+Ganoderma,Ganoderma,nab,Fungi,Basidiomycota,Agaricomycetes,Polyporales,Polyporaceae,Ganoderma,NA
+Other Grass Pollen,Gramineae,nab,Viridiplantae,Tracheophyta,Liliopsida,Poales,Poaceae,NA,NA
+Other Weed Pollen,Gramineae,nab,Viridiplantae,Tracheophyta,Liliopsida,Poales,Poaceae,NA,NA
+Gramineae / Poaceae,Gramineae,nab,Viridiplantae,Tracheophyta,Liliopsida,Poales,Poaceae,NA,NA
+Dreshslera / Helminthosporium,Helminthosporium,nab,Fungi,Ascomycota,Dothideomycetes,Pleosporales,Massarinaceae,Helminthosporium,NA
+Juglans,Juglans,nab,Viridiplantae,Streptophyta,Magnoliopsida,Fagales,Juglandaceae,Juglans,NA
+Leptosphaeria-type,Leptosphaeria,nab,Fungi,Ascomycota,Dothideomycetes,Pleosporales,Leptosphaeriaceae,Leptosphaeria,NA
+Ligustrum,Ligustrum,nab,Viridiplantae,Streptophyta,Magnoliopsida,Lamiales,Oleaceae,Ligustrum,NA
+Liquidambar,Liquidambar,nab,Viridiplantae,Streptophyta,Magnoliopsida,Saxifragales,Altingiaceae,Liquidambar,NA
+Morus,Morus,nab,Viridiplantae,Tracheophyta,Magnoliopsida,Rosales,Moraceae,Morus,NA
+Myrica,Myrica,nab,Viridiplantae,Streptophyta,Magnoliopsida,Fagales,Myricaceae,Myrica,NA
+Smuts / Myxomycetes,Myxomycetes,nab,Protozoa,Mycetozoa,Myxomycetes,NA,NA,NA,NA
+Nigrospora,Nigrospora,nab,Fungi,Ascomycota,Sordariomycetes,Trichosphaeriales,Trichosphaeriaceae,Nigrospora,NA
+Oidium / Erysiphe,Oidium,nab,Fungi,Ascomycota,Leotiomycetes,Erysiphales,Erysiphaceae,Oidium,NA
+Olea,Olea,nab,Viridiplantae,Streptophyta,Magnoliopsida,Lamiales,Oleaceae,Olea,NA
+Penicillium / Aspergillus,Penicillium,nab,Fungi,Ascomycota,Eurotiomycetes,Eurotiales,Aspergillaceae,Penicillium,NA
+Periconia,Periconia,nab,Fungi,Ascomycota,Dothideomycetes,Pleosporales,Periconiaceae,Periconia,NA
+Peronospora,Peronospora,nab,Chromista,Oomycota,NA,Peronosporales,Peronosporaceae,Peronospora,NA
+Pinaceae,Pinaceae,nab,Viridiplantae,Streptophyta,Pinopsida,NA,Pinaceae,NA,NA
+Pithomyces,Pithomyces,nab,Fungi,Ascomycota,Dothideomycetes,Pleosporales,Astrosphaeriellaceae,Pithomyces,NA
+Plantago,Plantago,nab,Viridiplantae,Streptophyta,Magnoliopsida,Lamiales,Plantaginaceae,Plantago,NA
+Platanus,Platanus,nab,Viridiplantae,Streptophyta,Magnoliopsida,Proteales,Platanaceae,Platanus,NA
+Pleospora,Pleospora,nab,Fungi,Ascomycota,Dothideomycetes,Pleosporales,Pleosporaceae,Pleospora,NA
+Polythrincium,Polythrincium,nab,Fungi,Ascomycota,Dothideomycetes,Mycosphaerellales,Mycosphaerellaceae,Polythrincium,NA
+Populus,Populus,nab,Viridiplantae,Streptophyta,Magnoliopsida,Malpighiales,Salicaceae,Populus,NA
+Prosopis,Prosopis,nab,Viridiplantae,Tracheophyta,Magnoliopsida,Fabales,Fabaceae,Prosopis,NA
+Pseudotsuga,Pseudotsuga,nab,Viridiplantae,Streptophyta,Pinopsida,NA,Pinaceae,Pseudotsuga,NA
+Rusts,Pucciniales,nab,Fungi,Basidiomycota,Pucciniomycetes,Pucciniales,NA,NA,NA
+Quercus,Quercus,nab,Viridiplantae,Streptophyta,Magnoliopsida,Fagales,Fagaceae,Quercus,NA
+Rumex,Rumex,nab,Viridiplantae,Streptophyta,Magnoliopsida,Caryophyllales,Polygonaceae,Rumex,NA
+Salix,Salix,nab,Viridiplantae,Streptophyta,Magnoliopsida,Malpighiales,Salicaceae,Salix,NA
+Stemphylium,Stemphylium,nab,Fungi,Ascomycota,Dothideomycetes,Pleosporales,Pleosporaceae,Stemphylium,NA
+Tilia,Tilia,nab,Viridiplantae,Streptophyta,Magnoliopsida,Malvales,Malvaceae,Tilia,NA
+Torula,Torula,nab,Fungi,Ascomycota,Dothideomycetes,Pleosporales,Torulaceae,Torula,NA
+Other Tree Pollen,Tracheophyta,nab,Viridiplantae,Streptophyta,NA,NA,NA,NA,NA
+Tsuga,Tsuga,nab,Viridiplantae,Streptophyta,Pinopsida,NA,Pinaceae,Tsuga,NA
+Typha,Typha,nab,Viridiplantae,Streptophyta,Magnoliopsida,Poales,Typhaceae,Typha,NA
+Ulmus,Ulmus,nab,Viridiplantae,Streptophyta,Magnoliopsida,Rosales,Ulmaceae,Ulmus,NA
+Urticaceae,Urticaceae,nab,Viridiplantae,Streptophyta,Magnoliopsida,Rosales,Urticaceae,NA,NA
+Unidentified Pollen,Viridiplantae,nab,Viridiplantae,NA,NA,NA,NA,NA,NA
+NA,Acmispon glaber,inat,Viridiplantae,Streptophyta,Magnoliopsida,Fabales,Fabaceae,Acmispon,Acmispon glaber
+NA,Adelinia grande,inat,Viridiplantae,Tracheophyta,Magnoliopsida,Boraginales,Boraginaceae,Adelinia,Adelinia grandis
+NA,Anemone berlandieri,inat,Viridiplantae,Streptophyta,Magnoliopsida,Ranunculales,Ranunculaceae,Anemone,Anemone berlandieri
+NA,Aquilegia canadensis,inat,Viridiplantae,Streptophyta,Magnoliopsida,Ranunculales,Ranunculaceae,Aquilegia,Aquilegia canadensis
+NA,Asclepias incarnata,inat,Viridiplantae,Streptophyta,Magnoliopsida,Gentianales,Apocynaceae,Asclepias,Asclepias incarnata
+NA,Campanulastrum americanum,inat,Viridiplantae,Tracheophyta,Magnoliopsida,Asterales,Campanulaceae,Campanula,Campanula americana
+NA,Cardamine concatenata,inat,Viridiplantae,Streptophyta,Magnoliopsida,Brassicales,Brassicaceae,Cardamine,Cardamine concatenata
+NA,Cardamine pratensis,inat,Viridiplantae,Streptophyta,Magnoliopsida,Brassicales,Brassicaceae,Cardamine,Cardamine pratensis
+NA,Castilleja exserta,inat,Viridiplantae,Streptophyta,Magnoliopsida,Lamiales,Orobanchaceae,Castilleja,Castilleja exserta
+NA,Cephalanthus occidentalis,inat,Viridiplantae,Streptophyta,Magnoliopsida,Gentianales,Rubiaceae,Cephalanthus,Cephalanthus occidentalis
+NA,Chamaecrista fasciculata,inat,Viridiplantae,Streptophyta,Magnoliopsida,Fabales,Fabaceae,Chamaecrista,Chamaecrista fasciculata
+NA,Chamaenerion angustifolium,inat,Viridiplantae,Streptophyta,Magnoliopsida,Myrtales,Onagraceae,Chamaenerion,Chamaenerion angustifolium
+NA,Chelone glabra,inat,Viridiplantae,Streptophyta,Magnoliopsida,Lamiales,Plantaginaceae,Chelone,Chelone glabra
+NA,Clarkia unguiculata,inat,Viridiplantae,Streptophyta,Magnoliopsida,Myrtales,Onagraceae,Clarkia,Clarkia unguiculata
+NA,Claytonia virginica,inat,Viridiplantae,Streptophyta,Magnoliopsida,Caryophyllales,Montiaceae,Claytonia,Claytonia virginica
+NA,Conoclinium coelestinum,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asterales,Asteraceae,Conoclinium,Conoclinium coelestinum
+NA,Cypripedium acaule,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Orchidaceae,Cypripedium,Cypripedium acaule
+NA,Dicentra cucullaria,inat,Viridiplantae,Streptophyta,Magnoliopsida,Ranunculales,Papaveraceae,Dicentra,Dicentra cucullaria
+NA,Dichelostemma capitatum,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Asparagaceae,Dichelostemma,Dichelostemma capitatum
+NA,Epilobium canum,inat,Viridiplantae,Streptophyta,Magnoliopsida,Myrtales,Onagraceae,Epilobium,Epilobium canum
+NA,Eriogonum fasciculatum,inat,Viridiplantae,Streptophyta,Magnoliopsida,Caryophyllales,Polygonaceae,Eriogonum,Eriogonum fasciculatum
+NA,Erythronium albidum,inat,Viridiplantae,Streptophyta,Magnoliopsida,Liliales,Liliaceae,Erythronium,Erythronium albidum
+NA,Fragaria vesca,inat,Viridiplantae,Streptophyta,Magnoliopsida,Rosales,Rosaceae,Fragaria,Fragaria vesca
+NA,Houstonia pusilla,inat,Viridiplantae,Streptophyta,Magnoliopsida,Gentianales,Rubiaceae,Houstonia,Houstonia pusilla
+NA,Hydrophyllum virginianum,inat,Viridiplantae,Streptophyta,Magnoliopsida,Boraginales,Hydrophyllaceae,Hydrophyllum,Hydrophyllum virginianum
+NA,Impatiens capensis,inat,Viridiplantae,Streptophyta,Magnoliopsida,Ericales,Balsaminaceae,Impatiens,Impatiens capensis
+NA,Ipomopsis aggregata,inat,Viridiplantae,Streptophyta,Magnoliopsida,Ericales,Polemoniaceae,Ipomopsis,Ipomopsis aggregata
+NA,Lobelia cardinalis,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asterales,Campanulaceae,Lobelia,Lobelia cardinalis
+NA,Lobelia siphilitica,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asterales,Campanulaceae,Lobelia,Lobelia siphilitica
+NA,Lupinus texensis,inat,Viridiplantae,Streptophyta,Magnoliopsida,Fabales,Fabaceae,Lupinus,Lupinus texensis
+NA,Maianthemum racemosum,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Asparagaceae,Maianthemum,Maianthemum racemosum
+NA,Mertensia virginica,inat,Viridiplantae,Streptophyta,Magnoliopsida,Boraginales,Boraginaceae,Mertensia,Mertensia virginica
+NA,Monarda fistulosa,inat,Viridiplantae,Streptophyta,Magnoliopsida,Lamiales,Lamiaceae,Monarda,Monarda fistulosa
+NA,Nemophila menziesii,inat,Viridiplantae,Streptophyta,Magnoliopsida,Boraginales,Hydrophyllaceae,Nemophila,Nemophila menziesii
+NA,Penstemon cobaea,inat,Viridiplantae,Streptophyta,Magnoliopsida,Lamiales,Plantaginaceae,Penstemon,Penstemon cobaea
+NA,Phlox divaricata,inat,Viridiplantae,Streptophyta,Magnoliopsida,Ericales,Polemoniaceae,Phlox,Phlox divaricata
+NA,Podophyllum peltatum,inat,Viridiplantae,Streptophyta,Magnoliopsida,Ranunculales,Berberidaceae,Podophyllum,Podophyllum peltatum
+NA,Primula hendersonii,inat,Viridiplantae,Streptophyta,Magnoliopsida,Ericales,Primulaceae,Primula,Primula hendersonii
+NA,Prunus padus,inat,Viridiplantae,Streptophyta,Magnoliopsida,Rosales,Rosaceae,Prunus,Prunus padus
+NA,Prunus serotina,inat,Viridiplantae,Streptophyta,Magnoliopsida,Rosales,Rosaceae,Prunus,Prunus serotina
+NA,Ribes speciosum,inat,Viridiplantae,Streptophyta,Magnoliopsida,Saxifragales,Grossulariaceae,Ribes,Ribes speciosum
+NA,Robinia pseudoacacia,inat,Viridiplantae,Streptophyta,Magnoliopsida,Fabales,Fabaceae,Robinia,Robinia pseudoacacia
+NA,Salvia lyrata,inat,Viridiplantae,Streptophyta,Magnoliopsida,Lamiales,Lamiaceae,Salvia,Salvia lyrata
+NA,Sambucus cerulea,inat,Viridiplantae,Tracheophyta,Magnoliopsida,Dipsacales,Adoxaceae,Sambucus,Sambucus caerulea
+NA,Sanguinaria canadensis,inat,Viridiplantae,Streptophyta,Magnoliopsida,Ranunculales,Papaveraceae,Sanguinaria,Sanguinaria canadensis
+NA,Silene virginica,inat,Viridiplantae,Streptophyta,Magnoliopsida,Caryophyllales,Caryophyllaceae,Silene,Silene virginica
+NA,Sisyrinchium bellum,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Iridaceae,Sisyrinchium,Sisyrinchium bellum
+NA,Symphyotrichum novae-angliae,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asterales,Asteraceae,Symphyotrichum,Symphyotrichum novae-angliae
+NA,Thalictrum thalictroides,inat,Viridiplantae,Streptophyta,Magnoliopsida,Ranunculales,Ranunculaceae,Thalictrum,Thalictrum thalictroides
+NA,Trichostema lanceolatum,inat,Viridiplantae,Streptophyta,Magnoliopsida,Lamiales,Lamiaceae,Trichostema,Trichostema lanceolatum
+NA,Trillium grandiflorum,inat,Viridiplantae,Streptophyta,Magnoliopsida,Liliales,Melanthiaceae,Trillium,Trillium grandiflorum
+NA,Uvularia grandiflora,inat,Viridiplantae,Streptophyta,Magnoliopsida,Liliales,Colchicaceae,Uvularia,Uvularia grandiflora
+NA,Verbena hastata,inat,Viridiplantae,Streptophyta,Magnoliopsida,Lamiales,Verbenaceae,Verbena,Verbena hastata
+NA,Viola sororia,inat,Viridiplantae,Streptophyta,Magnoliopsida,Malpighiales,Violaceae,Viola,Viola sororia
+NA,Yucca schidigera,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Asparagaceae,Yucca,Yucca schidigera
+NA,Yucca rupicola,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Asparagaceae,Yucca,Yucca rupicola
+NA,Yucca filamentosa,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Asparagaceae,Yucca,Yucca filamentosa
+NA,Yucca baccata,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Asparagaceae,Yucca,Yucca baccata
+NA,Yucca glauca,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Asparagaceae,Yucca,Yucca glauca
+NA,Yucca brevifolia,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Asparagaceae,Yucca,Yucca brevifolia
+NA,Yucca torreyi,inat,Viridiplantae,Tracheophyta,Liliopsida,Asparagales,Asparagaceae,Yucca,Yucca faxoniana
+NA,Yucca treculeana,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Asparagaceae,Yucca,Yucca treculeana
+NA,Yucca elata,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Asparagaceae,Yucca,Yucca elata
+NA,Yucca arkansana,inat,Viridiplantae,Tracheophyta,Liliopsida,Asparagales,Asparagaceae,Yucca,Yucca arkansana
+NA,Yucca pallida,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Asparagaceae,Yucca,Yucca pallida
+NA,Yucca constricta,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Asparagaceae,Yucca,Yucca constricta
+NA,Yucca angustissima,inat,Viridiplantae,Streptophyta,Magnoliopsida,Asparagales,Asparagaceae,Yucca,Yucca angustissima
+NA,Yucca madrensis,inat,Viridiplantae,Tracheophyta,Liliopsida,Asparagales,Asparagaceae,Yucca,Yucca madrensis

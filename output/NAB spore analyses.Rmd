@@ -1,0 +1,1144 @@
+---
+title: "NAB spore analyses"
+author: "Yiluan Song"
+date: "11/18/2021"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache=TRUE,  warning = FALSE, message = FALSE)
+
+library(pacman)
+p_load(tidyverse)
+p_load(readxl)
+p_load(fuzzyjoin)
+p_load(taxize)
+p_load(RcppRoll)
+p_load(rlist)
+p_load(scales)
+p_load(greenbrown)
+p_load(nimble)
+p_load(daymetr)
+p_load(lubridate)
+p_load(gridExtra)
+p_load(ggrepel)
+p_load(ggpubr)
+```
+
+# __Explore data__
+
+## Read and clean NAB data
+The complete dataset has both pollen and spore count. In this analysis we focus on spores.
+```{r read}
+# nab_path <- "/data/ZHULAB/phenology/nab/2021-10-04/"
+# file_list<-list.files(path = nab_path, pattern = ".xlsx", full.names = T)
+# 
+# station_df<-read_csv("/data/ZHULAB/phenology/nab/NAB stations.csv") %>% 
+#   mutate(id=row_number())
+# 
+# df_list<-vector(mode="list", length=length(file_list))
+# for (i in 1:length(file_list)) {
+#   file<-file_list[i]
+#   
+#   dat<-read_excel(
+#     file,
+#     col_names = F)
+#   start_n<-which(dat[,1]=="Date")
+#   
+#   if (min(start_n)==1) {
+#     meta_dat<-NA
+#     station<-NA
+#   } else {
+#     meta_dat <- read_excel(
+#       file,
+#       col_names = F,
+#       n_max = start_n[1]-1
+#     ) %>% pull()
+#     station<-meta_dat[2] %>% strsplit(split=": ") %>% unlist() %>% tail(1)
+#   }
+#   
+#   location<-file %>% strsplit(split=c("/")) %>%unlist() %>%  tail(1) %>% strsplit(split=" \\(") %>% unlist() %>% head(1)
+#   if (!is.na(station)) {
+#     station_info<-data.frame(station=station, location=location) %>% 
+#       stringdist_inner_join(station_df, by=c("location","station"),max_dist=20, distance_col="distance") %>% 
+#       arrange(station.distance,location.distance) %>% 
+#       head(1) %>% 
+#       rename(station=station.y) %>% 
+#       rename(location=location.y) %>% 
+#       dplyr::select(-station.x,-location.x,-station.distance, -location.distance,-distance)
+#   } else {
+#     station_info<-data.frame(location=location) %>% 
+#       stringdist_inner_join(station_df, by="location",max_dist=20, distance_col="distance") %>%
+#       arrange(distance) %>% 
+#       head(1) %>% 
+#       rename(location=location.y) %>% 
+#       dplyr::select(-location.x, -distance)
+#   }
+#   
+#   if (length(start_n)==1) { # only pollen, no spores
+#     pollen_dat <- read_excel(
+#       file,
+#       skip = start_n[1]-1,
+#       col_types = c("date",
+#                     rep("numeric", ncol(read_excel(
+#                       file,
+#                       skip = start_n[1]-1))-1))
+#     )
+#     if (is.na(pollen_dat[2,1])) { # meaning finer taxonomic resolutions available)
+#       genus_names <- read_excel(
+#         file,
+#         skip = start_n[1]-1
+#       ) %>% 
+#         slice(1) %>% 
+#         gather(key="old", value="new") %>% 
+#         mutate(new=case_when(is.na(new)~old,
+#                              TRUE~new))
+#       pollen_dat <- read_excel(
+#         file,
+#         skip = start_n[1]-1,
+#         col_types = c("date",
+#                       rep("numeric", ncol(read_excel(
+#                         file,
+#                         skip = start_n[1]-1))-1)),
+#         col_names = genus_names$new
+#       )
+#     }
+#     pollen_dat <-pollen_dat %>% 
+#       filter(!is.na(Date)) %>% 
+#       gather(key="taxa", value="count", -Date) %>% 
+#       filter(! str_detect(taxa,  "Station")) %>%
+#       filter(! taxa %in% c("Comment", "WeatherNotes"))%>% 
+#       mutate(group="pollen") %>% 
+#       rowwise() %>% 
+#       # mutate(taxa=(strsplit(taxa, split=(" \\(")) %>% unlist() %>% head(1))) %>% 
+#       group_by(Date, taxa, group) %>% 
+#       summarize (count=sum(count)) %>% 
+#       ungroup()
+#     df_list[[i]]<-pollen_dat%>% 
+#       cbind(station_info)
+#   }
+#   
+#   if (length(start_n)==2) { # both pollen and spores
+#     pollen_dat <- read_excel(
+#       file,
+#       skip = start_n[1]-1,
+#       n_max = (start_n[2]-2)-(start_n[1]+1),
+#       col_types = c("date", 
+#                     rep("numeric", ncol(read_excel(
+#                       file,
+#                       skip = start_n[1]-1,
+#                       n_max = (start_n[2]-2)-(start_n[1]+1)))-1))
+#     ) 
+#     
+#     if (is.na(pollen_dat[2,1])) { # meaning finer taxonomic resolutions available)
+#       genus_names <- read_excel(
+#         file,
+#         skip = start_n[1]-1,
+#         n_max = (start_n[2]-2)-(start_n[1]+1)
+#       ) %>% 
+#         slice(1) %>% 
+#         gather(key="old", value="new") %>% 
+#         mutate(new=case_when(is.na(new)~old,
+#                              TRUE~new))
+#       pollen_dat <- read_excel(
+#         file,
+#         skip = start_n[1]-1,
+#         n_max = (start_n[2]-2)-(start_n[1]+1),
+#         col_types = c("date", 
+#                       rep("numeric", ncol(read_excel(
+#                         file,
+#                         skip = start_n[1]-1,
+#                         n_max = (start_n[2]-2)-(start_n[1]+1)))-1)),
+#         col_names = genus_names$new
+#       ) 
+#     }
+#     pollen_dat <-pollen_dat %>% 
+#       filter(!is.na(Date)) %>% 
+#       gather(key="taxa", value="count", -Date) %>% 
+#       filter(! taxa %in% c("Comment", "WeatherNotes","Station Name", "Station Postal Code", "Station State"))%>% 
+#       mutate(group="pollen") %>% 
+#       rowwise() %>% 
+#       # mutate(taxa=(strsplit(taxa, split=(" \\(")) %>% unlist() %>% head(1))) %>% 
+#       group_by(Date, taxa, group) %>% 
+#       summarize (count=sum(count)) %>% 
+#       ungroup()
+#     
+#     spore_dat <- read_excel(
+#       file,
+#       skip = start_n[2]-1,
+#       col_types = c("date",
+#                     rep("numeric", ncol(read_excel(
+#                       file,
+#                       skip = start_n[2]-1))-1))
+#     ) %>% 
+#       filter(!is.na(Date)) %>% 
+#       gather(key="taxa", value="count", -Date) %>% 
+#       filter(! str_detect(taxa,  "Station")) %>% 
+#       filter(! taxa %in% c("Comment", "WeatherNotes"))   %>% 
+#       mutate(group="spore")
+#     
+#     if (nrow(spore_dat)!=0) {
+#       df_list[[i]]<-bind_rows(pollen_dat, spore_dat)%>% 
+#         cbind(station_info)
+#     } else {
+#       df_list[[i]]<-pollen_dat%>% 
+#         cbind(station_info)
+#     }
+#     
+#   }
+#   # print(i)
+# }
+# df_all<-bind_rows(df_list) %>% as_tibble()
+# write_rds(df_all,"/data/ZHULAB/phenology/nab/nab_dat.rds")
+
+nab_df<-read_rds("/data/ZHULAB/phenology/nab/nab_dat.rds") %>% as_tibble()
+nab_df
+```
+
+## Sampling stations
+Meta-data associated with sampling stations.
+```{r meta}
+meta_df<-nab_df %>% 
+  filter(taxa=="Total Spore Count") %>% 
+  group_by(taxa, station, location, lat, lon, id) %>% 
+  drop_na(count) %>% 
+  filter(count>0) %>% 
+  summarise(mindate=min(Date),
+            maxdate=max(Date),
+            n=n()) %>% 
+  mutate(range=maxdate-mindate) %>%
+  ungroup() %>% 
+  arrange(desc(n))
+
+meta_df
+
+site_list<-c("Houston, TX","St. Louis, MO", "San Diego, CA", "New Orleans, LA", "Philadelphia, PA", "Bellevue, NE")
+```
+
+A total of 34 sampling stations distributed across the US. Selected stations (highlighted in red) are visualized for fungal spore phenology.
+```{r map, out.width="100%"}
+p_map<-ggplot()+
+  geom_polygon(data = map_data("state"), aes(x = long, y = lat, group = group), fill = "white") +
+  geom_path(data = map_data("state"), aes(x = long, y = lat, group = group), color = "grey50", alpha = 0.5, lwd = 0.2) +
+  theme_void() +
+  # coord_map(projection = "albers", parameters = c(30,40), orientation = c(90,0,-105)) +
+  geom_point(data=meta_df%>% filter( !location %in% site_list),aes(x=lon, y=lat), pch=1, cex=3)+
+  geom_point(data=meta_df %>% filter(location %in% site_list),aes(x=lon, y=lat), pch=10, col="dark green", cex=3)+
+  geom_label_repel(data=meta_df  %>% filter(location %in% site_list),aes(x=lon, y=lat, label=location), col="dark green")+
+  scale_color_viridis_c()+
+  theme_void()+
+  coord_map("bonne", lat0 = 50)
+p_map
+```
+
+
+## Clean up taxonomy
+We also get classification on various levels for aggregation.
+```{r taxa}
+# taxa_df<-df_all %>% 
+#   distinct(taxa) %>% 
+#   filter(!taxa %in% c("Total Pollen Count", "Total Spore Count")) %>% 
+#   rename(taxa_raw=taxa) %>% 
+#   rowwise() %>% 
+#   mutate(taxa_clean=str_split(taxa_raw, pattern="/", simplify = T)[1]) %>% 
+#   mutate(taxa_clean=str_split(taxa_clean, pattern=" \\(", simplify = T)[1]) %>% 
+#   mutate(taxa_clean=str_replace(taxa_clean, pattern = "-type","")) %>% 
+#   mutate(taxa_clean=str_replace(taxa_clean, pattern = "Unidentified ","")) %>% 
+#   mutate(taxa_clean=str_replace(taxa_clean, pattern = "Undifferentiated ","")) %>% 
+#   mutate(taxa_clean=str_replace(taxa_clean, pattern = "Other ","")) %>% 
+#   mutate(taxa_clean=str_replace(taxa_clean, pattern = "spores","mycota")) %>% 
+#   mutate(taxa_clean=str_replace(taxa_clean, pattern = " ","")) %>% 
+#   mutate(taxa_clean=case_when(taxa_clean=="Rusts"~"Pucciniales",
+#                               taxa_clean=="Smuts"~"Myxomycetes",
+#                               taxa_clean=="Dreshslera" ~ "Helminthosporium",
+#                               (taxa_clean=="GrassPollen"|taxa_clean=="WeedPollen") ~ "Gramineae",
+#                               taxa_clean=="TreePollen" ~ "Tracheophyta",
+#                               taxa_clean=="Pollen" ~ "Viridiplantae",
+#                               TRUE~taxa_clean)) %>% 
+#   arrange(taxa_clean)
+# 
+# resolve_df<-taxa_df%>% 
+#   pull(taxa_clean) %>% 
+#   gnr_resolve(data_source_ids = c(4,11),with_context=T,best_match_only=T, fields = "all") %>% #NCBI and GBIF
+#   full_join(taxa_df,
+#              by=c("user_supplied_name"="taxa_clean")) %>% 
+#   rename(taxa_clean=user_supplied_name) %>% 
+#   mutate(same=(taxa_clean==matched_name)) 
+# 
+# resolve_df_correct<-resolve_df%>% 
+#   filter(str_detect(classification_path,"Metazoa")) %>% 
+#   pull(taxa_clean) %>% 
+#   gnr_resolve(data_source_ids = c(4,11),best_match_only=F, fields = "all") %>% #NCBI and GBIF
+#   filter(!str_detect(classification_path,"Animalia")) %>% 
+#   filter(!str_detect(classification_path,"Metazoa")) %>% 
+#   rename(taxa_clean=user_supplied_name) %>% 
+#   group_by(taxa_clean) %>% 
+#   slice(1) %>% 
+#   ungroup()
+# 
+# resolve_df<-resolve_df%>% 
+#   filter(!str_detect(classification_path,"Metazoa")) %>% 
+#   bind_rows(resolve_df_correct) %>% 
+#   arrange(taxa_clean)
+# 
+# taxa_id_df<-resolve_df %>% 
+#   dplyr::select(taxa_clean, data_source_id, taxon_id ) %>% 
+#   distinct(taxa_clean, .keep_all = T) %>% 
+#   mutate(data_source=case_when(data_source_id==4~"ncbi",
+#                                data_source_id==11~"gbif"))
+# 
+# taxa_class_df<-vector(mode="list", length=nrow(taxa_id_df))
+# for(i in 1:nrow(taxa_id_df)) {
+#    taxa_class_df[[i]]<-
+#     classification(taxa_id_df$taxon_id[i],db=taxa_id_df$data_source[i])  [[1]] %>% 
+#     as_tibble() %>% 
+#     filter(rank%in% c("kingdom","phylum","class","order","family", "genus","species")) %>% 
+#      mutate(rank=factor(rank, levels=c("kingdom","phylum","class","order","family", "genus","species"))) %>% 
+#     dplyr::select(-id) %>% 
+#     spread(key="rank", value="name") %>% 
+#      mutate(taxa_clean=taxa_id_df$taxa_clean[i])
+# }
+# taxa_class_df<-bind_rows(taxa_class_df)
+# 
+# taxa_df<-taxa_df %>% 
+#   left_join(taxa_class_df, by="taxa_clean") %>% 
+#   mutate(kingdom=str_replace(kingdom,"Plantae", "Viridiplantae")) %>% 
+#   mutate(kingdom=case_when(phylum=="Oomycota"~"Chromista",
+#                            TRUE~kingdom)) %>% 
+#   as_tibble()
+# write_rds(taxa_df,"/data/ZHULAB/phenology/nab/nab_dat_taxa.rds")
+
+nab_taxa_df<-read_rds("/data/ZHULAB/phenology/nab/nab_taxa.rds") %>% as_tibble()
+nab_taxa_df
+```
+
+Join.
+```{r}
+nab_with_taxa_df <- nab_df %>%
+  rename(taxa_raw = taxa) %>%
+  left_join(nab_taxa_df, by = "taxa_raw") %>%
+  rename(taxa = taxa_clean) %>%
+  mutate(family = case_when(
+    taxa_raw == "Total Spore Count" ~ "Total",
+    TRUE ~ family
+  )) %>%
+  mutate(genus = case_when(
+    taxa_raw == "Total Spore Count" ~ "Total",
+    TRUE ~ genus
+  )) %>%
+  filter(kingdom == "Fungi" | is.na(kingdom)) %>%
+  group_by(Date, lat, lon, station,location, id, family, genus, taxa) %>%
+  summarise(count = sum(count)) %>%
+  ungroup() %>%
+  mutate(date = as.Date(Date)) %>%
+  dplyr::select(-Date)
+```
+
+```{r}
+labelfunc_x <- function(x) {
+  origin <- as.Date("2021-01-01")
+  format(origin + x, format = "%b")
+}
+
+p_calen<-nab_with_taxa_df %>%
+  filter(location %in% site_list) %>%
+  filter(family == "Total") %>%
+  mutate(doy = format(date, "%j") %>% as.integer()) %>%
+  mutate(year = format(date, "%Y") %>% as.integer()) %>%
+  # filter(year %in% year_list) %>% 
+  group_by(taxa, location, doy) %>%
+  summarise(count=mean(count)) %>% 
+  ungroup() %>% 
+  group_by(taxa, location) %>% 
+  mutate(count_st=(count-min(count, na.rm = T))/(max(count, na.rm = T)-min(count, na.rm = T))) %>%
+  ungroup() %>% 
+  ggplot() +
+  geom_tile(aes(x = doy, y = location,  fill = count_st), alpha=1) +
+  ylab ("")+
+  xlab ("")+
+  theme_classic()+
+  # scale_x_continuous(breaks = scales::pretty_breaks(n = 2)) +
+  scale_x_continuous(labels=labelfunc_x)+
+  theme(axis.line.y = element_blank(),
+        # axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())+
+  # theme(strip.text.y= element_text(angle = 0))+
+  theme(legend.position = "bottom",
+        legend.key.width = unit(2, "cm"))+
+  scale_fill_gradient(low = "light yellow", high = "dark green",na.value="white"#,
+                      # breaks=(c(0,1, 100,  10000, 1000000)+1) %>% log(10),
+                      # labels=c(0,1, 100,  10000, 1000000),
+                      # name=expression(Spore~concentration~(grains / m^3))
+                      )+
+  guides(fill=F)
+p_calen
+```
+
+```{r}
+cairo_pdf("./nab/output/figures/1 map_calendar.pdf", width=6, height=6)
+grid.arrange(annotate_figure(p_map, fig.lab = "A"),
+             annotate_figure(p_calen, fig.lab = "B"),
+             layout_matrix=rbind(c(1),
+                                 c(2)),
+             # widths = 3:2,
+             heights = 3:2
+)
+dev.off()
+```
+
+
+## Visualize total spore count
+```{r total, out.width = "100%"}
+df_comm_all<-nab_df %>% 
+  rename(taxa_raw=taxa) %>% 
+  left_join(taxa_df, by="taxa_raw") %>% 
+  mutate(family=case_when(taxa_raw=="Total Spore Count"~"Total",
+                          TRUE~family)) %>% 
+  mutate(genus=case_when(taxa_raw=="Total Spore Count"~"Total",
+                          TRUE~genus)) %>% 
+  filter(kingdom!="Viridiplantae"|is.na(kingdom)) %>% 
+  group_by(taxa_raw, taxa_clean, Date, lat, lon, station,location, id, family,genus) %>% 
+  summarize(count=sum(count)) %>% 
+  ungroup() %>% 
+  group_by(taxa_raw, taxa_clean, lat, lon, station, location, id, family,genus) %>% 
+  complete(Date = seq(min(Date),max(Date), by="1 day"))%>%
+  mutate(count_ma = roll_mean(count, n = 28, align = "right", fill = NA, na.rm = T)) %>%
+  ungroup() %>% 
+  drop_na(family) %>% 
+  group_by(station, location, id, Date,family, lon, lat) %>% 
+  summarize(count_agg=sum(count_ma)) %>% 
+  ungroup()
+
+# df_comm<-df_comm_all%>% 
+#    filter(location %in% site_list) 
+
+ggplot(data=df_comm_all%>% 
+   filter(location %in% site_list) %>% 
+         filter(family=="Total")  ) +
+  geom_line(aes(x=Date, y=count_agg))  +
+  scale_y_continuous(trans = log_trans(), 
+                     breaks = trans_breaks("log", function(x) exp(x)),
+                     labels = trans_format("log", math_format(e^.x)))+
+  ggtitle("Total Spore Counts (all counts are per cubic meter of air)")+
+  ylab("log (count)")+
+  theme_classic()+
+  facet_wrap(.~location, ncol=2, scales = "free_y") 
+```
+
+## Visualize community composition
+We here show the four most dominant families in comparison to the total spore count.
+```{r comm, out.width = "100%"}
+comm_meta<-df_comm %>% 
+  group_by(family) %>% 
+  summarize(median=median(count_agg, na.rm=T)) %>% 
+  ungroup() %>% 
+  arrange(desc(median))
+
+df_comm_major<-df_comm %>% 
+  filter(family %in% (comm_meta %>% slice(1:5) %>% pull(family))|
+           family=="Total") 
+
+ggplot(data=df_comm_major) +
+  geom_line(aes(x=Date, y=count_agg, col=family, group=family)) +
+  scale_y_continuous(trans = log_trans(), 
+                     breaks = trans_breaks("log", function(x) exp(x)),
+                     labels = trans_format("log", math_format(e^.x)))+
+  ggtitle("Taxa-specific Spore Counts (all counts are per cubic meter of air)")+
+  ylab("log (count)")+
+  theme_classic()+
+  facet_wrap(.~station, ncol=2, scales = "free_y")+
+  theme(legend.position="bottom")
+```
+
+## Visualize phenology
+Focusing on the family _Cladosporiaceae_, we visualize the phenology of spores. This figure shows the inter-annual and intra-annual variations in spore count. Note that we are not following calendar years but rather start counting 60 days after Jan 1. This is because the spore count is generally the lowest around day 60. We hope to make sure each cycle has an increasing and then decreasing trend in spore count.
+
+```{r pheno, out.width = "100%", fig.height=12}
+taxa = "Cladosporiaceae" # "Cladosporiaceae"
+df_pheno<-df_comm_all %>%
+  # filter(location %in% site_list) %>% 
+  filter(family==taxa) %>% 
+  mutate(year=as.integer(format(Date, "%Y"))) %>% 
+  mutate(doy=as.integer(format(Date, "%j"))) %>% 
+  group_by(station, location, id, lat, lon, year) %>% 
+  mutate(cumsum=cumsum(coalesce(count_agg,0))) %>% 
+  ungroup() %>% 
+  filter(log(count_agg+1)>0) %>% 
+  mutate(year=case_when(doy<=60 ~ (year-1),
+                        TRUE ~ as.double(year))) %>% 
+  mutate(doy=case_when(doy>60 ~ (doy-60),
+                        TRUE ~ as.numeric(difftime( Date,as.Date(paste0(year,"-01-01")) )-60 )))
+
+df_pheno_group<-df_pheno %>% 
+  distinct(id, year, station, location, lat, lon) 
+df_pheno_complete<-vector(mode="list",length=nrow(df_pheno_group))
+for(i in 1:nrow(df_pheno_group)) {
+  df_pheno_1y<-df_pheno %>% 
+    filter(id==df_pheno_group$id[i],
+           year==df_pheno_group$year[i])  %>% 
+    complete(doy=seq(1,365,by=1)) %>% 
+    mutate(station=df_pheno_group$station[i],
+           location=df_pheno_group$location[i],
+           id=df_pheno_group$id[i],
+           lon=df_pheno_group$lon[i],
+           lat=df_pheno_group$lat[i])
+  if (nrow(df_pheno_1y %>% drop_na(count_agg))>=365*3/5) {
+    df_pheno_complete[[i]]<-df_pheno_1y
+  }
+  # print(i)
+}
+df_pheno_complete<-rlist::list.clean(df_pheno_complete) %>% 
+  bind_rows()
+
+p_pheno<-ggplot(df_pheno_complete %>% 
+         filter(location %in% site_list))+
+  geom_line(aes(x=doy+60, y=count_agg, col=year, group=year), alpha=0.5)+
+  scale_y_continuous(trans = log_trans(), 
+                     breaks = trans_breaks("log", function(x) exp(x)),
+                     labels = trans_format("log", math_format(e^.x)))+
+  scale_x_continuous(labels=labelfunc_x)+
+  # ggtitle("Phenology curves of Cladosporiaceae spores")+
+  ylab(expression(Spore~concentration~(grains / m^3)))+
+  xlab("Time of year")+
+  scale_color_viridis_c()+
+  theme_classic()+
+  facet_wrap(.~location, ncol=3, scales = "free_y")+
+  guides(col=F)
+p_pheno
+```
+
+```{r}
+cairo_pdf("./nab/output/figures/2 pheno_curves.pdf", width=6, height=4)
+print (p_pheno)
+dev.off()
+```
+
+## Naive way to fit model
+
+If we fit each phenology curve with a double logistic phenology model, the phenology can sometimes be described well. However, there are undesirable behaviours, e.g., overfitting, large variations in model parameters that can hardly be interpreted. This is particularly problematic for sites and years without a single peak in spore count or have large observational noise.
+
+```{r simplefit}
+df_pheno_group<-df_pheno_complete %>% 
+  filter(location %in% site_list) %>% 
+  drop_na(year) %>%
+  distinct(id, year, station, location, lat, lon) 
+
+df_simplefit_list<-vector(mode="list", length=nrow(df_pheno_group))
+for (i in 1:nrow(df_pheno_group)) {
+  df_pheno_1y<-df_pheno_complete %>% 
+    right_join(df_pheno_group %>% slice(i), by=c()) %>% 
+    mutate(logcount=log(count_agg+1))
+  fit <- FitDoubleLogElmore(df_pheno_1y$logcount,plot = F,hessian = T,ninit = 50)
+  df_pheno_1y<-df_pheno_1y %>% 
+    mutate(fit = fit$predicted %>% as.numeric())
+  df_simplefit_list[[i]]<-df_pheno_1y
+}
+df_simplefit<-bind_rows(df_simplefit_list)
+
+p_simple<-ggplot(df_simplefit)+
+  geom_point(aes(x=doy+60, y=exp(logcount)-1, col=year,group=year), alpha=0.1)+
+  geom_line(aes(x=doy+60, y=exp(fit)-1, col=year,group=year), lwd=1)+
+  theme_classic()+
+  facet_wrap(.~location, scale="free_y", ncol=3)+
+  guides(col=F)+
+   scale_color_viridis_c()+
+  scale_y_continuous(trans = log_trans(), 
+                     breaks = trans_breaks("log", function(x) exp(x)),
+                     labels = trans_format("log", math_format(e^.x)))+
+  scale_x_continuous(labels=labelfunc_x)+
+  # ggtitle("Phenology curves of Cladosporiaceae spores")+
+  ylab(expression(Spore~concentration~(grains / m^3)))+
+  xlab("Time of year")
+
+cairo_pdf("./nab/output/figures/3 simple_fit.pdf", width=6, height=6)
+print (p_simple)
+dev.off()
+```
+
+# __Fit hierarchical Bayesian model__
+
+We adopt a hierarchical Bayesian modeling approach to impose reasonable constraints and prior knowledge on model parameters. We are also able to borrow strength from multiple time series to find the general shape of phenology curve.
+
+## Model structure
+Due to the very different shapes of phenology curves among sites, we fit a hierarchical Bayesian model for each site independently. We start with a data model, assuming spore count to have a Poisson distribution with the mean $\lambda$, and $log(\lambda)$ to follow a double logistic curve over a year (Elmore et al., 2012).
+
+
+$$
+\\
+y \sim Poisson(\lambda)\\
+log(\lambda)= mn + ((mx-mn) + rsu \times  doy) \times(\frac {1}{1+exp((sos-doy)/rsp)}-\frac {1}{1+exp((eos-doy)/rau)})
+\\
+mn = mn' \times (mn_{max}-mn_{min}) + mn_{min}\\
+mx = mx' \times (mx_{max}-mz_{min}) + mx_{min}\\
+sos = sos' \times (sos_{max}-sos_{min}) + sos_{min}\\
+eos = eos' \times (eos_{max}-eos_{min}) + eos_{min}\\
+rsp = rsp' \times (rsp_{max}-rsp_{min}) + rsp_{min}\\
+rau = rau' \times (rau_{max}-rau_{min}) + rau_{min}\\
+rsu = rsu' \times (rsu_{max}-rsu_{min}) + rsu_{min}\\
+$$
+
+Each parameter is scaled to $(0,1)$ and then logit-transformed to the real number line. We assume that the transformed parameters each has a mean and year-specific random effects.
+$$
+\\
+logit (mn') =\mu_{mn}+\epsilon_{mn,t}\\
+logit (mx') =\mu_{mx}+\epsilon_{mx,t}\\
+logit (sos') =\mu_{sos}+\epsilon_{sos,t}\\
+logit (eos') =\mu_{eos}+\epsilon_{eos,t}\\
+logit (rsp') =\mu_{rsp}+\epsilon_{rsp,t}\\
+logit (rau') =\mu_{rau}+\epsilon_{rau,t}\\
+logit (rsu') =\mu_{rsu}+\epsilon_{rsu,t}\\
+\\
+\epsilon_{mn,t} \sim N(0, \sigma^{2}_{mn})\\
+\epsilon_{mx,t} \sim N(0, \sigma^{2}_{mx})\\
+\epsilon_{sos,t} \sim N(0, \sigma^{2}_{sos})\\
+\epsilon_{eos,t} \sim N(0, \sigma^{2}_{eos})\\
+\epsilon_{rsp,t} \sim N(0, \sigma^{2}_{rsp})\\
+\epsilon_{rau,t} \sim N(0, \sigma^{2}_{rau})\\
+\epsilon_{rsu,t} \sim N(0, \sigma^{2}_{rsu})\\
+$$
+
+The priors and hyperparameters are specified below.
+$$
+\\
+\mu_{mn}, \mu_{mx} , \mu_{sos} ,\mu_{eos} , \mu_{rsp} , \mu_{rau}, \mu_{rsu} \sim N(0,1)\\
+\\
+\sigma^{2}_{mn}, \sigma^{2}_{mx}, \sigma^{2}_{sos}, \sigma^{2}_{eos}, \sigma^{2}_{rsp}, \sigma^{2}_{rau},\sigma^{2}_{rsu}  \sim Gamma(1, 1e^{-5})
+$$
+
+$$
+\\
+mn_{min} = -5, mn_{max}=5\\
+mx_{min} = 5, mx_{max}=15\\
+sos_{min}=0, sos_{max}=183\\
+eos_{min}=183, eos_{max}=365\\
+rsp_{min}=1, rsp_{max}=61\\
+rau_{min}=1, rau_{max}=61\\
+rsu_{min}=-0.01, rsu_{max}=0.01\\
+$$
+
+## Fitting model
+```{r utils}
+dl<-function (doy,year,params) {
+  mu_mn<-params['mu_mn']
+  mu_mx<-params['mu_mx']
+  mu_sos<-params['mu_sos']
+  mu_eos<-params['mu_eos']
+  mu_rsp<-params['mu_rsp']
+  mu_rau<-params['mu_rau']
+  mu_rsu<-params['mu_rsu']
+  
+  ep_mn_t<-params[paste0('ep_mn_t[',year,']')] 
+  ep_mx_t<-params[paste0('ep_mx_t[',year,']')] 
+  ep_sos_t<-params[paste0('ep_sos_t[',year,']')] 
+  ep_eos_t<-params[paste0('ep_eos_t[',year,']')] 
+  ep_rsp_t<-params[paste0('ep_rsp_t[',year,']')] 
+  ep_rau_t<-params[paste0('ep_rau_t[',year,']')] 
+  ep_rsu_t<-params[paste0('ep_rsu_t[',year,']')] 
+  
+  logit_t_mn <-mu_mn+ep_mn_t
+  logit_t_mx <-mu_mx+ep_mx_t
+  logit_t_sos <-mu_sos+ep_sos_t
+  logit_t_eos <-mu_eos+ep_eos_t
+  logit_t_rsp <-mu_rsp+ep_rsp_t
+  logit_t_rau <-mu_rau+ep_rau_t
+  logit_t_rsu <-mu_rsu+ep_rsu_t
+  
+  t_mn<-exp(logit_t_mn)/(1+exp(logit_t_mn))
+  t_mx<-exp(logit_t_mx)/(1+exp(logit_t_mx))
+  t_sos<-exp(logit_t_sos)/(1+exp(logit_t_sos))
+  t_eos<-exp(logit_t_eos)/(1+exp(logit_t_eos))
+  t_rsp<-exp(logit_t_rsp)/(1+exp(logit_t_rsp))
+  t_rau<-exp(logit_t_rau)/(1+exp(logit_t_rau))
+  t_rsu<-exp(logit_t_rsu)/(1+exp(logit_t_rsu))
+  
+  mn <- t_mn *(mn_max-mn_min) + mn_min
+  mx <- t_mx *(mx_max-mx_min) + mx_min
+  sos <- t_sos *(sos_max-sos_min) + sos_min
+  eos <- t_eos *(eos_max-eos_min) + eos_min
+  rsp <- t_rsp *(rsp_max-rsp_min) + rsp_min
+  rau <- t_rau *(rau_max-rau_min) + rau_min
+  rsu <- t_rsu *(rsu_max-rsu_min) + rsu_min
+  
+  log_lambda=mn + ((mx-mn) + rsu * doy) *(1/(1+exp((sos-doy)/rsp))-1/(1+exp((eos-doy)/rau)))
+  lambda=exp(log_lambda)
+  
+  return(lambda)
+}
+
+get_params<-function(params, nt){
+  
+  mu_mn<-params['mu_mn']
+  mu_mx<-params['mu_mx']
+  mu_sos<-params['mu_sos']
+  mu_eos<-params['mu_eos']
+  mu_rsp<-params['mu_rsp']
+  mu_rau<-params['mu_rau']
+  mu_rsu<-params['mu_rsu']
+  
+  ep_mn_t<-rep(0, nt)
+  ep_mx_t<-rep(0, nt)
+  ep_sos_t<-rep(0, nt)
+  ep_eos_t<-rep(0, nt)
+  ep_rsp_t<-rep(0, nt)
+  ep_rau_t<-rep(0, nt)
+  ep_rsu_t<-rep(0, nt)
+  for (t in 1:nt) {
+    ep_mn_t[t]<-params[paste0('ep_mn_t[',t,']')] 
+    ep_mx_t[t]<-params[paste0('ep_mx_t[',t,']')] 
+    ep_sos_t[t]<-params[paste0('ep_sos_t[',t,']')] 
+    ep_eos_t[t]<-params[paste0('ep_eos_t[',t,']')] 
+    ep_rsp_t[t]<-params[paste0('ep_rsp_t[',t,']')] 
+    ep_rau_t[t]<-params[paste0('ep_rau_t[',t,']')] 
+    ep_rsu_t[t]<-params[paste0('ep_rsu_t[',t,']')] 
+  }
+  ep_mn_t[is.na(ep_mn_t)]<-0
+  ep_mx_t[is.na(ep_mx_t)]<-0
+  ep_sos_t[is.na(ep_sos_t)]<-0
+  ep_eos_t[is.na(ep_eos_t)]<-0
+  ep_rsp_t[is.na(ep_rsp_t)]<-0
+  ep_rau_t[is.na(ep_rau_t)]<-0
+  ep_rsu_t[is.na(ep_rsu_t)]<-0
+  
+  params_all<-vector(mode="list", length=nt)
+  
+  for (t in 1:nt) {
+    logit_t_mn <-mu_mn+ep_mn_t[t]
+    logit_t_mx <-mu_mx+ep_mx_t[t]
+    logit_t_sos <-mu_sos+ep_sos_t[t]
+    logit_t_eos <-mu_eos+ep_eos_t[t]
+    logit_t_rsp <-mu_rsp+ep_rsp_t[t]
+    logit_t_rau <-mu_rau+ep_rau_t[t]
+    logit_t_rsu <-mu_rsu+ep_rsu_t[t]
+    
+    t_mn<-exp(logit_t_mn)/(1+exp(logit_t_mn))
+    t_mx<-exp(logit_t_mx)/(1+exp(logit_t_mx))
+    t_sos<-exp(logit_t_sos)/(1+exp(logit_t_sos))
+    t_eos<-exp(logit_t_eos)/(1+exp(logit_t_eos))
+    t_rsp<-exp(logit_t_rsp)/(1+exp(logit_t_rsp))
+    t_rau<-exp(logit_t_rau)/(1+exp(logit_t_rau))
+    t_rsu<-exp(logit_t_rsu)/(1+exp(logit_t_rsu))
+    
+    mn <- t_mn *(mn_max-mn_min) + mn_min
+    mx <- t_mx *(mx_max-mx_min) + mx_min
+    sos <- t_sos *(sos_max-sos_min) + sos_min
+    eos <- t_eos *(eos_max-eos_min) + eos_min
+    rsp <- t_rsp *(rsp_max-rsp_min) + rsp_min
+    rau <- t_rau *(rau_max-rau_min) + rau_min
+    rsu <- t_rsu *(rsu_max-rsu_min) + rsu_min
+    
+    params_all[[t]]<-data.frame(level_year=t,
+                                mn=mn,
+                                mx=mx,
+                                sos=sos,
+                                eos=eos,
+                                rsp=rsp,
+                                rau=rau,
+                                rsu=rsu)
+  }
+  params_all<-bind_rows(params_all)
+  
+  return(params_all)
+}
+```
+
+We build the model and run MCMC with the _nimble_ package.
+```{r model_setup}
+df_pheno_model_all_years<-df_pheno_complete %>% 
+  drop_na() %>% 
+  mutate(level_site=as.integer(factor(id)))
+
+ns<-df_pheno_model_all_years %>% pull(level_site) %>% unique() %>% length()
+
+df_pheno_model_all_years_new<-df_params<-vector(mode="list", length=ns)
+# dir.create(paste0("/data/ZHULAB/phenology/nab/model/"))
+for (s in 1:ns) {
+  df_pheno_model<-df_pheno_model_all_years %>% 
+    filter(level_site==s) %>% 
+    mutate(level_year=as.integer(factor(year))) 
+  
+  nt<-df_pheno_model %>% pull(level_year) %>% unique() %>% length()
+  
+    meta<-df_pheno_model %>% 
+      slice(1) %>% 
+      dplyr::select(lat, lon, station, location)
+    df_daymet<- download_daymet(site = meta$station,
+                                      lat = meta$lat,
+                                      lon = meta$lon,
+                                      start = year(min(df_pheno_model$Date)),
+                                      end = min(year(max(df_pheno_model$Date))+1, 2020),
+                                      internal = TRUE,
+                                      simplify = TRUE) %>% 
+      
+      mutate(level_site=s) %>%
+      filter(measurement %in% c("tmax..deg.c.", "tmin..deg.c.","prcp..mm.day.", "vp..Pa.")) %>% 
+      spread(key = "measurement", value="value") %>% 
+      rename(prcp=`prcp..mm.day.`,
+             tmax=`tmax..deg.c.`,
+             tmin=`tmin..deg.c.`,
+             vp=`vp..Pa.`) %>% 
+      mutate(Date=as.Date(yday, origin = paste0(year,"-01-01"))-1) %>% 
+      mutate (temp=(tmax+tmin/2)) %>% 
+      dplyr::select(level_site, Date, temp, prcp, vp)
+  
+  df_daymet_annual<-df_daymet %>% 
+    left_join(df_pheno_model %>% distinct(level_site,Date, year), by=c("level_site","Date") )%>% 
+    drop_na(year) %>% 
+    group_by(level_site,year) %>% 
+    summarize(mat=mean(temp),
+              tap=sum(prcp),
+              mvp=mean(vp),) %>% 
+    ungroup()
+  
+  df_pheno_model<-df_pheno_model %>% 
+    left_join(df_daymet_annual, by=c("level_site","year" )) %>% 
+    drop_na(tap, mat, mvp)
+  
+  level_df<-df_pheno_model %>%
+    distinct(level_site, level_year) %>%
+    mutate(level_siteyear=row_number())
+  
+  df_pheno_model<-df_pheno_model %>% 
+    left_join(level_df, by=c("level_site", "level_year"))
+  
+  N<-nrow(df_pheno_model)
+  
+  ########################
+  # Design model
+  ########################
+  mn_min = log(quantile(df_pheno_model_all_years$count_agg, 0.5)) - 2*(log(quantile(df_pheno_model_all_years$count_agg, 0.5)) -log(quantile(df_pheno_model_all_years$count_agg, 0.05)) )
+  mn_max = log(quantile(df_pheno_model_all_years$count_agg, 0.5)) 
+  mx_min = log(quantile(df_pheno_model_all_years$count_agg, 0.5)) 
+  mx_max = log(quantile(df_pheno_model_all_years$count_agg, 0.5)) + 2*(log(quantile(df_pheno_model_all_years$count_agg, 0.95)) -log(quantile(df_pheno_model_all_years$count_agg, 0.5)) )
+  sos_min=0
+  sos_max=183
+  eos_min=183
+  eos_max=365
+  rsp_min=1
+  rsp_max=61
+  rau_min=1
+  rau_max=61
+  rsu_min=-0.01
+  rsu_max=0.01
+  
+  Code <- nimbleCode({
+    mu_mn ~ dnorm(mean=0, var=1)
+    mu_mx ~ dnorm(mean=0, var=1)
+    # constraint_data1  ~ dconstraint( mu_mx>= mu_mn )
+    mu_sos ~ dnorm(mean=0, var=1)
+    mu_eos ~ dnorm(mean=0, var=1)
+    # constraint_data2  ~ dconstraint( mu_eos>= mu_sos )
+    mu_rsp ~ dnorm(mean=0, var=1)
+    mu_rau ~ dnorm(mean=0, var=1)
+    mu_rsu ~ dnorm(mean=0, var=1)
+    
+    # sig_t_mn ~ dinvgamma(shape=0.1, scale=0.1)
+    # sig_t_mx ~ dinvgamma(shape=0.1, scale=0.1)
+    # sig_t_sos ~ dinvgamma(shape=0.1, scale=0.1)
+    # sig_t_eos ~ dinvgamma(shape=0.1, scale=0.1)
+    # sig_t_rsp ~ dinvgamma(shape=0.1, scale=0.1)
+    # sig_t_rau ~ dinvgamma(shape=0.1, scale=0.1)
+    # sig_t_rsu ~ dinvgamma(shape=0.1, scale=0.1)
+    sig_t_mn ~ dgamma(shape=1, scale=0.00001)
+    sig_t_mx ~ dgamma(shape=1, scale=0.00001)
+    sig_t_sos ~ dgamma(shape=1, scale=0.00001)
+    sig_t_eos ~ dgamma(shape=1, scale=0.00001)
+    sig_t_rsp ~ dgamma(shape=1, scale=0.00001)
+    sig_t_rau ~ dgamma(shape=1, scale=0.00001)
+    sig_t_rsu ~ dgamma(shape=1, scale=0.00001)
+    
+    for (t in 1:(nt)) {
+      ep_mn_t[t] ~ dnorm (mean = 0, var = sig_t_mn)
+      ep_mx_t[t] ~ dnorm (mean = 0, var = sig_t_mx)
+      ep_sos_t[t] ~ dnorm (mean = 0, var = sig_t_sos)
+      ep_eos_t[t] ~ dnorm (mean = 0, var = sig_t_eos)
+      ep_rsp_t[t] ~ dnorm (mean = 0, var = sig_t_rsp)
+      ep_rau_t[t] ~ dnorm (mean = 0, var = sig_t_rau)
+      ep_rsu_t[t] ~ dnorm (mean = 0, var = sig_t_rsu)
+    }
+    
+    for (i in 1:N) {
+      logit (t_mn[i]) <-mu_mn+ep_mn_t[year[i]]
+      logit (t_mx[i]) <-mu_mx+ep_mx_t[year[i]]
+      logit (t_sos[i]) <-mu_sos+ep_sos_t[year[i]]
+      logit (t_eos[i]) <-mu_eos+ep_eos_t[year[i]]
+      logit (t_rsp[i]) <-mu_rsp+ep_rsp_t[year[i]]
+      logit (t_rau[i]) <-mu_rau+ep_rau_t[year[i]]
+      logit (t_rsu[i]) <-mu_rsu+ep_rsu_t[year[i]]
+      
+      mn[i] <- t_mn[i] *(mn_max-mn_min) + mn_min
+      mx[i] <- t_mx[i] *(mx_max-mx_min) + mx_min
+      sos[i] <- t_sos[i] *(sos_max-sos_min) + sos_min
+      eos[i] <- t_eos[i] *(eos_max-eos_min) + eos_min
+      rsp[i] <- t_rsp[i] *(rsp_max-rsp_min) + rsp_min
+      rau[i] <- t_rau[i] *(rau_max-rau_min) + rau_min
+      rsu[i] <- t_rsu[i] *(rsu_max-rsu_min) + rsu_min
+      
+      log(lambda[i])<-mn[i] + ((mx[i]-mn[i]) + rsu[i] * doy[i]) *(1/(1+exp((sos[i]-doy[i])/rsp[i]))-1/(1+exp((eos[i]-doy[i])/rau[i])))
+      
+      y[i] ~dpois(lambda[i])
+    }
+  })
+  
+  Data <- list(
+    y = round(df_pheno_model$count_agg),
+    year = df_pheno_model$level_year,
+    doy = df_pheno_model$doy
+  )
+  
+  Dimensions <- list(
+    ep_mn_t=nt+1, # cos some sites only have1 year of data. returns error in that case.
+    ep_mx_t=nt+1,
+    ep_sos_t=nt+1,
+    ep_eos_t=nt+1,
+    ep_rsp_t=nt+1,
+    ep_rau_t=nt+1,
+    ep_rsu_t=nt+1
+  )
+  
+  Inits <- list(
+    mu_mn =0,
+    mu_mx =0,
+    mu_sos =0,
+    mu_eos =0,
+    mu_rsp =0,
+    mu_rau=0,
+    mu_rsu=0,
+    
+    sig_t_mn =0.00001,
+    sig_t_mx =0.00001,
+    sig_t_sos  =0.00001,
+    sig_t_eos =0.00001,
+    sig_t_rsp  =0.00001,
+    sig_t_rau  =0.00001,
+    sig_t_rsu  =0.00001,
+    
+    ep_mn_t=rep(0, nt+1),
+    ep_mx_t=rep(0,nt+1),
+    ep_sos_t=rep(0,nt+1),
+    ep_eos_t=rep(0,nt+1),
+    ep_rsp_t=rep(0,nt+1),
+    ep_rau_t=rep(0,nt+1),
+    ep_rsu_t=rep(0,nt+1)
+  )
+  
+  Constants <-list(nt=nt,
+    N=N,
+    mn_min = mn_min,
+    mn_max=mn_max,
+    mx_min = mx_min,
+    mx_max=mx_max,
+    sos_min=sos_min,
+    sos_max=sos_max,
+    eos_min=eos_min,
+    eos_max=eos_max,
+    rsp_min=rsp_min,
+    rsp_max=rsp_max,
+    rau_min=rau_min,
+    rau_max=rau_max,
+    rsu_min=rsu_min,
+    rsu_max=rsu_max
+  )
+  
+  ########################
+  # Fit model
+  ########################
+  
+  Model <- nimbleModel(code = Code,
+                       data = Data,
+                       inits = Inits,
+                       dimensions = Dimensions,
+                       constants = Constants,
+                       check = F, calculate=F)
+  MCMCconfiguration <- configureMCMC(Model,useConjugacy = T,  print=T)
+  MCMCconfiguration$addMonitors("ep_mn_t[]",
+                                "ep_mx_t[]",
+                                "ep_sos_t[]",
+                                "ep_eos_t[]",
+                                "ep_rsp_t[]",
+                                "ep_rau_t[]",
+                                "ep_rsu_t[]"
+  )
+  mMCMC <- buildMCMC(MCMCconfiguration)
+  CModel <- compileNimble(Model, resetFunctions = T)
+  Cmcmc <- compileNimble(mMCMC, project=CModel, resetFunctions = T)
+
+  runMCMC_samples <- runMCMC(Cmcmc, nburnin = 200, niter = 1000)
+  dir.create(paste0("/data/ZHULAB/phenology/nab/model/",taxa, "/"), recursive = T)
+  write_csv(as.data.frame(runMCMC_samples), paste0("/data/ZHULAB/phenology/nab/model/",taxa, "/",s,"_mcmc.csv"))
+  
+  ########################
+  # Get parameters
+  ########################
+  runMCMC_samples_view <- as.matrix(read_csv(paste0("/data/ZHULAB/phenology/nab/model/",taxa, "/" ,s,"_mcmc.csv")))
+  params<-apply(runMCMC_samples_view,2,median)
+  
+  df_pheno_model<-df_pheno_model %>% 
+    mutate(y_pred=dl(doy,level_year,params))
+  
+  df_pheno_model_all_years_new[[s]]<-df_pheno_model
+  
+  df_params[[s]]<-df_pheno_model %>% 
+    distinct(level_site, level_year, level_siteyear, mat, tap, mvp, id, station, location, year, lon, lat) %>% 
+    left_join(get_params(params, nt), by=c("level_year"))   %>% 
+    gather(key="param", value="value", -level_site, -level_year, -level_siteyear, -mat, -tap,-mvp,-id, -station, -location, -year, -lon, -lat) %>% 
+    mutate(param=factor(param, levels=c("mn", "mx", "sos", "eos", "rsp", "rau", "rsu"))) %>% 
+    mutate(level_site=factor(level_site))
+}
+
+df_params<-bind_rows(df_params)
+df_pheno_model_all_years_new<-bind_rows(df_pheno_model_all_years_new)
+```
+
+## Check model fit
+
+This figure shows observed phenology in dashed lines and model-fitted phenology in solid lines. Colors show different sites.
+```{r fit, out.width="100%", fig.height=30}
+p_bayes<-ggplot(df_pheno_model_all_years_new %>% 
+         filter(location %in% site_list)
+         )+
+  geom_point(aes(x=doy+60, y=count_agg, col=year,group=year),alpha=0.1)+
+  geom_line(aes(x=doy+60, y=y_pred, col=year,group=year), lwd=1) +
+  # ggtitle("Fitted phenology curves of Cladosporiaceae spores")+
+  theme_classic()+
+  scale_color_viridis_c()+
+  facet_wrap(.~location, scale="free_y", ncol=3)+
+  # facet_grid(row=vars(id), col=vars(year), scale="free_y")+
+  guides(col=F)+
+  scale_y_continuous(trans = log_trans(), 
+                     breaks = trans_breaks("log", function(x) exp(x)),
+                     labels = trans_format("log", math_format(e^.x)))+
+  scale_x_continuous(labels=labelfunc_x)+
+  # ggtitle("Phenology curves of Cladosporiaceae spores")+
+  ylab(expression(Spore~concentration~(grains / m^3)))+
+  xlab("Time of year")
+p_bayes
+
+cairo_pdf("./nab/output/figures/4 bayes_fit.pdf", width=6, height=6)
+print (p_bayes)
+dev.off()
+```
+
+The Pearson correlation between observed and fitted values is `r round(cor(df_pheno_model_all_years_new$count_agg, df_pheno_model_all_years_new$y_pred),4)`.
+```{r corr, out.width = "100%", fig.height=15}
+p_corr<-ggplot(df_pheno_model_all_years_new %>% 
+         filter(location %in% site_list))+
+  geom_point(aes(x=count_agg, y = y_pred, group=year, col=year), alpha=0.1)+
+  geom_abline(intercept = 0, slope=1, col="red", lty=2)+
+  scale_x_continuous(trans = log_trans(), 
+                     breaks = trans_breaks("log", function(x) exp(x)),
+                     labels = trans_format("log", math_format(e^.x)))+
+  scale_y_continuous(trans = log_trans(), 
+                     breaks = trans_breaks("log", function(x) exp(x)),
+                     labels = trans_format("log", math_format(e^.x)))+
+  xlab(expression(Observed~spore~concentration~(grains / m^3)))+
+  ylab(expression(Fitted~spore~concentration~(grains / m^3)))+
+  theme_classic()+
+  facet_wrap(.~location,scale="free",ncol = 3)+
+  scale_color_viridis_c()+
+  guides(col=F)
+
+cairo_pdf("./nab/output/figures/5 bayes_corr.pdf", width=6, height=5)
+print (p_corr)
+dev.off()
+```
+
+## Inspect model parameters
+
+At first glance, it is not obvious how the model parameters change with sites or year. Colors show different sites.
+```{r params_year, out.width = "100%"}
+ggplot(df_params)+
+  geom_line(aes(x=year, y=value, col=level_site, group=level_site))+
+  geom_point(aes(x=year, y=value, col=level_site, group=level_site))+
+  theme_classic()+
+  guides(col=F)+
+  facet_wrap(.~param, scales = "free_y")
+```
+
+We do see interesting relationships when comparing these phenology model parameters to climatic variables, i.e., mean annual temperature and total annual precipitation. Smoothed line in blue is from generalized linear regression. Colors show different sites. It appears that the phenology parameter-climate relationship is mainly driven by spatial patterns (among sites), rather than temporal patterns (among years).
+```{r params_clim, out.width = "100%", fig.height=10}
+df_params<-df_params %>% 
+  mutate(t_value=case_when(param=="mn"~(value-mn_min)/(mn_max-mn_min),
+                         param=="mx"~(value-mx_min)/(mx_max-mx_min),
+                         param=="sos"~(value-sos_min)/(sos_max-sos_min),
+                         param=="eos"~(value-eos_min)/(eos_max-eos_min),
+                         param=="rsp"~(value-rsp_min)/(rsp_max-rsp_min),
+                         param=="rau"~(value-rau_min)/(rau_max-rau_min),
+                         param=="rsu"~(value-rsu_min)/(rsu_max-rsu_min),
+  ))
+
+df_params<-df_params %>% 
+  left_join(lm_df, by="param")
+p_mat<-ggplot( )+
+  geom_point( data=df_params, aes(x=mat, y=t_value, col=level_site, group=level_site),)+
+  geom_smooth( data=df_params %>% filter(mat_p<0.05), aes(x=mat, y=t_value),method="glm", method.args = list(family = "quasibinomial"))+
+  xlab("Mean annual temperature (°C)")+
+  ylab("Scaled parameter value")+
+  theme_classic()+
+  facet_wrap(.~param, scales = "free_y", ncol=1)+
+  guides(col=F)
+
+p_tap<-ggplot(df_params)+
+  geom_point(data=df_params,aes(x=tap, y=t_value, col=level_site, group=level_site))+
+  geom_smooth(data=df_params %>% filter(tap_p<0.05),aes(x=tap, y=t_value),method="glm", method.args = list(family = "quasibinomial"))+
+  xlab("Total annual precipitation (mm)")+
+  ylab("Scaled parameter value")+
+  theme_classic()+
+  facet_wrap(.~param, scales = "free_y", ncol=1)+
+  guides(col=F)
+
+p_mvp<-ggplot(df_params)+
+  geom_point(aes(x=mvp, y=t_value, col=level_site, group=level_site))+
+  geom_smooth(aes(x=mvp, y=t_value),method="glm", method.args = list(family = "quasibinomial"))+
+  xlab("Mean vapor pressure (??)")+
+  ylab("Scaled parameter value")+
+  theme_classic()+
+  facet_wrap(.~param, scales = "free_y", ncol=1)+
+  guides(col=F)
+
+  
+
+cairo_pdf("./nab/output/figures/6 pheno_climate.pdf", width=6, height=9)
+grid.arrange(annotate_figure(p_mat, fig.lab = "A"),
+             annotate_figure(p_tap, fig.lab = "B"),
+             nrow=1
+)
+dev.off()
+```
+
+Note:
+* mn: lower bound of phenology curve
+* mx: higher bound of phenology curve
+* sos: timing of spring inflection point
+* eos: timing of autumn inflection point
+* rsp: 1 / rate of increase in spring
+* rau: 1 / rate of decrease in fall
+* rsu: rate of change during summer 
+
+Regression of logit(transformed parameters) against climatic variables support the possible influence of climate on spore phenology.
+```{r reg}
+param_list<-unique(df_params$param)
+lm_list<-vector(mode="list")
+for (paramoi in param_list) {
+  lmoi<-lm(logit(t_value)~mat+tap, data=df_params %>% filter(param==paramoi)) %>% summary()
+lm_list[[paramoi]]<-c(lmoi$coefficients[,4],param=paramoi) %>% 
+  t() %>% 
+  data.frame() %>% 
+  dplyr::select(param,mat_p=mat, tap_p=tap)
+}
+<-bind_rows(lm_list) 
+
+
+summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="mn")))
+summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="mx")))
+summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="sos")))
+summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="eos")))
+summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="rsp")))
+summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="rau")))
+summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="rsu")))
+```
+
+## References
+Elmore, A.J., S.M. Guinn, B.J. Minsley and A.D. Richardson (2012): Landscape controls on the timing of spring, autumn, and growing season length in mid-Atlantic forests. - Global Change Biology 18, 656-674.
