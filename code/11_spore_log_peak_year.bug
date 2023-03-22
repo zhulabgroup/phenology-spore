@@ -1,0 +1,25 @@
+model{
+
+for(i in 1:N){
+
+log_peak[i]~dnorm(mu[i],tau[1])  #likelihood
+log_peak.pred[i]~dnorm(mu[i],tau[1])  #predicted values
+
+mu[i]<-alpha[id[i]]+beta[id[i]]*year[i]  #process model 
+
+}
+
+#priors
+for(i in id_list){
+alpha[i]~dnorm(a,tau[2])
+beta[i]~dnorm(b,tau[3])
+}
+
+a~dnorm(0,0.0001)
+b~dnorm(0,0.0001)
+
+for(i in 1:3){
+tau[i]~dgamma(0.0001, 0.0001)
+}
+
+}
