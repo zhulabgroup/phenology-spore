@@ -18,6 +18,14 @@ p_load(gridExtra)
 p_load(ggrepel)
 p_load(ggpubr)
 
+p_load(zoo)
+p_load(padr)
+p_load(ptw)
+p_load(forestmangr)
+p_load(magrittr)
+p_load(maps)
+p_load(mapproj)
+
 .path <- list( # hidden variable won't be removed
   nab_raw = "/nfs/turbo/seas-zhukai/phenology/nab/raw/",
   nab_clean = "/nfs/turbo/seas-zhukai/phenology/nab/clean/",
