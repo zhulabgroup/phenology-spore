@@ -41,13 +41,19 @@ log_peak_fit<-data_peak %>%
 log_peak_fix_var<-ggpredict(nlme_log_peak, "year", type = "re") %>% 
   as_tibble()
 ##plot
-ggplot() +
+plot_log_peak_year<-ggplot() +
   geom_jitter(data=log_peak_fit,aes (x=year, y=log_peak, group=id, col=id))+
   geom_path(data=log_peak_fit,aes (x=year, y=log_peak_fit.random, group=id, col=id))+
   geom_path(data=log_peak_fit,aes (x=year, y=log_peak_fit.fixed), col="black", linewidth=1)+
   geom_ribbon(data=log_peak_fix_var,aes (x=x, ymin=conf.low, ymax=conf.high), col="gray",  alpha=0.5)+
   scale_x_continuous(breaks=seq(2009, 2019, by=1))+
   theme_classic()
+ggsave(
+  plot=plot_log_peak_year,
+  filename="~/spore_phenology/output/figures/plot_log_peak_year.pdf",
+  width=10,
+  height=10
+)
 
 #peak_doy~year
 # model_lmer1 <- lmer(peak_doy ~ year + (1 | id), data = data_peak)
@@ -66,13 +72,19 @@ peak_doy_fit<-data_peak %>%
 peak_doy_fix_var<-ggpredict(nlme_peak_doy, "year", type = "re") %>% 
   as_tibble()
 ##plot
-ggplot() +
+plot_peak_doy<-ggplot() +
   geom_jitter(data=peak_doy_fit,aes (x=year, y=peak_doy, group=id, col=id))+
   geom_path(data=peak_doy_fit,aes (x=year, y=peak_doy_fit.random, group=id, col=id))+
   geom_path(data=peak_doy_fit,aes (x=year, y=peak_doy_fit.fixed), col="black", linewidth=1)+
   geom_ribbon(data=peak_doy_fix_var,aes (x=x, ymin=conf.low, ymax=conf.high), col="gray",  alpha=0.5)+
   scale_x_continuous(breaks=seq(2009, 2019, by=1))+
   theme_classic()
+ggsave(
+  plot=plot_peak_doy,
+  filename="~/spore_phenology/output/figures/plot_peak_doy.pdf",
+  width=10,
+  height=10
+)
 
 #log(integral+1)~year
 ##read the data
@@ -95,13 +107,19 @@ log_integral_fit<-data_integral %>%
 log_integral_fix_var<-ggpredict(nlme_log_integral, "year", type = "re") %>% 
   as_tibble()
 ##plot
-ggplot() +
+plot_log_integral<-ggplot() +
   geom_jitter(data=log_integral_fit,aes (x=year, y=log_integral, group=id, col=id))+
   geom_path(data=log_integral_fit,aes (x=year, y=log_integral_fit.random, group=id, col=id))+
   geom_path(data=log_integral_fit,aes (x=year, y=log_integral_fit.fixed), col="black", linewidth=1)+
   geom_ribbon(data=log_integral_fix_var,aes (x=x, ymin=conf.low, ymax=conf.high), col="gray",  alpha=0.5)+
   scale_x_continuous(breaks=seq(2007, 2019, by=1))+
   theme_classic()
+ggsave(
+  plot=plot_log_integral,
+  filename="~/spore_phenology/output/figures/plot_log_integral.pdf",
+  width=10,
+  height=10
+)
 
 #start_doy~year
 ##read the data
@@ -132,13 +150,19 @@ start_doy_fit<-data_season %>%
 start_doy_fix_var<-ggpredict(nlme_start_doy, "year", type = "re") %>% 
   as_tibble()
 ##plot
-ggplot() +
+plot_start_doy<-ggplot() +
   geom_jitter(data=start_doy_fit,aes (x=year, y=start_doy, group=id, col=id))+
   geom_path(data=start_doy_fit,aes (x=year, y=start_doy_fit.random, group=id, col=id))+
   geom_path(data=start_doy_fit,aes (x=year, y=start_doy_fit.fixed), col="black", linewidth=1)+
   geom_ribbon(data=start_doy_fix_var,aes (x=x, ymin=conf.low, ymax=conf.high), col="gray",  alpha=0.5)+
   scale_x_continuous(breaks=seq(2007, 2019, by=1))+
   theme_classic()
+ggsave(
+  plot=plot_start_doy,
+  filename="~/spore_phenology/output/figures/plot_start_doy.pdf",
+  width=10,
+  height=10
+)
 
 #end_doy~year
 # model_lmer1 <- lmer(end_doy ~ year + (1 | id), data = data_season)
@@ -155,13 +179,19 @@ end_doy_fit<-data_season %>%
 end_doy_fix_var<-ggpredict(nlme_end_doy, "year", type = "re") %>% 
   as_tibble()
 ##plot
-ggplot() +
+plot_end_doy<-ggplot() +
   geom_jitter(data=end_doy_fit,aes (x=year, y=end_doy, group=id, col=id))+
   geom_path(data=end_doy_fit,aes (x=year, y=end_doy_fit.random, group=id, col=id))+
   geom_path(data=end_doy_fit,aes (x=year, y=end_doy_fit.fixed), col="black", linewidth=1)+
   geom_ribbon(data=end_doy_fix_var,aes (x=x, ymin=conf.low, ymax=conf.high), col="gray",  alpha=0.5)+
   scale_x_continuous(breaks=seq(2007, 2019, by=1))+
   theme_classic()
+ggsave(
+  plot=plot_end_doy,
+  filename="~/spore_phenology/output/figures/plot_end_doy.pdf",
+  width=10,
+  height=10
+)
 
 #duration~year
 # model_lmer1 <- lmer(duration ~ year + (1 | id), data = data_season)
@@ -179,10 +209,16 @@ duration_fit<-data_season %>%
 duration_fix_var<-ggpredict(nlme_duration, "year", type = "re") %>% 
   as_tibble()
 ##plot
-ggplot() +
+plot_duration<-ggplot() +
   geom_jitter(data=duration_fit,aes (x=year, y=duration, group=id, col=id))+
   geom_path(data=duration_fit,aes (x=year, y=duration_fit.random, group=id, col=id))+
   geom_path(data=duration_fit,aes (x=year, y=duration_fit.fixed), col="black", linewidth=1)+
   geom_ribbon(data=duration_fix_var,aes (x=x, ymin=conf.low, ymax=conf.high), col="gray",  alpha=0.5)+
   scale_x_continuous(breaks=seq(2007, 2019, by=1))+
   theme_classic()
+ggsave(
+  plot=plot_duration,
+  filename="~/spore_phenology/output/figures/plot_duration.pdf",
+  width=10,
+  height=10
+)
