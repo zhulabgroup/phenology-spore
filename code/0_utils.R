@@ -17,7 +17,6 @@ p_load(lubridate)
 p_load(gridExtra)
 p_load(ggrepel)
 p_load(ggpubr)
-
 p_load(zoo)
 p_load(padr)
 p_load(ptw)
@@ -25,8 +24,13 @@ p_load(forestmangr)
 p_load(magrittr)
 p_load(maps)
 p_load(mapproj)
+p_load(knitr)
+
+
+# ln -s /nfs/turbo/seas-zhukai/phenology/phenology_fungal_spore/ data
+# ln -s /nfs/turbo/seas-zhukai/phenology/nab/ data/nab
 
 .path <- list( # hidden variable won't be removed
-  nab_raw = "/nfs/turbo/seas-zhukai/phenology/nab/raw/",
-  nab_clean = "/nfs/turbo/seas-zhukai/phenology/nab/clean/",
+  nab_raw = "data/nab/raw/",
+  nab_clean = "data/nab/clean/",
   out_fig = "output/figures/")

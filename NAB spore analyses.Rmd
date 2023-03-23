@@ -19,15 +19,30 @@ source("code/0_utils.R")
 ## Read and clean NAB data
 The complete dataset has both pollen and spore count. In this analysis we focus on spores.
 ```{r read}
-# source("./code/1_read.R")
+# source("code/1_read.R")
 nab_df<-read_rds(str_c(.path$nab_clean,"nab_dat.rds")) %>% as_tibble()
 nab_df
+```
+
+
+## Clean up taxonomy
+We retrieved classification on various levels for aggregation.
+```{r taxa}
+# source("code/2_taxonomy.R")
+nab_taxa_df<-read_rds(str_c(.path$nab_clean,"nab_taxa.rds")) %>% as_tibble()
+nab_taxa_df
+```
+
+Join.
+```{r join}
+source ("code/3_join.R")
+df
 ```
 
 ## Sampling stations
 Meta-data associated with sampling stations.
 ```{r meta}
-source("./code/2_meta.R")
+source("code/4_meta.R")
 meta_df
 ```
 
@@ -36,143 +51,30 @@ A total of 34 sampling stations distributed across the US. Selected stations (hi
 p_map
 ```
 
-
-## Clean up taxonomy
-We also get classification on various levels for aggregation.
-```{r taxa}
-# source("./code/3_taxonomy.R")
-nab_taxa_df<-read_rds(str_c(.path$nab_clean,"nab_taxa.rds")) %>% as_tibble()
-nab_taxa_df
-```
-
-Join.
-```{r join}
-source ("./code/4_join.R")
-nab_with_taxa_df
-```
-
+## Time series
 ```{r calendar, out.width="100%"}
-source ("./code/5_calendar.R")
+source ("code/5_calendar.R")
 p_calen
-
-# cairo_pdf(str_c(.path$out_fig,"1 map_calendar.pdf"), width=6, height=6)
-# grid.arrange(annotate_figure(p_map, fig.lab = "A"),
-#              annotate_figure(p_calen, fig.lab = "B"),
-#              layout_matrix=rbind(c(1),
-#                                  c(2)),
-#              # widths = 3:2,
-#              heights = 3:2
-# )
-# dev.off()
 ```
-
 
 ## Visualize total spore count
 ```{r total, out.width = "100%"}
-df_ts<-nab_with_taxa_df%>% 
-  group_by(lat, lon, station, location, id, family, genus, taxa) %>% 
-  complete(date = seq(min(date),max(date), by="1 day"))%>%
-  ungroup() %>% 
-  # mutate(count_ma = roll_mean(count, n = 28, align = "right", fill = NA, na.rm = T)) %>%
-  ungroup() %>% 
-  drop_na(family) %>% 
-  group_by(station, location, id, date,family, lon, lat) %>% 
-  summarize(count_agg=sum(count)) %>% 
-  ungroup() %>% 
-  mutate(count_agg=case_when(count_agg>=5~count_agg))
-
-ggplot(data=df_ts%>% 
-   # filter(location %in% site_list) %>% 
-         filter(family=="Cladosporiaceae")  ) +
-  geom_line(aes(x=date, y=count_agg))  +
-  scale_y_continuous(trans = log_trans(), 
-                     breaks = trans_breaks("log", function(x) exp(x)),
-                     labels = trans_format("log", math_format(e^.x)))+
-  ggtitle("Total Spore Counts (all counts are per cubic meter of air)")+
-  ylab("log (count)")+
-  theme_classic()+
-  facet_wrap(.~location, ncol=2, scales = "free_y") 
+source("code/5b_time_series.R")
+p_ts
 ```
 
 ## Visualize community composition
 We here show the four most dominant families in comparison to the total spore count.
 ```{r comm, out.width = "100%"}
-comm_meta<-df_comm %>% 
-  group_by(family) %>% 
-  summarize(median=median(count_agg, na.rm=T)) %>% 
-  ungroup() %>% 
-  arrange(desc(median))
-
-df_comm_major<-df_comm %>% 
-  filter(family %in% (comm_meta %>% slice(1:5) %>% pull(family))|
-           family=="Total") 
-
-ggplot(data=df_comm_major) +
-  geom_line(aes(x=Date, y=count_agg, col=family, group=family)) +
-  scale_y_continuous(trans = log_trans(), 
-                     breaks = trans_breaks("log", function(x) exp(x)),
-                     labels = trans_format("log", math_format(e^.x)))+
-  ggtitle("Taxa-specific Spore Counts (all counts are per cubic meter of air)")+
-  ylab("log (count)")+
-  theme_classic()+
-  facet_wrap(.~station, ncol=2, scales = "free_y")+
-  theme(legend.position="bottom")
+source("code/5c_composition.R")
+p_comm
 ```
 
 ## Visualize phenology
 Focusing on the family _Cladosporiaceae_, we visualize the phenology of spores. This figure shows the inter-annual and intra-annual variations in spore count. Note that we are not following calendar years but rather start counting 60 days after Jan 1. This is because the spore count is generally the lowest around day 60. We hope to make sure each cycle has an increasing and then decreasing trend in spore count.
 
 ```{r pheno, out.width = "100%", fig.height=12}
-taxa = "Cladosporiaceae" # "Cladosporiaceae"
-df_pheno<-df_comm_all %>%
-  # filter(location %in% site_list) %>% 
-  filter(family==taxa) %>% 
-  mutate(year=as.integer(format(Date, "%Y"))) %>% 
-  mutate(doy=as.integer(format(Date, "%j"))) %>% 
-  group_by(station, location, id, lat, lon, year) %>% 
-  mutate(cumsum=cumsum(coalesce(count_agg,0))) %>% 
-  ungroup() %>% 
-  filter(log(count_agg+1)>0) %>% 
-  mutate(year=case_when(doy<=60 ~ (year-1),
-                        TRUE ~ as.double(year))) %>% 
-  mutate(doy=case_when(doy>60 ~ (doy-60),
-                        TRUE ~ as.numeric(difftime( Date,as.Date(paste0(year,"-01-01")) )-60 )))
-
-df_pheno_group<-df_pheno %>% 
-  distinct(id, year, station, location, lat, lon) 
-df_pheno_complete<-vector(mode="list",length=nrow(df_pheno_group))
-for(i in 1:nrow(df_pheno_group)) {
-  df_pheno_1y<-df_pheno %>% 
-    filter(id==df_pheno_group$id[i],
-           year==df_pheno_group$year[i])  %>% 
-    complete(doy=seq(1,365,by=1)) %>% 
-    mutate(station=df_pheno_group$station[i],
-           location=df_pheno_group$location[i],
-           id=df_pheno_group$id[i],
-           lon=df_pheno_group$lon[i],
-           lat=df_pheno_group$lat[i])
-  if (nrow(df_pheno_1y %>% drop_na(count_agg))>=365*3/5) {
-    df_pheno_complete[[i]]<-df_pheno_1y
-  }
-  # print(i)
-}
-df_pheno_complete<-rlist::list.clean(df_pheno_complete) %>% 
-  bind_rows()
-
-p_pheno<-ggplot(df_pheno_complete %>% 
-         filter(location %in% site_list))+
-  geom_line(aes(x=doy+60, y=count_agg, col=year, group=year), alpha=0.5)+
-  scale_y_continuous(trans = log_trans(), 
-                     breaks = trans_breaks("log", function(x) exp(x)),
-                     labels = trans_format("log", math_format(e^.x)))+
-  scale_x_continuous(labels=labelfunc_x)+
-  # ggtitle("Phenology curves of Cladosporiaceae spores")+
-  ylab(expression(Spore~concentration~(grains / m^3)))+
-  xlab("Time of year")+
-  scale_color_viridis_c()+
-  theme_classic()+
-  facet_wrap(.~location, ncol=3, scales = "free_y")+
-  guides(col=F)
+source("code/12a_taxa_phenoogy.R")
 p_pheno
 ```
 

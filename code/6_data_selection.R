@@ -20,7 +20,7 @@ station_year_df<-nab_with_taxa_df %>%
 data_insert_df<-station_year_df %>%
   dplyr::select(location,id,year,date,count) %>%
   group_by(location,id) %>%
-  pad(start_val= as.Date("2007-01-01"),end_val = as.Date("2019-12-31"))%>%
+  padr::pad(start_val= as.Date("2007-01-01"),end_val = as.Date("2019-12-31"))%>%
   mutate(year=format(date, "%Y") %>% as.integer(),count_insert = na.approx(count, maxgap=7)) %>%
   ungroup()
 # #test the maxgap
