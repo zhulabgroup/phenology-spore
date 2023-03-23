@@ -21,7 +21,8 @@ df_pheno<-df_comm_major %>%
          filter(n>=365/3) %>% 
            select(location, year)),
          by=c("location", "year")
-           )
+           ) %>% 
+  ungroup()
   
 
 p_pheno<-ggplot(df_pheno %>% 
@@ -31,11 +32,15 @@ p_pheno<-ggplot(df_pheno %>%
                      breaks = scales::trans_breaks("log", function(x) exp(x)),
                      labels = scales::trans_format("log", scales::math_format(e^.x)))+
   scale_x_continuous(labels=labelfunc_x)+
-  # ggtitle("Phenology curves of Cladosporiaceae spores")+
+  ggtitle("Phenology curves of Cladosporiaceae spores")+
   ylab(expression(Spore~concentration~(grains / m^3)))+
   xlab("Time of year")+
   scale_color_viridis_c()+
   theme_classic()+
-  facet_wrap(.~location, ncol=3, scales = "free_y")+
-  guides(col=F)
+  facet_wrap(.~location, ncol=3, scales = "free_y")#+
+  # guides(col="none")
 p_pheno
+
+# cairo_pdf("./nab/output/figures/2 pheno_curves.pdf", width=6, height=4)
+# print (p_pheno)
+# dev.off()

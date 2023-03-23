@@ -26,6 +26,11 @@ p_load(maps)
 p_load(mapproj)
 p_load(knitr)
 
+p_unload("all")
+
+pacman::p_load(tidyverse)
+pacman::p_load(nimble)
+
 
 # ln -s /nfs/turbo/seas-zhukai/phenology/phenology_fungal_spore/ data
 # ln -s /nfs/turbo/seas-zhukai/phenology/nab/ data/nab
@@ -33,4 +38,6 @@ p_load(knitr)
 .path <- list( # hidden variable won't be removed
   nab_raw = "data/nab/raw/",
   nab_clean = "data/nab/clean/",
+  out_simple_model = "data/pheno_model/simple/",
+  out_bayes_model = "data/pheno_model/bayes/",
   out_fig = "output/figures/")

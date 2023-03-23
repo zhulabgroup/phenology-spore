@@ -22,7 +22,9 @@ df_comm_major<-df %>%
   mutate(count=case_when(count>=5~count)) # set low values to 0
 
 p_comm<-ggplot(data=df_comm_major %>% 
-                 filter(location %in% site_list)) +
+                 filter(location %in% site_list) %>% 
+                 filter(lubridate::year(date)==2012) %>% 
+                 drop_na()) +
   geom_line(aes(x=date, y=count, col=family, group=family), alpha=0.5) +
   scale_y_continuous(trans = scales::log_trans(), 
                      breaks =scales:: trans_breaks("log", function(x) exp(x)),

@@ -1,6 +1,6 @@
 df_o <- nab_df %>%
   rename(taxa_raw = taxa) %>%
-  left_join(nab_taxa_df, by = "taxa_raw") %>%
+  left_join(taxa_df, by = "taxa_raw") %>%
   rename(taxa = taxa_clean) %>%
   mutate(kingdom = case_when(
     taxa_raw == "Total Spore Count" ~ "Fungi",
