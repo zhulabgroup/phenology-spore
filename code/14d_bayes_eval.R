@@ -1,3 +1,6 @@
+df_params<-read_rds(str_c(.path$out_bayes_model, taxa, "/", "params.rds"))
+df_pheno_model_all_years_new<-read_rds(str_c(.path$out_bayes_model, taxa, "/", "fit.rds"))
+
 p_fitline<-ggplot(df_pheno_model_all_years_new %>% 
                   filter(location %in% site_list)
 )+

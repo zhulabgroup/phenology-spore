@@ -69,6 +69,9 @@ We here show the four most dominant families in comparison to the total spore co
 source("code/5c_composition.R")
 p_comm
 ```
+## Get key phenological metrics
+
+## Temporal trends
 
 ## Visualize phenology
 Focusing on the family _Cladosporiaceae_, we visualize the phenology of spores. This figure shows the inter-annual and intra-annual variations in spore count. Note that we are not following calendar years but rather start counting 60 days after Jan 1. This is because the spore count is generally the lowest around day 60. We hope to make sure each cycle has an increasing and then decreasing trend in spore count.
@@ -159,7 +162,7 @@ We build the model and run MCMC with the _nimble_ package.
 
 This figure shows observed phenology in dashed lines and model-fitted phenology in solid lines. Colors show different sites.
 ```{r fit, out.width="100%", fig.height=30}
-# source("code/14d_bayes_eval.R")
+source("code/14d_bayes_eval.R")
 p_fitline
 ```
 
@@ -172,63 +175,14 @@ p_corr
 
 At first glance, it is not obvious how the model parameters change with sites or year. Colors show different sites.
 ```{r params_year, out.width = "100%"}
-ggplot(df_params)+
-  geom_line(aes(x=year, y=value, col=level_site, group=level_site))+
-  geom_point(aes(x=year, y=value, col=level_site, group=level_site))+
-  theme_classic()+
-  guides(col=F)+
-  facet_wrap(.~param, scales = "free_y")
+source("code/15_analyze_bayes_param.R")
+p_param_year
 ```
 
 We do see interesting relationships when comparing these phenology model parameters to climatic variables, i.e., mean annual temperature and total annual precipitation. Smoothed line in blue is from generalized linear regression. Colors show different sites. It appears that the phenology parameter-climate relationship is mainly driven by spatial patterns (among sites), rather than temporal patterns (among years).
 ```{r params_clim, out.width = "100%", fig.height=10}
-df_params<-df_params %>% 
-  mutate(t_value=case_when(param=="mn"~(value-mn_min)/(mn_max-mn_min),
-                         param=="mx"~(value-mx_min)/(mx_max-mx_min),
-                         param=="sos"~(value-sos_min)/(sos_max-sos_min),
-                         param=="eos"~(value-eos_min)/(eos_max-eos_min),
-                         param=="rsp"~(value-rsp_min)/(rsp_max-rsp_min),
-                         param=="rau"~(value-rau_min)/(rau_max-rau_min),
-                         param=="rsu"~(value-rsu_min)/(rsu_max-rsu_min),
-  ))
-
-df_params<-df_params %>% 
-  left_join(lm_df, by="param")
-p_mat<-ggplot( )+
-  geom_point( data=df_params, aes(x=mat, y=t_value, col=level_site, group=level_site),)+
-  geom_smooth( data=df_params %>% filter(mat_p<0.05), aes(x=mat, y=t_value),method="glm", method.args = list(family = "quasibinomial"))+
-  xlab("Mean annual temperature (°C)")+
-  ylab("Scaled parameter value")+
-  theme_classic()+
-  facet_wrap(.~param, scales = "free_y", ncol=1)+
-  guides(col=F)
-
-p_tap<-ggplot(df_params)+
-  geom_point(data=df_params,aes(x=tap, y=t_value, col=level_site, group=level_site))+
-  geom_smooth(data=df_params %>% filter(tap_p<0.05),aes(x=tap, y=t_value),method="glm", method.args = list(family = "quasibinomial"))+
-  xlab("Total annual precipitation (mm)")+
-  ylab("Scaled parameter value")+
-  theme_classic()+
-  facet_wrap(.~param, scales = "free_y", ncol=1)+
-  guides(col=F)
-
-p_mvp<-ggplot(df_params)+
-  geom_point(aes(x=mvp, y=t_value, col=level_site, group=level_site))+
-  geom_smooth(aes(x=mvp, y=t_value),method="glm", method.args = list(family = "quasibinomial"))+
-  xlab("Mean vapor pressure (??)")+
-  ylab("Scaled parameter value")+
-  theme_classic()+
-  facet_wrap(.~param, scales = "free_y", ncol=1)+
-  guides(col=F)
-
-  
-
-cairo_pdf("./nab/output/figures/6 pheno_climate.pdf", width=6, height=9)
-grid.arrange(annotate_figure(p_mat, fig.lab = "A"),
-             annotate_figure(p_tap, fig.lab = "B"),
-             nrow=1
-)
-dev.off()
+p_mat
+p_tap
 ```
 
 Note:
@@ -242,25 +196,7 @@ Note:
 
 Regression of logit(transformed parameters) against climatic variables support the possible influence of climate on spore phenology.
 ```{r reg}
-param_list<-unique(df_params$param)
-lm_list<-vector(mode="list")
-for (paramoi in param_list) {
-  lmoi<-lm(logit(t_value)~mat+tap, data=df_params %>% filter(param==paramoi)) %>% summary()
-lm_list[[paramoi]]<-c(lmoi$coefficients[,4],param=paramoi) %>% 
-  t() %>% 
-  data.frame() %>% 
-  dplyr::select(param,mat_p=mat, tap_p=tap)
-}
-<-bind_rows(lm_list) 
-
-
-summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="mn")))
-summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="mx")))
-summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="sos")))
-summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="eos")))
-summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="rsp")))
-summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="rau")))
-summary(lm(logit(t_value)~mat+tap, data=df_params %>% filter(param=="rsu")))
+glm_outputlist
 ```
 
 ## References
