@@ -20,7 +20,7 @@ source("code/0_utils.R")
 The complete dataset has both pollen and spore count. In this analysis we focus on spores.
 ```{r read}
 # source("code/1_read.R")
-nab_df<-read_rds(str_c(.path$nab_clean,"nab_dat.rds")) %>% as_tibble()
+nab_df<-read_rds(str_c(.path$nab_clean,"nab_dat_20230323.rds")) %>% as_tibble()
 nab_df %>% filter(group == "spore")
 ```
 

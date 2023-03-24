@@ -1,15 +1,15 @@
 df_params<-read_rds(str_c(.path$out_bayes_model, taxa, "/", "params.rds"))
 df_pheno_model_all_years_new<-read_rds(str_c(.path$out_bayes_model, taxa, "/", "fit.rds"))
 
-p_fitline<-ggplot(df_pheno_model_all_years_new %>% 
-                  filter(location %in% site_list)
+p_fitline<-ggplot(df_pheno_model_all_years_new #%>% 
+                  # filter(location %in% site_list)
 )+
   geom_point(aes(x=doy+60, y=count, col=year,group=year),alpha=0.1)+
   geom_line(aes(x=doy+60, y=y_pred, col=year,group=year), lwd=1) +
   # ggtitle("Fitted phenology curves of Cladosporiaceae spores")+
   theme_classic()+
   scale_color_viridis_c()+
-  facet_wrap(.~location, scale="free_y", ncol=3)+
+  facet_wrap(.~year, scale="free_y", ncol=3)+
   # facet_grid(row=vars(id), col=vars(year), scale="free_y")+
   guides(col="none")+
   scale_y_continuous(trans = scales::log_trans(), 
@@ -19,6 +19,7 @@ p_fitline<-ggplot(df_pheno_model_all_years_new %>%
   # ggtitle("Phenology curves of Cladosporiaceae spores")+
   ylab(expression(Spore~concentration~(grains / m^3)))+
   xlab("Time of year")
+p_fitline
 
 # cairo_pdf("./nab/output/figures/4 bayes_fit.pdf", width=6, height=6)
 # print (p_bayes)

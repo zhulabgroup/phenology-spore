@@ -8,7 +8,7 @@ df_list <- vector(mode = "list", length = length(file_list))
 for (i in 1:length(file_list)) {
   file <- file_list[i]
 
-  dat <- read_excel(
+  dat <- readxl::read_excel(
     file,
     col_names = F
   )
@@ -18,7 +18,7 @@ for (i in 1:length(file_list)) {
     meta_dat <- NA
     station <- NA
   } else {
-    meta_dat <- read_excel(
+    meta_dat <- readxl::read_excel(
       file,
       col_names = F,
       n_max = start_n[1] - 1
@@ -39,7 +39,7 @@ for (i in 1:length(file_list)) {
 
   if (!is.na(station)) {
     station_info <- data.frame(station = station, location = location) %>%
-      stringdist_inner_join(station_df, by = c("location", "station"), max_dist = 20, distance_col = "distance") %>%
+      fuzzyjoin::stringdist_inner_join(station_df, by = c("location", "station"), max_dist = 20, distance_col = "distance") %>%
       arrange(station.distance, location.distance) %>%
       head(1) %>%
       rename(station = station.y) %>%
@@ -47,7 +47,7 @@ for (i in 1:length(file_list)) {
       dplyr::select(-station.x, -location.x, -station.distance, -location.distance, -distance)
   } else {
     station_info <- data.frame(location = location) %>%
-      stringdist_inner_join(station_df, by = "location", max_dist = 20, distance_col = "distance") %>%
+      fuzzyjoin::stringdist_inner_join(station_df, by = "location", max_dist = 20, distance_col = "distance") %>%
       arrange(distance) %>%
       head(1) %>%
       rename(location = location.y) %>%
@@ -55,19 +55,19 @@ for (i in 1:length(file_list)) {
   }
 
   if (length(start_n) == 1) { # only pollen, no spores
-    pollen_dat <- read_excel(
+    pollen_dat <- readxl::read_excel(
       file,
       skip = start_n[1] - 1,
       col_types = c(
         "date",
-        rep("numeric", ncol(read_excel(
+        rep("numeric", ncol(readxl::read_excel(
           file,
           skip = start_n[1] - 1
         )) - 1)
       )
     )
     if (is.na(pollen_dat[2, 1])) { # meaning finer taxonomic resolutions available)
-      genus_names <- read_excel(
+      genus_names <- readxl::read_excel(
         file,
         skip = start_n[1] - 1
       ) %>%
@@ -77,12 +77,12 @@ for (i in 1:length(file_list)) {
           is.na(new) ~ old,
           TRUE ~ new
         ))
-      pollen_dat <- read_excel(
+      pollen_dat <- readxl::read_excel(
         file,
         skip = start_n[1] - 1,
         col_types = c(
           "date",
-          rep("numeric", ncol(read_excel(
+          rep("numeric", ncol(readxl::read_excel(
             file,
             skip = start_n[1] - 1
           )) - 1)
@@ -106,13 +106,13 @@ for (i in 1:length(file_list)) {
   }
 
   if (length(start_n) == 2) { # both pollen and spores
-    pollen_dat <- read_excel(
+    pollen_dat <- readxl::read_excel(
       file,
       skip = start_n[1] - 1,
       n_max = (start_n[2] - 2) - (start_n[1] + 1),
       col_types = c(
         "date",
-        rep("numeric", ncol(read_excel(
+        rep("numeric", ncol(readxl::read_excel(
           file,
           skip = start_n[1] - 1,
           n_max = (start_n[2] - 2) - (start_n[1] + 1)
@@ -121,7 +121,7 @@ for (i in 1:length(file_list)) {
     )
 
     if (is.na(pollen_dat[2, 1])) { # meaning finer taxonomic resolutions available)
-      genus_names <- read_excel(
+      genus_names <- readxl::read_excel(
         file,
         skip = start_n[1] - 1,
         n_max = (start_n[2] - 2) - (start_n[1] + 1)
@@ -132,13 +132,13 @@ for (i in 1:length(file_list)) {
           is.na(new) ~ old,
           TRUE ~ new
         ))
-      pollen_dat <- read_excel(
+      pollen_dat <- readxl::read_excel(
         file,
         skip = start_n[1] - 1,
         n_max = (start_n[2] - 2) - (start_n[1] + 1),
         col_types = c(
           "date",
-          rep("numeric", ncol(read_excel(
+          rep("numeric", ncol(readxl::read_excel(
             file,
             skip = start_n[1] - 1,
             n_max = (start_n[2] - 2) - (start_n[1] + 1)
@@ -158,12 +158,12 @@ for (i in 1:length(file_list)) {
       summarise(count = sum(count)) %>%
       ungroup()
 
-    spore_dat <- read_excel(
+    spore_dat <- readxl::read_excel(
       file,
       skip = start_n[2] - 1,
       col_types = c(
         "date",
-        rep("numeric", ncol(read_excel(
+        rep("numeric", ncol(readxl::read_excel(
           file,
           skip = start_n[2] - 1
         )) - 1)
@@ -186,4 +186,4 @@ for (i in 1:length(file_list)) {
   print(i)
 }
 df_all <- bind_rows(df_list) %>% as_tibble()
-write_rds(df_all, str_c(.path$nab_clean, "nab_dat_20230322.rds"))
+write_rds(df_all, str_c(.path$nab_clean, "nab_dat_20230323.rds"))

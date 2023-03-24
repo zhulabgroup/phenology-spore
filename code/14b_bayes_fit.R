@@ -1,16 +1,17 @@
 source("code/14a_bayes_utils.R")
 
 df_pheno_model_all_years<-df_pheno %>% 
-  filter(location %in% site_list) %>% 
-  mutate(location = factor(location, levels=site_list_order)) %>% 
+  # filter(location %in% site_list) %>% 
+  # mutate(location = factor(location, levels=site_list_order)) %>% 
   drop_na() %>% 
   mutate(level_site=as.integer(factor(location)))
 
+site_list_all<-df_pheno_model_all_years %>% pull(location) %>% unique()
 ns<-df_pheno_model_all_years %>% pull(level_site) %>% unique() %>% length()
 
 df_pheno_model_all_years_new<-df_params<-vector(mode="list")
 
-for (site in site_list_order) {
+for (site in site_list_all) {
   df_pheno_model<-df_pheno_model_all_years %>% 
     filter(location==site) %>% 
     mutate(level_year=as.integer(factor(year))) %>% 
@@ -40,10 +41,10 @@ for (site in site_list_order) {
   sos_max=183
   eos_min=183
   eos_max=365
-  rsp_min=30
-  rsp_max=60
-  rau_min=30
-  rau_max=60
+  rsp_min=30/6
+  rsp_max=180/6
+  rau_min=30/6
+  rau_max=180/6
   rsu_min=-0.01
   rsu_max=0.01
   
@@ -100,7 +101,7 @@ for (site in site_list_order) {
       rau[i] <- t_rau[i] *(rau_max-rau_min) + rau_min
       rsu[i] <- t_rsu[i] *(rsu_max-rsu_min) + rsu_min
       
-      log(lambda[i])<-mn[i] + ((mx[i]-mn[i]) + rsu[i] * doy[i]) *(1/(1+exp((sos[i]-doy[i])/rsp[i]))-1/(1+exp((eos[i]-doy[i])/rau[i])))
+      log(lambda[i])<-mn[i] + ((mx[i]-mn[i]) + rsu[i] * doy[i]) *(1/(1+exp((sos[i]-doy[i])/(rsp[i]*(mx[i]-mn[i]))))-1/(1+exp((eos[i]-doy[i])/(rau[i]*(mx[i]-mn[i])))))
       
       y[i] ~dpois(lambda[i])
     }

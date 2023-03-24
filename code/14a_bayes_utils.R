@@ -39,7 +39,7 @@ dl<-function (doy,year,params) {
   rau <- t_rau *(rau_max-rau_min) + rau_min
   rsu <- t_rsu *(rsu_max-rsu_min) + rsu_min
   
-  log_lambda=mn + ((mx-mn) + rsu * doy) *(1/(1+exp((sos-doy)/rsp))-1/(1+exp((eos-doy)/rau)))
+  log_lambda=mn + ((mx-mn) + rsu * doy) *(1/(1+exp((sos-doy)/(rsp*(mx-mn))))-1/(1+exp((eos-doy)/(rau*(mx-mn)))))
   lambda=exp(log_lambda)
   
   return(lambda)
