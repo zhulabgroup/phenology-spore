@@ -38,6 +38,7 @@ pacman::p_load(nimble)
 .path <- list( # hidden variable won't be removed
   nab_raw = "data/nab/raw/",
   nab_clean = "data/nab/clean/",
+  dat_process = "data/processed/",
   out_simple_model = "data/pheno_model/simple/",
   out_bayes_model = "data/pheno_model/bayes/",
   out_fig = "output/figures/"

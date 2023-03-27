@@ -6,7 +6,7 @@ p_fitline <- ggplot(
   # filter(location %in% site_list)
 ) +
   geom_point(aes(x = doy + 60, y = count, col = year, group = year), alpha = 0.1) +
-  geom_line(aes(x = doy + 60, y = y_pred, col = year, group = year), lwd = 1) +
+  geom_line(aes(x = doy + 60, y = y_pred, col = year, group = year), linewidth = 1) +
   # ggtitle("Fitted phenology curves of Cladosporiaceae spores")+
   theme_classic() +
   scale_color_viridis_c() +
@@ -26,7 +26,7 @@ p_fitline <- ggplot(
 p_fitline_6 <- ggplot(df_pheno_model_all_years_new %>%
   filter(location %in% site_list)) +
   geom_point(aes(x = doy + 60, y = count, col = year, group = year), alpha = 0.1) +
-  geom_line(aes(x = doy + 60, y = y_pred, col = year, group = year), lwd = 1) +
+  geom_line(aes(x = doy + 60, y = y_pred, col = year, group = year), linewidth = 1) +
   # ggtitle("Fitted phenology curves of Cladosporiaceae spores")+
   theme_classic() +
   scale_color_viridis_c() +

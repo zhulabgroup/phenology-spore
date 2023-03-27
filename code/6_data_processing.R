@@ -1,7 +1,7 @@
-nab_with_taxa_df <- read_rds("~/spore_phenology/data/nab_with_taxa.rds")
+df <- read_rds(str_c(.path$dat_process, "spore_dat.rds"))
 
 # station_year combination, measurements > 18, years > 5
-station_year_df <- nab_with_taxa_df %>%
+df_siteyear <- df %>%
   filter(family == "Total") %>%
   mutate(year = format(date, "%Y") %>% as.integer()) %>%
   group_by(location, id, year) %>%
@@ -17,11 +17,11 @@ station_year_df <- nab_with_taxa_df %>%
   ungroup()
 
 # linear interpolation
-data_insert_df <- station_year_df %>%
+df_fill <- df_siteyear %>%
   dplyr::select(location, id, year, date, count) %>%
   group_by(location, id) %>%
   padr::pad(start_val = as.Date("2007-01-01"), end_val = as.Date("2019-12-31")) %>%
-  mutate(year = format(date, "%Y") %>% as.integer(), count_insert = na.approx(count, maxgap = 7)) %>%
+  mutate(year = format(date, "%Y") %>% as.integer(), count_fill = zoo::na.approx(count, maxgap = 7, na.rm = F)) %>%
   ungroup()
 # #test the maxgap
 # data_insert_df<-station_year_df %>%
@@ -51,21 +51,22 @@ whitfun <- function(x, lambda) {
   }
   return(x)
 }
-data_smooth_df <- data_insert_df %>%
-  dplyr::select(location, id, year, date, count_insert) %>%
+
+df_smooth <- df_fill %>%
+  dplyr::select(location, id, year, date, count_fill) %>%
   group_by(location, id) %>%
-  mutate(count_smooth = whitfun(count_insert, lambda = 1800)) %>%
+  mutate(count_smooth = whitfun(count_fill, lambda = 1800)) %>%
   ungroup() %>%
   group_by(location, id, year) %>%
   mutate(doy = format(date, "%j") %>% as.integer(), month = format(date, "%b")) %>%
   ungroup()
-write_rds(data_smooth_df, "~/spore_phenology/data/data_smooth.rds")
+write_rds(df_smooth, str_c(.path$dat_process, "fill_smooth.rds"))
 
 # internal consistency
 # ggplot(data=data_smooth_df %>% filter(id==18),aes(x=date, y=log(count_smooth+1)))+
 #   geom_line()+
 #   facet_wrap(.~location*id, ncol=6)
-ggplot(data = data_smooth_df, aes(x = date, y = log(count_smooth + 1))) +
+p_ts_fill_smooth <- ggplot(data = df_smooth, aes(x = date, y = log(count_smooth + 1))) +
   geom_point(size = 0.01) +
   facet_wrap(. ~ location * id, ncol = 6)
 # ggplot(data=data_smooth_df %>% filter(id==5),aes(x=date, y=log(count_smooth+1)))+
@@ -76,7 +77,7 @@ ggplot(data = data_smooth_df, aes(x = date, y = log(count_smooth + 1))) +
 
 # determine time window
 # histogram
-ggplot(data = data_smooth_df %>%
+p_samp_window <- ggplot(data = df_smooth %>%
   filter(!is.na(count_smooth))) +
   geom_histogram(aes(x = doy))
 # #doy
@@ -106,8 +107,8 @@ ggplot(data = data_smooth_df %>%
 #   facet_wrap(.~location*id, ncol=6)+
 #   stat_cor(method="pearson", label.y = 500)
 # time window (Apr-Sep)
-ggplot(
-  data = data_smooth_df %>%
+p_data_avail <- ggplot(
+  data = df_smooth %>%
     group_by(location, id, year) %>%
     filter(month %in% c("Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct")) %>%
     filter(!is.na(count_smooth)) %>%
@@ -118,7 +119,7 @@ ggplot(
   geom_smooth(method = "lm") +
   ylim(0, 1) +
   facet_wrap(. ~ location * id, ncol = 6) +
-  stat_cor(method = "pearson", label.y = 500)
+  ggpubr::stat_cor(method = "pearson", label.y = 500)
 
 
 # #trend of measurements

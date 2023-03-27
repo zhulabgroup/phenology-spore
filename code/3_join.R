@@ -43,3 +43,4 @@ left_join(
   theme_classic()
 
 df <- bind_rows(df_o, df_add)
+write_rds(df, str_c(.path$dat_process, "spore_dat.rds"))

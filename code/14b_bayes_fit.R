@@ -3,7 +3,7 @@ source("code/14a_bayes_utils.R")
 df_pheno_model_all_years <- df_pheno %>%
   # filter(location %in% site_list) %>%
   # mutate(location = factor(location, levels=site_list_order)) %>%
-  drop_na() %>%
+  # drop_na() %>%
   mutate(level_site = as.integer(factor(location)))
 
 if (FALSE) {
@@ -42,10 +42,10 @@ if (FALSE) {
     ########################
     # Design model
     ########################
-    mn_min <- log(quantile(df_pheno_model_all_years$count, 0.5)) - 2 * (log(quantile(df_pheno_model_all_years$count, 0.5)) - log(quantile(df_pheno_model_all_years$count, 0.05)))
-    mn_max <- log(quantile(df_pheno_model_all_years$count, 0.5))
-    mx_min <- log(quantile(df_pheno_model_all_years$count, 0.5))
-    mx_max <- log(quantile(df_pheno_model_all_years$count, 0.5)) + 2 * (log(quantile(df_pheno_model_all_years$count, 0.95)) - log(quantile(df_pheno_model_all_years$count, 0.5)))
+    mn_min <- log(quantile(df_pheno_model_all_years$count, 0.5, na.rm = T)) - 2 * (log(quantile(df_pheno_model_all_years$count, 0.5, na.rm = T)) - log(quantile(df_pheno_model_all_years$count, 0.05, na.rm = T)))
+    mn_max <- log(quantile(df_pheno_model_all_years$count, 0.5, na.rm = T))
+    mx_min <- log(quantile(df_pheno_model_all_years$count, 0.5, na.rm = T))
+    mx_max <- log(quantile(df_pheno_model_all_years$count, 0.5, na.rm = T)) + 2 * (log(quantile(df_pheno_model_all_years$count, 0.95, na.rm = T)) - log(quantile(df_pheno_model_all_years$count, 0.5, na.rm = T)))
     sos_min <- 0
     sos_max <- 183
     eos_min <- 183

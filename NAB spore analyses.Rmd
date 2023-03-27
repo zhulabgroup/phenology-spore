@@ -20,7 +20,7 @@ source("code/0_utils.R")
 The complete dataset has both pollen and spore count. In this analysis we focus on spores.
 ```{r read}
 # source("code/1_read.R")
-nab_df<-read_rds(str_c(.path$nab_clean,"nab_dat_20230323.rds")) %>% as_tibble()
+nab_df<-read_rds(str_c(.path$nab_clean,"nab_dat_20230327.rds")) %>% as_tibble()
 nab_df %>% filter(group == "spore")
 ```
 
@@ -69,7 +69,19 @@ We here show the four most dominant families in comparison to the total spore co
 source("code/5c_composition.R")
 p_comm
 ```
+## Data processing
+```{r}
+source("code/6_data_processing.R")
+p_ts_fill_smooth
+p_samp_window
+p_data_avail
+```
+
 ## Get key phenological metrics
+```{r}
+source("code/7_extract_metrics.R")
+```
+
 
 ## Temporal trends
 

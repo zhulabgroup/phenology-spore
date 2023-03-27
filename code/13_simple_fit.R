@@ -27,7 +27,7 @@ p_simple <- ggplot(df_simplefit) +
   geom_line(aes(x = doy + 60, y = exp(fit) - 1, col = year, group = year), linewidth = 1) +
   theme_classic() +
   facet_wrap(. ~ location, scale = "free_y", ncol = 3) +
-  guides(col = F) +
+  guides(col = "none") +
   scale_color_viridis_c() +
   scale_y_continuous(
     trans = scales::log_trans(),
