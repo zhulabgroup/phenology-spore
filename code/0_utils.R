@@ -25,11 +25,13 @@ p_load(magrittr)
 p_load(maps)
 p_load(mapproj)
 p_load(knitr)
+p_load(patchwork)
 
 p_unload("all")
 
 pacman::p_load(tidyverse)
 pacman::p_load(nimble)
+pacman::p_load(patchwork)
 
 
 # ln -s /nfs/turbo/seas-zhukai/phenology/phenology_fungal_spore/ data

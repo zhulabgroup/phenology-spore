@@ -195,8 +195,7 @@ p_param_year
 
 We do see interesting relationships when comparing these phenology model parameters to climatic variables, i.e., mean annual temperature and total annual precipitation. Smoothed line in blue is from generalized linear regression. Colors show different sites. It appears that the phenology parameter-climate relationship is mainly driven by spatial patterns (among sites), rather than temporal patterns (among years).
 ```{r params_clim, out.width = "100%", fig.height=10}
-p_mat
-p_tap
+p_clim
 ```
 
 Note:
@@ -206,11 +205,11 @@ Note:
 * eos: timing of autumn inflection point
 * rsp: 1 / rate of increase in spring
 * rau: 1 / rate of decrease in fall
-* rsu: rate of change during summer 
+* rsu: rate of decrease during summer 
 
 Regression of logit(transformed parameters) against climatic variables support the possible influence of climate on spore phenology.
 ```{r reg}
-glm_outputlist
+lm_outputlist
 ```
 
 ## References

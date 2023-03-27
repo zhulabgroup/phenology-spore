@@ -10,7 +10,7 @@ p_fitline <- ggplot(
   # ggtitle("Fitted phenology curves of Cladosporiaceae spores")+
   theme_classic() +
   scale_color_viridis_c() +
-  facet_wrap(. ~ location * year, scale = "free_y", ncol = 3) +
+  facet_wrap(. ~ location, scale = "free_y", ncol = 5) +
   # facet_grid(row=vars(id), col=vars(year), scale="free_y")+
   guides(col = "none") +
   scale_y_continuous(
@@ -63,7 +63,7 @@ p_corr <- ggplot(df_pheno_model_all_years_new) +
   xlab(expression(Observed ~ spore ~ concentration ~ (grains / m^3))) +
   ylab(expression(Fitted ~ spore ~ concentration ~ (grains / m^3))) +
   theme_classic() +
-  facet_wrap(. ~ location, scale = "free", ncol = 3) +
+  facet_wrap(. ~ location, scale = "free", ncol = 5) +
   scale_color_viridis_c() +
   guides(col = "none")
 
