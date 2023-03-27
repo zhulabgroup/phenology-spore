@@ -155,7 +155,7 @@ $$
 
 We build the model and run MCMC with the _nimble_ package.
 ```{r model_setup}
-# source("code/14b_bayes_fit.R")
+source("code/14b_bayes_fit.R")
 ```
 
 ## Check model fit
@@ -163,11 +163,13 @@ We build the model and run MCMC with the _nimble_ package.
 This figure shows observed phenology in dashed lines and model-fitted phenology in solid lines. Colors show different sites.
 ```{r fit, out.width="100%", fig.height=30}
 source("code/14d_bayes_eval.R")
+p_fitline_6
 p_fitline
 ```
 
 The Pearson correlation between observed and fitted values is `r round(cor(df_pheno_model_all_years_new$count, df_pheno_model_all_years_new$y_pred),4)`.
 ```{r corr, out.width = "100%", fig.height=15}
+p_corr_6
 p_corr
 ```
 

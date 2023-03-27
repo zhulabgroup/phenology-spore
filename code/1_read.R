@@ -186,7 +186,7 @@ for (i in 1:length(file_list)) {
   print(i)
 }
 
-df_all <- df_all(nab,date=Date)
+df_all <- df_all(nab, date = Date)
 
 df_all <- bind_rows(df_list) %>% as_tibble()
 write_rds(df_all, str_c(.path$nab_clean, "nab_dat_20230323.rds"))

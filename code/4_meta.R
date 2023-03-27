@@ -11,9 +11,12 @@ meta_df <- df %>%
   ungroup() %>%
   arrange(desc(n))
 
-site_list <- c("Houston, TX", "St. Louis, MO", "San Diego, CA", "New Orleans, LA", "Philadelphia, PA", "Bellevue, NE")
-site_list_order<- meta_df %>% filter(location %in% site_list) %>% arrange(lat) %>% pull(location)
-  
+site_list <- c("Houston 2, TX", "St. Louis, MO", "San Diego, CA", "New Orleans, LA", "Philadelphia, PA", "Bellevue, NE")
+site_list_order <- meta_df %>%
+  filter(location %in% site_list) %>%
+  arrange(lat) %>%
+  pull(location)
+
 p_map <- ggplot() +
   geom_polygon(data = map_data("state"), aes(x = long, y = lat, group = group), fill = "white") +
   geom_path(data = map_data("state"), aes(x = long, y = lat, group = group), color = "grey50", alpha = 0.5, linewidth = 0.2) +

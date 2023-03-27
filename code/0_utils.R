@@ -7,8 +7,8 @@ p_load(RcppRoll)
 p_load(rlist)
 p_load(scales)
 if (!require(greenbrown)) {
-  p_load(Kendall,bfast,phenopix)
-  install.packages("greenbrown", repos="http://R-Forge.R-project.org")
+  p_load(Kendall, bfast, phenopix)
+  install.packages("greenbrown", repos = "http://R-Forge.R-project.org")
 }
 p_load(greenbrown)
 p_load(nimble)
@@ -40,4 +40,5 @@ pacman::p_load(nimble)
   nab_clean = "data/nab/clean/",
   out_simple_model = "data/pheno_model/simple/",
   out_bayes_model = "data/pheno_model/bayes/",
-  out_fig = "output/figures/")
+  out_fig = "output/figures/"
+)
