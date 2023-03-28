@@ -74,7 +74,7 @@ p_comm
 source("code/6_data_processing.R")
 p_ts_fill_smooth
 p_samp_window
-p_data_avail
+p_data_avail_timewindow
 ```
 
 ## Get key phenological metrics
