@@ -69,6 +69,12 @@ write_rds(df_smooth, str_c(.path$dat_process, "fill_smooth.rds"))
 p_ts_fill_smooth <- ggplot(data = df_smooth, aes(x = date, y = log(count_smooth + 1))) +
   geom_point(size = 0.01) +
   facet_wrap(. ~ location * id, ncol = 6)
+ggsave(
+  plot = p_ts_fill_smooth,
+  filename = "~/spore_phenology/output/figures/p_ts_fill_smooth_29stations.pdf",
+  width = 18,
+  height = 10
+)
 # ggplot(data=data_smooth_df %>% filter(id==5),aes(x=date, y=log(count_smooth+1)))+
 #   scale_x_date(date_breaks = "1 year")+
 #   geom_path()+
@@ -94,20 +100,27 @@ p_samp_window <- ggplot(data = df_smooth %>%
 #   geom_path(alpha=0.2)
 
 # trend of measurements (%)
-# #whole year
-# ggplot(data=data_smooth_df %>%
-#          group_by(location,id,year) %>%
-#          filter(!is.na(count_smooth)) %>%
-#          summarise(observ_percent=n()/365),
-#        aes(x=year,y=observ_percent)
-# )+
-#   geom_point()+
-#   geom_smooth(method="lm")+
-#   ylim(0,1)+
-#   facet_wrap(.~location*id, ncol=6)+
-#   stat_cor(method="pearson", label.y = 500)
-# time window (Apr-Sep)
-p_data_avail <- ggplot(
+##whole year
+p_data_avail_wholeyear <- ggplot(
+  data = df_smooth %>% 
+    group_by(location, id, year) %>% 
+    filter(!is.na(count_smooth)) %>% 
+    summarise(observ_percent = n() / 366),
+  aes(x = year, y = observ_percent)
+) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ylim(0, 1) +
+  facet_wrap(. ~ location * id, ncol = 6) +
+  ggpubr::stat_cor(method = "pearson", label.y = 500)
+ggsave(
+  plot = p_data_avail_wholeyear,
+  filename = "~/spore_phenology/output/figures/p_data_avail_wholeyear_29stations.pdf",
+  width = 18,
+  height = 10
+)
+##time window (Apr-Oct)
+p_data_avail_timewindow <- ggplot(
   data = df_smooth %>%
     group_by(location, id, year) %>%
     filter(month %in% c("Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct")) %>%
@@ -120,26 +133,9 @@ p_data_avail <- ggplot(
   ylim(0, 1) +
   facet_wrap(. ~ location * id, ncol = 6) +
   ggpubr::stat_cor(method = "pearson", label.y = 500)
-
-
-# #trend of measurements
-# ggplot(data=station_year_df %>%
-#          group_by(location, id, year) %>%
-#          summarise(nobservation=n()),
-#        aes(x=year, y=nobservation)
-#        )+
-#   geom_point()+
-#   geom_smooth(method="lm")+
-#   scale_x_continuous(breaks=seq(2007,2019,1))+
-#   facet_wrap(.~location*id, ncol=6)+
-#   stat_cor(method="pearson", label.y = 500)
-#
-# #internal consistency
-# p_load(pracma)
-# ggplot(data=station_year_df %>%
-#          group_by(location,id) %>%
-#          mutate(count_whittaker=whittaker(y=count,lambda=1600)),
-#        aes(x=date, y=log(count_whittaker+1))
-#        )+
-#   geom_line()+
-#   facet_wrap(.~location*id, ncol=6)
+ggsave(
+  plot = p_data_avail_timewindow,
+  filename = "~/spore_phenology/output/figures/p_data_avail_timewindow_29stations.pdf",
+  width = 18,
+  height = 10
+)
