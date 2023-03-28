@@ -105,7 +105,7 @@ ggplot(data=data_smooth_df %>%
 #   ylim(0,1)+
 #   facet_wrap(.~location*id, ncol=6)+
 #   stat_cor(method="pearson", label.y = 500)
-#time window (Apr-Sep)
+#time window (Apr-Oct)
 ggplot(data=data_smooth_df %>% 
          group_by(location,id,year) %>% 
          filter(month %in% c("Apr","May","Jun","Jul","Aug","Sep","Oct")) %>%
@@ -118,6 +118,7 @@ ggplot(data=data_smooth_df %>%
   ylim(0,1)+
   facet_wrap(.~location*id, ncol=6)+
   stat_cor(method="pearson", label.y = 500)
+
 
 
 # #trend of measurements
