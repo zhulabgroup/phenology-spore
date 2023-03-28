@@ -18,18 +18,12 @@ df_siteyear <- df %>%
 
 # linear interpolation
 df_fill <- df_siteyear %>%
-  dplyr::select(location, id, year, date, count) %>%
-  group_by(location, id) %>%
-  padr::pad(start_val = as.Date("2007-01-01"), end_val = as.Date("2019-12-31")) %>%
+  dplyr::select(lat, lon, station, location, id, year, date, count) %>%
+  group_by(lat, lon, station, location, id) %>%
+  padr::pad(start_val = as.Date("2007-01-01"), end_val = as.Date("2021-12-31")) %>%
   mutate(year = format(date, "%Y") %>% as.integer(), count_fill = zoo::na.approx(count, maxgap = 7, na.rm = F)) %>%
   ungroup()
-# #test the maxgap
-# data_insert_df<-station_year_df %>%
-#   dplyr::select(location,id,year,date,count) %>%
-#   group_by(location,id) %>%
-#   pad(start_val= as.Date("2007-01-01"),end_val = as.Date("2019-12-31"))%>%
-#   mutate(year=format(date, "%Y") %>% as.integer(),count_insert = na.approx(count, maxgap=14)) %>%
-#   ungroup()
+#mutate(count = case_when(count >= 5 ~ count)) # set low values to NA
 
 # Whittaker smooth
 # Function for smoothing, because ptw::whit1 does not take NA in the time series
@@ -53,53 +47,50 @@ whitfun <- function(x, lambda) {
 }
 
 df_smooth <- df_fill %>%
-  dplyr::select(location, id, year, date, count_fill) %>%
   group_by(location, id) %>%
   mutate(count_smooth = whitfun(count_fill, lambda = 1800)) %>%
   ungroup() %>%
   group_by(location, id, year) %>%
   mutate(doy = format(date, "%j") %>% as.integer(), month = format(date, "%b")) %>%
   ungroup()
-write_rds(df_smooth, str_c(.path$dat_process, "fill_smooth.rds"))
+write_rds(df_smooth, str_c(.path$dat_process, "fill_smooth_to2021.rds"))
 
-# internal consistency
-# ggplot(data=data_smooth_df %>% filter(id==18),aes(x=date, y=log(count_smooth+1)))+
-#   geom_line()+
-#   facet_wrap(.~location*id, ncol=6)
-p_ts_fill_smooth <- ggplot(data = df_smooth, aes(x = date, y = log(count_smooth + 1))) +
-  geom_point(size = 0.01) +
-  facet_wrap(. ~ location * id, ncol = 6)
+# time series of pollen concentration in 29 stations after filling and smoothing
+p_ts_fill_smooth <- ggplot(data = df_smooth) +
+  geom_line(aes(x = date, y = count_smooth)) +
+  scale_y_continuous(
+    trans = scales::log_trans(),
+    breaks = scales::trans_breaks("log", function(x) exp(x)),
+    labels = scales::trans_format("log", scales::math_format(e^.x))
+  ) +
+  ggtitle("Total Spore Counts (all counts are per cubic meter of air)") +
+  ylab("count") +
+  facet_wrap(. ~ location, ncol = 6, scales = "free_y")
 ggsave(
   plot = p_ts_fill_smooth,
   filename = "~/spore_phenology/output/figures/p_ts_fill_smooth_29stations.pdf",
   width = 18,
   height = 10
 )
-# ggplot(data=data_smooth_df %>% filter(id==5),aes(x=date, y=log(count_smooth+1)))+
-#   scale_x_date(date_breaks = "1 year")+
-#   geom_path()+
-#   facet_wrap(.~location*id, ncol=6)
-
 
 # determine time window
 # histogram
 p_samp_window <- ggplot(data = df_smooth %>%
   filter(!is.na(count_smooth))) +
   geom_histogram(aes(x = doy))
-# #doy
-# ggplot(data=data_smooth_df %>%
+# ggplot(data = df_smooth %>%
 #          filter(!is.na(count_smooth)),
-#        aes(x=interaction(id, year), y=doy,group=interaction(id, year), col=as.factor(id))
+#        aes(x = interaction(id, year), y = doy, group = interaction(id, year), col = as.factor(id))
 #        )+
-#   geom_point(alpha=0.2)
-# ggplot(data=data_smooth_df %>%
-#          group_by(location,id,year) %>%
+#   geom_point(alpha = 0.2)
+# ggplot(data = df_smooth %>%
+#          group_by(location, id, year) %>%
 #          filter(!is.na(count_smooth)),
-#        aes(x=doy, y=log(count_smooth+1),group=interaction(id, year))
+#        aes(x = doy, y = log(count_smooth+1), group = interaction(id, year))
 #        )+
-#   geom_path(alpha=0.2)
+#   geom_path(alpha = 0.2)
 
-# trend of measurements (%)
+# data availability in whole year vs. in time window
 ##whole year
 p_data_avail_wholeyear <- ggplot(
   data = df_smooth %>% 
@@ -111,7 +102,7 @@ p_data_avail_wholeyear <- ggplot(
   geom_point() +
   geom_smooth(method = "lm") +
   ylim(0, 1) +
-  facet_wrap(. ~ location * id, ncol = 6) +
+  facet_wrap(. ~ location, ncol = 6) +
   ggpubr::stat_cor(method = "pearson", label.y = 500)
 ggsave(
   plot = p_data_avail_wholeyear,
@@ -131,7 +122,7 @@ p_data_avail_timewindow <- ggplot(
   geom_point() +
   geom_smooth(method = "lm") +
   ylim(0, 1) +
-  facet_wrap(. ~ location * id, ncol = 6) +
+  facet_wrap(. ~ location, ncol = 6) +
   ggpubr::stat_cor(method = "pearson", label.y = 500)
 ggsave(
   plot = p_data_avail_timewindow,

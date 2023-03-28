@@ -46,7 +46,7 @@ source("code/4_meta.R")
 meta_df
 ```
 
-A total of 34 sampling stations distributed across the US. Selected stations (highlighted in red) are visualized for fungal spore phenology.
+A total of 39 sampling stations distributed across the US. Selected stations (highlighted in red) are visualized for fungal spore phenology.
 ```{r map, out.width="100%"}
 p_map
 ```
@@ -69,6 +69,7 @@ We here show the four most dominant families in comparison to the total spore co
 source("code/5c_composition.R")
 p_comm
 ```
+
 ## Data processing
 ```{r}
 source("code/6_data_processing.R")
