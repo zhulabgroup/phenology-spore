@@ -106,21 +106,6 @@ p_samp_window <- ggplot(data = df_smooth %>%
 #   ylim(0,1)+
 #   facet_wrap(.~location*id, ncol=6)+
 #   stat_cor(method="pearson", label.y = 500)
-
-#time window (Apr-Oct)
-ggplot(data=data_smooth_df %>% 
-         group_by(location,id,year) %>% 
-         filter(month %in% c("Apr","May","Jun","Jul","Aug","Sep","Oct")) %>%
-         filter(!is.na(count_smooth)) %>%
-         summarise(observ_percent=n()/214),
-       aes(x=year,y=observ_percent)
-)+
-  geom_point()+
-  geom_smooth(method="lm")+
-  ylim(0,1)+
-  facet_wrap(.~location*id, ncol=6)+
-  stat_cor(method="pearson", label.y = 500)
-
 # time window (Apr-Sep)
 p_data_avail <- ggplot(
   data = df_smooth %>%
@@ -135,8 +120,6 @@ p_data_avail <- ggplot(
   ylim(0, 1) +
   facet_wrap(. ~ location * id, ncol = 6) +
   ggpubr::stat_cor(method = "pearson", label.y = 500)
-
-
 
 
 # #trend of measurements
