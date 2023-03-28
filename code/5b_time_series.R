@@ -3,7 +3,7 @@ df_total_ts <- df %>%
   group_by(location, family) %>%
   tidyr::complete(date = seq(min(date), max(date), by = "1 day")) %>%
   arrange(date, location) %>%
-  mutate(count = case_when(count >= 5 ~ count)) # set low values to 0
+  mutate(count = case_when(count >= 5 ~ count)) # set low values to NA
 
 p_ts <- ggplot(data = df_total_ts %>%
   filter(location %in% site_list) %>%
