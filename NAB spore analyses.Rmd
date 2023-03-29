@@ -24,7 +24,6 @@ nab_df<-read_rds(str_c(.path$nab_clean,"nab_dat_20230327.rds")) %>% as_tibble()
 nab_df %>% filter(group == "spore")
 ```
 
-
 ## Clean up taxonomy
 We retrieved classification on various levels for aggregation.
 ```{r taxa}
@@ -82,7 +81,6 @@ p_data_avail_timewindow
 ```{r}
 source("code/7_extract_metrics.R")
 ```
-
 
 ## Temporal trends
 
