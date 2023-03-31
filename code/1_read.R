@@ -187,4 +187,6 @@ for (i in 1:length(file_list)) {
 }
 
 df_all <- bind_rows(df_list) %>% as_tibble() %>% rename(date=Date)
+df_all$count <- abs(df_all$count)
+
 write_rds(df_all, str_c(.path$nab_clean, "nab_dat_20230327.rds"))
