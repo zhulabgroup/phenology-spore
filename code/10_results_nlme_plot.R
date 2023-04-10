@@ -161,14 +161,18 @@ plot_integral <- ggplot() +
   geom_path(data = integral_fit, aes(x = year, y = integral_fit.random, group = location, col = location)) +
   geom_path(data = integral_fit, aes(x = year, y = integral_fit.fixed), col = "black", linewidth = 1) +
   geom_ribbon(data = integral_fix_var, aes(x = x, ymin = conf.low, ymax = conf.high), col = "gray", alpha = 0.5) +
-  scale_x_continuous(breaks = seq(2007, 2021, by = 1)) +
+  scale_x_continuous(breaks = seq(2007, 2021, by = 3)) +
   theme_classic() +
-  ylab("integral Apr-Oct")
+  ylab("Seasonal Integral in Apr-Oct") +
+  xlab("Year") +
+  theme(legend.position = "none") +
+  scale_y_continuous(labels = function(x) x/1e+7) +
+  ylab(expression(paste("Seasonal Integral in Apr-Oct (*10"^7*")")))
 ggsave(
   plot = plot_integral,
   filename = "~/spore_phenology/output/figures/plot_integral.pdf",
-  width = 15,
-  height = 10
+  width = 4,
+  height = 3
 )
 ## fit nlme integral ~ climate
 nlme_log_integral_climate <- lme(integral ~ tap, data = data_integral, random = ~ 1 | location)
