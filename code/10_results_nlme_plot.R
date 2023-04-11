@@ -160,12 +160,13 @@ plot_integral <- ggplot() +
   geom_jitter(data = integral_fit, aes(x = year, y = integral, group = location, col = location)) +
   geom_path(data = integral_fit, aes(x = year, y = integral_fit.random, group = location, col = location)) +
   geom_path(data = integral_fit, aes(x = year, y = integral_fit.fixed), col = "black", linewidth = 1) +
-  geom_ribbon(data = integral_fix_var, aes(x = x, ymin = conf.low, ymax = conf.high), col = "gray", alpha = 0.5) +
+  geom_ribbon(data = integral_fix_var, aes(x = x, ymin = conf.low, ymax = conf.high), col = "gray", alpha = 0.15) +
   scale_x_continuous(breaks = seq(2007, 2021, by = 3)) +
   theme_classic() +
   ylab("Seasonal Integral in Apr-Oct") +
   xlab("Year") +
   theme(legend.position = "none") +
+  # scale_y_sqrt()
   scale_y_continuous(labels = function(x) x/1e+7) +
   ylab(expression(paste("Seasonal Integral in Apr-Oct (*10"^7*")")))
 ggsave(
