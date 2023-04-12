@@ -143,7 +143,7 @@ data_integral <- df_smooth %>%
 # model_nlme1 <- lme(log_integral ~ year, data = data_integral, random = ~1 | id)
 # summary(model_nlme1)
 ## fit nlme
-nlme_integral <- lme(integral ~ year, data = data_integral, random = ~ year | location)
+nlme_integral <- lme(integral ~ year, data = data_integral, random = ~ 1 | location)
 summary(nlme_integral)
 ## read fitted data and variance
 integral_fit <- data_integral %>%
