@@ -29,6 +29,10 @@ df_season <- df_smooth %>%
   ) %>%
   mutate(los = eos - sos)
 
+df_metrics <- list(df_peak, df_integral, df_season) %>% reduce(full_join, by = c("lat", "lon", "location", "id", "year"))
+write_rds(df_metrics, str_c(.path$dat_process, "metrics.rds"))
+
+
 # # this code doesn't work when the time series is all 0
 # # you used 30 percent rather than 30 percentile
 # # in the line threshold <- data$count_smooth[i - 1], you extracted the concentration of the day before crossing the threshold, but the daily fluctuation makes this an inconsistent threshold
@@ -70,6 +74,3 @@ df_season <- df_smooth %>%
 #   dplyr::select(-threshold_inte)
 # parameters_df <- full_join(parameters_df, threshold_df, by = c("location" = "location", "id" = "id", "year" = "year"))
 # write_rds(parameters_df, "~/spore_phenology/data/parameters.rds")
-
-df_metrics <- list(df_peak, df_integral, df_season) %>% reduce(full_join, by = c("lat", "lon", "location", "id", "year"))
-write_rds(df_metrics, str_c(.path$dat_process, "metrics.rds"))

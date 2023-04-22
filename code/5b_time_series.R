@@ -15,6 +15,6 @@ p_ts <- ggplot(data = df_total_ts %>%
     labels = scales::trans_format("log", scales::math_format(e^.x))
   ) +
   ggtitle("Total Spore Counts (all counts are per cubic meter of air)") +
-  ylab("log (count)") +
+  ylab("count") +
   theme_classic() +
   facet_wrap(. ~ location, ncol = 2, scales = "free_y")

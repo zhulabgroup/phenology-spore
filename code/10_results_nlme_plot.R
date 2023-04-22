@@ -143,7 +143,7 @@ data_integral <- df_smooth %>%
 # model_nlme1 <- lme(log_integral ~ year, data = data_integral, random = ~1 | id)
 # summary(model_nlme1)
 ## fit nlme
-nlme_integral <- lme(integral ~ year, data = data_integral, random = ~ year | location)
+nlme_integral <- lme(integral ~ year, data = data_integral, random = ~ 1 | location)
 summary(nlme_integral)
 ## read fitted data and variance
 integral_fit <- data_integral %>%
@@ -157,10 +157,10 @@ integral_fix_var <- ggpredict(nlme_integral, terms = c("year", "location"), type
   as_tibble()
 ## plot
 plot_integral <- ggplot() +
-  geom_jitter(data = integral_fit, aes(x = year, y = integral, group = location, col = location)) +
-  geom_path(data = integral_fit, aes(x = year, y = integral_fit.random, group = location, col = location)) +
-  geom_path(data = integral_fit, aes(x = year, y = integral_fit.fixed), col = "black", linewidth = 1) +
-  geom_ribbon(data = integral_fix_var, aes(x = x, ymin = conf.low, ymax = conf.high), col = "gray", alpha = 0.15) +
+  geom_jitter(data = integral_fit, aes(x = year, y = integral, group = location, col = location), alpha = 0.5) +
+  geom_path(data = integral_fit, aes(x = year, y = integral_fit.random, group = location, col = location), alpha = 0.5) +
+  geom_path(data = integral_fit, aes(x = year, y = integral_fit.fixed), col = "black", linewidth = 1.5) +
+  geom_ribbon(data = integral_fix_var, aes(x = x, ymin = conf.low, ymax = conf.high), col = "gray", alpha = 0.2) +
   scale_x_continuous(breaks = seq(2007, 2021, by = 3)) +
   theme_classic() +
   ylab("Seasonal Integral in Apr-Oct") +
@@ -172,9 +172,100 @@ plot_integral <- ggplot() +
 ggsave(
   plot = plot_integral,
   filename = "~/spore_phenology/output/figures/plot_integral.pdf",
-  width = 4,
+  width = 3,
   height = 3
 )
+plot_integral <- ggplot() +
+  geom_jitter(data = integral_fit, aes(x = year, y = integral, group = location, col = location), alpha = 0.3, size = 0.5) +
+  geom_path(data = integral_fit, aes(x = year, y = integral_fit.random, group = location, col = location), alpha = 0.3) +
+  geom_path(data = integral_fit, aes(x = year, y = integral_fit.fixed), col = "black", linewidth = 1) +
+  geom_ribbon(data = integral_fix_var, aes(x = x, ymin = conf.low, ymax = conf.high), col = "gray", alpha = 0.4) +
+  scale_x_continuous(breaks = seq(2007, 2021, by = 3)) +
+  theme_classic() +
+  ylab("Seasonal Integral in Apr-Oct") +
+  xlab("Year") +
+  theme(legend.position = "none") +
+  # scale_y_sqrt()
+  scale_y_continuous(labels = function(x) x/1e+7) +
+  ylab(expression(paste("Seasonal Integral in Apr-Oct (*10"^7*")")))
+ggsave(
+  plot = plot_integral,
+  filename = "~/spore_phenology/output/figures/plot_integral_test1.pdf",
+  width = 3,
+  height = 4
+)
+# plot_integral <- ggplot() +
+#   geom_jitter(data = integral_fit, aes(x = year, y = integral, group = location, col = location), alpha = 0.3, size = 0.5) +
+#   geom_path(data = integral_fit, aes(x = year, y = integral_fit.random, group = location, col = location), alpha = 0.3) +
+#   geom_path(data = integral_fit, aes(x = year, y = integral_fit.fixed), col = "black", linewidth = 1) +
+#   geom_ribbon(data = integral_fix_var, aes(x = x, ymin = conf.low, ymax = conf.high), col = "gray", alpha = 0.4) +
+#   scale_x_continuous(breaks = seq(2007, 2021, by = 3)) +
+#   theme_classic() +
+#   ylab("Seasonal Integral in Apr-Oct") +
+#   xlab("Year") +
+#   theme(legend.position = "none") +
+#   # scale_y_sqrt()
+#   # scale_y_continuous(
+#   #   trans = scales::log_trans(),
+#   #   breaks = scales::trans_breaks("log", function(x) exp(x)),
+#   #   labels = scales::trans_format("log", scales::math_format(e^.x))
+#   # ) +
+#   scale_y_continuous(labels = function(x) x/1e+7) +
+#   ylab(expression(paste("Seasonal Integral in Apr-Oct (*10"^7*")")))
+# ggsave(
+#   plot = plot_integral,
+#   filename = "~/spore_phenology/output/figures/plot_integral_test2.pdf",
+#   width = 3,
+#   height = 3
+# )
+# plot_integral <- ggplot() +
+#   geom_jitter(data = integral_fit, aes(x = year, y = integral, group = location, col = location), alpha = 0.3, size = 0.5) +
+#   geom_path(data = integral_fit, aes(x = year, y = integral_fit.random, group = location, col = location), alpha = 0.3) +
+#   geom_path(data = integral_fit, aes(x = year, y = integral_fit.fixed), col = "black", linewidth = 1) +
+#   geom_ribbon(data = integral_fix_var, aes(x = x, ymin = conf.low, ymax = conf.high), col = "gray", alpha = 0.4) +
+#   scale_x_continuous(breaks = seq(2007, 2021, by = 3)) +
+#   theme_classic() +
+#   ylab("Seasonal Integral in Apr-Oct") +
+#   xlab("Year") +
+#   theme(legend.position = "none") +
+#   # scale_y_sqrt()
+#   scale_y_continuous(
+#     trans = scales::log_trans(),
+#     breaks = scales::trans_breaks("log", function(x) exp(x)),
+#     labels = scales::trans_format("log", scales::math_format(e^.x))
+#   ) + 
+#   # scale_y_continuous(labels = function(x) x/1e+7) +
+#     ylab(expression(paste("Seasonal Integral in Apr-Oct")))
+# ggsave(
+#   plot = plot_integral,
+#   filename = "~/spore_phenology/output/figures/plot_integral_test3.pdf",
+#   width = 3,
+#   height = 3
+# )
+# plot_integral <- ggplot() +
+#   geom_jitter(data = integral_fit %>% filter(integral <= 6e6), aes(x = year, y = integral, group = location, col = location), alpha = 0.3, size = 0.5) +
+#   geom_path(data = integral_fit %>% filter(integral <= 6e6), aes(x = year, y = integral_fit.random, group = location, col = location), alpha = 0.3) +
+#   geom_path(data = integral_fit, aes(x = year, y = integral_fit.fixed), col = "black", linewidth = 1) +
+#   geom_ribbon(data = integral_fix_var, aes(x = x, ymin = conf.low, ymax = conf.high), col = "gray", alpha = 0.4) +
+#   scale_x_continuous(breaks = seq(2007, 2021, by = 3)) +
+#   theme_classic() +
+#   ylab("Seasonal Integral in Apr-Oct") +
+#   xlab("Year") +
+#   theme(legend.position = "none") +
+#   # scale_y_sqrt()
+#   # scale_y_continuous(
+#   #   trans = scales::log_trans(),
+#   #   breaks = scales::trans_breaks("log", function(x) exp(x)),
+#   #   labels = scales::trans_format("log", scales::math_format(e^.x))
+#   # ) +
+#   scale_y_continuous(labels = function(x) x/1e+7) +
+#   ylab(expression(paste("Seasonal Integral in Apr-Oct (*10"^7*")")))
+# ggsave(
+#   plot = plot_integral,
+#   filename = "~/spore_phenology/output/figures/plot_integral_test4.pdf",
+#   width = 3,
+#   height = 3
+# )
 ## fit nlme integral ~ climate
 nlme_log_integral_climate <- lme(integral ~ tap, data = data_integral, random = ~ 1 | location)
 summary(nlme_log_integral_climate)
