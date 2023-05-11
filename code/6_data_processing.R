@@ -4,12 +4,12 @@ df <- read_rds(str_c(.path$dat_process, "spore_dat.rds"))
 df_siteyear <- df %>%
   filter(family == "Total") %>%
   mutate(year = format(date, "%Y") %>% as.integer()) %>%
-  group_by(location, id, year) %>%
+  group_by(city, id, year) %>%
   # summarise(nobservation=n()) %>%
   mutate(nobservation = n()) %>%
   filter(nobservation >= 18) %>%
   ungroup() %>%
-  group_by(location, id) %>%
+  group_by(city, id) %>%
   # summarise(nyear=length(unique(year))) %>%
   mutate(nyear = length(unique(year))) %>%
   filter(nyear >= 5) %>%
@@ -18,9 +18,9 @@ df_siteyear <- df %>%
 
 # linear interpolation
 df_fill <- df_siteyear %>%
-  dplyr::select(lat, lon, station, location, id, year, date, count) %>%
-  group_by(lat, lon, station, location, id) %>%
-  padr::pad(start_val = as.Date("2007-01-01"), end_val = as.Date("2021-12-31")) %>%
+  dplyr::select(lat, lon, station, city, state, country, id, year, date, count) %>%
+  group_by(lat, lon, station, city, state, country, id) %>%
+  padr::pad(start_val = as.Date("2003-01-01"), end_val = as.Date("2022-12-31")) %>%
   mutate(year = format(date, "%Y") %>% as.integer(), count_fill = zoo::na.approx(count, maxgap = 7, na.rm = F)) %>%
   ungroup()
 #mutate(count = case_when(count >= 5 ~ count)) # set low values to NA
@@ -47,13 +47,13 @@ whitfun <- function(x, lambda) {
 }
 
 df_smooth <- df_fill %>%
-  group_by(location, id) %>%
+  group_by(city, state, country, id) %>%
   mutate(count_smooth = whitfun(count_fill, lambda = 1800)) %>%
   ungroup() %>%
-  group_by(location, id, year) %>%
+  group_by(city, state, country, id, year) %>%
   mutate(doy = format(date, "%j") %>% as.integer(), month = format(date, "%b")) %>%
   ungroup()
-write_rds(df_smooth, str_c(.path$dat_process, "fill_smooth_to2021.rds"))
+write_rds(df_smooth, "/nfs/turbo/seas-zhukai/phenology/phenology_spore/processed/2023-04-25/fill_smooth.rds")
 
 # time series of pollen concentration in 29 stations after filling and smoothing
 p_ts_fill_smooth <- ggplot(data = df_smooth) +
@@ -65,7 +65,7 @@ p_ts_fill_smooth <- ggplot(data = df_smooth) +
   ) +
   ggtitle("Total Spore Counts (all counts are per cubic meter of air)") +
   ylab("count") +
-  facet_wrap(. ~ location, ncol = 6, scales = "free_y")
+  facet_wrap(. ~ id, ncol = 6, scales = "free_y")
 ggsave(
   plot = p_ts_fill_smooth,
   filename = "~/spore_phenology/output/figures/p_ts_fill_smooth_29stations.pdf",
@@ -94,7 +94,7 @@ p_samp_window <- ggplot(data = df_smooth %>%
 ##whole year
 p_data_avail_wholeyear <- ggplot(
   data = df_smooth %>% 
-    group_by(location, id, year) %>% 
+    group_by( id, year) %>% 
     filter(!is.na(count_smooth)) %>% 
     summarise(observ_percent = n() / 366),
   aes(x = year, y = observ_percent)
@@ -113,7 +113,7 @@ ggsave(
 ##time window (Apr-Oct)
 p_data_avail_timewindow <- ggplot(
   data = df_smooth %>%
-    group_by(location, id, year) %>%
+    group_by(id, year) %>%
     filter(month %in% c("Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct")) %>%
     filter(!is.na(count_smooth)) %>%
     summarise(observ_percent = n() / 214),
