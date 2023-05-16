@@ -1,8 +1,3 @@
-pacman::p_load(lme4)
-pacman::p_load(blme)
-pacman::p_load(nlme)
-pacman::p_load(ggeffects)
-
 nlme_peak <- lme(peak ~ sporeyr, data = data_peak, random = ~ sporeyr | n)
 summary(nlme_peak)
 nlme_peak_doy <- lme(peak_doy ~ sporeyr, data = data_peak, random = ~ sporeyr | n)
@@ -451,24 +446,3 @@ ggsave(
   width = 10,
   height = 10
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

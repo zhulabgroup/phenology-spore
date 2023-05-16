@@ -32,6 +32,10 @@ p_unload("all")
 pacman::p_load(tidyverse)
 pacman::p_load(nimble)
 pacman::p_load(patchwork)
+pacman::p_load(lme4)
+pacman::p_load(blme)
+pacman::p_load(nlme)
+pacman::p_load(ggeffects)
 
 
 # ln -s /nfs/turbo/seas-zhukai/phenology/phenology_fungal_spore/ data

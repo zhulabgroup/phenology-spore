@@ -13,6 +13,9 @@ df_siteyear <- df %>%
   filter(nyear >= 5) %>%
   ungroup()
 
+
+df_test <- Phenology(df_siteyear, tsgf = "TSGFspline", approach = "White")
+  
 # linear interpolation
 df_fill <- df_siteyear %>%
   dplyr::select(lat, lon, station, city, state, country, id, year, date, count) %>%
