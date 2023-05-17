@@ -1,9 +1,15 @@
-parameters_df <- read_rds("H:/phenology/phenology_spore/processed/metrics_with_climate.rds")
-df_smooth <- read_rds("H:/phenology/phenology_spore/processed/fill_smooth_to2021.rds")
-pacman::p_load(lme4)
-pacman::p_load(blme)
-pacman::p_load(nlme)
-pacman::p_load(ggeffects)
+nlme_peak <- lme(peak ~ sporeyr, data = data_peak, random = ~ sporeyr | n)
+summary(nlme_peak)
+nlme_peak_doy <- lme(peak_doy ~ sporeyr, data = data_peak, random = ~ sporeyr | n)
+summary(nlme_peak_doy)
+nlme_integral <- lme(integral ~ sporeyr, data = data_integral, random = ~ sporeyr | n)
+summary(nlme_integral)
+nlme_sos <- lme(sos ~ sporeyr, data = data_season, random = ~ sporeyr | n)
+summary(nlme_sos)
+nlme_eos <- lme(eos ~ sporeyr, data = data_season, random = ~ sporeyr | n)
+summary(nlme_eos)
+nlme_los <- lme(los ~ sporeyr, data = data_season, random = ~ sporeyr | n)
+summary(nlme_los)
 
 # log(peak_con+1)~year
 ## read the data
@@ -440,24 +446,3 @@ ggsave(
   width = 10,
   height = 10
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
