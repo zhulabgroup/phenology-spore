@@ -36,6 +36,8 @@ pacman::p_load(lme4)
 pacman::p_load(blme)
 pacman::p_load(nlme)
 pacman::p_load(ggeffects)
+pacman::p_load(greenbrown)
+pacman::p_load(lubridate)
 
 
 # ln -s /nfs/turbo/seas-zhukai/phenology/phenology_fungal_spore/ data
