@@ -1,7 +1,7 @@
-df <- read_rds(str_c(.path$dat_process, "2023-04-25/spore_dat.rds"))
+df_spore <- read_rds(str_c(.path$dat_process, "2023-04-25/spore_dat.rds"))
 
 # select station-year combination with measurements >= 10, years >= 3
-df_siteyear <- df %>%
+df_siteyear <- df_spore %>%
   filter(family == "Total") %>%
   mutate(count = abs(count)) %>% 
   filter(count > 0) %>% 
@@ -31,7 +31,7 @@ df_fill <- df_siteyear %>%
             by = c("lat", "lon", "station", "city", "state", "country", "id")) %>% 
   dplyr::select(lat, lon, station, city, state, country, id, n, year, doy, date, count)
 
-# determine the offset
+# whittaker smoothing
 # Function for smoothing, because ptw::whit1 does not take NA in the time series
 whitfun <- function(x, lambda) {
   max_id <- 0
@@ -58,32 +58,45 @@ df_smooth <- df_fill %>%
   mutate(count_whit = whitfun(count_fill, lambda = 1800)) %>%
   ungroup()
 
-df_average <- df_fill %>% 
-  group_by(lat, lon, station, city, state, country, id, n, doy) %>% 
-  summarise(count_avg = mean(count, na.rm = T)) %>% 
-  mutate(count_avg = ifelse(is.nan(count_avg), NA, count_avg)) %>% 
-  ungroup() %>% 
-  group_by(lat, lon, station, city, state, country, id, n) %>% 
-  mutate(count_whit = whitfun(count_avg, lambda = 1800)) %>% 
-  mutate(count_fill = zoo::na.approx(count_avg, maxgap = 7, na.rm = F)) %>% 
-  mutate(count_whit_fill = whitfun(count_fill, lambda = 1800))
+# determine the offset
+x = 10
+l = 100
 
-# visualization
-ggplot(data = df_average %>% filter(n == 1), aes(x = doy)) +
-  geom_point(data = df_fill %>% filter(n == 1), aes(x = doy, y = count, col = year, alpha = 0.3, group = year)) +
-  geom_point(aes(y = count_avg), col = "purple") +
-  geom_line(aes(y = count_whit), col = "blue") +
+df_median <- df_fill %>% 
+  group_by(lat, lon, station, city, state, country, id, n, doy) %>% 
+  summarise(count_md = median(count, na.rm = T)) %>% 
+  mutate(count_md = ifelse(is.nan(count_md), NA, count_md)) %>% 
+  ungroup() %>% 
+  filter(n == x) %>% 
+  #group_by(lat, lon, station, city, state, country, id, n) %>% 
+  mutate(count_whit = whitfun(count_md, lambda = l)) %>% 
+  mutate(count_fill = zoo::na.approx(count_md, maxgap = 7, na.rm = F)) %>% 
+  mutate(count_whit_fill = whitfun(count_fill, lambda = l))
+
+offset = df_median %>% 
+  #filter(n == 3) %>% 
+  filter(count_whit_fill == min(count_whit_fill, na.rm = T)) %>% 
+  summarise(offset = head(doy, 1))
+
+ggplot(data = df_median, aes(x = doy)) +
+  geom_point(data = df_fill %>% filter(n == x), aes(x = doy, y = count, col = year, alpha = 0.1, group = year)) +
+  guides(alpha = "none") +
+  geom_point(aes(y = count_md), col = "purple") +
+  #geom_line(aes(y = count_whit), col = "blue") +
   geom_line(aes(y = count_whit_fill), col = "red") +
+  geom_vline(xintercept = offset$offset[1], col = "blue") +
   scale_y_continuous(
     trans = scales::log_trans(),
     breaks = scales::trans_breaks("log", function(x) exp(x)),
     labels = scales::trans_format("log", scales::math_format(e^.x))
   ) +
   ylab("count") +
+  #labs(color = "lambda = 100\noffset = 52\nyear") +
   facet_wrap(. ~ n, ncol = 6, scales = "free_y")
 
-ggplot(data = df_smooth %>% filter(n == 1)) +
+ggplot(data = df_smooth %>% filter(n == x)) +
   geom_point(aes(x = date, y = count), col = "gray") +
+  geom_vline(xintercept = (df_smooth %>% filter(n == x, doy == offset$offset[1]))$date, col = "blue") +
   geom_line(aes(x = date, y = count_whit)) +
   scale_y_continuous(
     trans = scales::log_trans(),
@@ -91,4 +104,12 @@ ggplot(data = df_smooth %>% filter(n == 1)) +
     labels = scales::trans_format("log", scales::math_format(e^.x))
   ) +
   ylab("count") +
-  facet_wrap(. ~ id, ncol = 6, scales = "free_y")
+  scale_x_datetime(breaks = "1 year", date_labels = "%Y") +
+  facet_wrap(. ~ n, ncol = 6, scales = "free_y")
+
+# df_offset <- data.frame(n = 1:60) %>% 
+#   mutate(lambda = NA, offset = NA)
+df_offset[x, "lambda"] = l
+df_offset[x, "offset"] = offset$offset[1]
+
+write_rds(df_offset, str_c(.path$dat_process, "2023-04-25/offset.rds"))
