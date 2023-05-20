@@ -1,4 +1,5 @@
 df_spore <- read_rds(str_c(.path$dat_process, "2023-04-25/spore_dat.rds"))
+df_offset <- read_rds(str_c(.path$dat_process, "2023-04-25/offset.rds"))
 
 # select station-year combination with measurements >= 10, years >= 3
 df_siteyear <- df_spore %>%
@@ -59,7 +60,7 @@ df_smooth <- df_fill %>%
   ungroup()
 
 # determine the offset
-x = 10
+i = 60
 l = 100
 
 df_median <- df_fill %>% 
@@ -67,7 +68,7 @@ df_median <- df_fill %>%
   summarise(count_md = median(count, na.rm = T)) %>% 
   mutate(count_md = ifelse(is.nan(count_md), NA, count_md)) %>% 
   ungroup() %>% 
-  filter(n == x) %>% 
+  filter(n == i) %>% 
   #group_by(lat, lon, station, city, state, country, id, n) %>% 
   mutate(count_whit = whitfun(count_md, lambda = l)) %>% 
   mutate(count_fill = zoo::na.approx(count_md, maxgap = 7, na.rm = F)) %>% 
@@ -79,7 +80,7 @@ offset = df_median %>%
   summarise(offset = head(doy, 1))
 
 ggplot(data = df_median, aes(x = doy)) +
-  geom_point(data = df_fill %>% filter(n == x), aes(x = doy, y = count, col = year, alpha = 0.1, group = year)) +
+  geom_point(data = df_fill %>% filter(n == i), aes(x = doy, y = count, col = year, alpha = 0.1, group = year)) +
   guides(alpha = "none") +
   geom_point(aes(y = count_md), col = "purple") +
   #geom_line(aes(y = count_whit), col = "blue") +
@@ -94,9 +95,9 @@ ggplot(data = df_median, aes(x = doy)) +
   #labs(color = "lambda = 100\noffset = 52\nyear") +
   facet_wrap(. ~ n, ncol = 6, scales = "free_y")
 
-ggplot(data = df_smooth %>% filter(n == x)) +
+ggplot(data = df_smooth %>% filter(n == i)) +
   geom_point(aes(x = date, y = count), col = "gray") +
-  geom_vline(xintercept = (df_smooth %>% filter(n == x, doy == offset$offset[1]))$date, col = "blue") +
+  geom_vline(xintercept = (df_smooth %>% filter(n == i, doy == offset$offset[1]))$date, col = "blue") +
   geom_line(aes(x = date, y = count_whit)) +
   scale_y_continuous(
     trans = scales::log_trans(),
@@ -109,7 +110,95 @@ ggplot(data = df_smooth %>% filter(n == x)) +
 
 # df_offset <- data.frame(n = 1:60) %>% 
 #   mutate(lambda = NA, offset = NA)
-df_offset[x, "lambda"] = l
-df_offset[x, "offset"] = offset$offset[1]
+df_offset[i, "lambda"] = l
+df_offset[i, "offset"] = offset$offset[1]
 
-write_rds(df_offset, str_c(.path$dat_process, "2023-04-25/offset.rds"))
+df_fill_smooth_offset <- left_join(df_smooth, df_offset, by = "n")
+
+# visualization
+df_plot <- tibble(
+  n = 1:60,
+  p = vector("list", 60),
+  b = vector("list", 60)
+)
+
+for (i in c(1:60)) {
+  l <- df_fill_smooth_offset %>% 
+    filter(n == i) %>% 
+    head(1) %>% 
+    pull(lambda)
+  
+  offset <- df_fill_smooth_offset %>% 
+    filter(n == i) %>% 
+    head(1) %>% 
+    pull(offset)
+  
+  city <- df_fill_smooth_offset %>% 
+    filter(n == i) %>% 
+    head(1) %>% 
+    pull(city)
+  
+  state <- df_fill_smooth_offset %>% 
+    filter(n == i) %>% 
+    head(1) %>% 
+    pull(state)
+  
+  df_median <- df_fill %>% 
+    group_by(lat, lon, station, city, state, country, id, n, doy) %>% 
+    summarise(count_md = median(count, na.rm = T)) %>% 
+    mutate(count_md = ifelse(is.nan(count_md), NA, count_md)) %>% 
+    ungroup() %>% 
+    filter(n == i) %>% 
+    #group_by(lat, lon, station, city, state, country, id, n) %>% 
+    mutate(count_whit = whitfun(count_md, lambda = l)) %>% 
+    mutate(count_fill = zoo::na.approx(count_md, maxgap = 7, na.rm = F)) %>% 
+    mutate(count_whit_fill = whitfun(count_fill, lambda = l))
+  
+  p_a <- ggplot(data = df_median, aes(x = doy)) +
+    geom_point(data = df_fill %>% filter(n == i), aes(x = doy, y = count, col = year, alpha = 0.1, group = year)) +
+    guides(alpha = "none") +
+    geom_point(aes(y = count_md), col = "purple") +
+    #geom_line(aes(y = count_whit), col = "blue") +
+    geom_line(aes(y = count_whit_fill), col = "red") +
+    geom_vline(xintercept = offset, col = "blue") +
+    scale_y_continuous(
+      trans = scales::log_trans(),
+      breaks = scales::trans_breaks("log", function(x) exp(x)),
+      labels = scales::trans_format("log", scales::math_format(e^.x))
+    ) +
+    ylab("count") +
+    labs(color = paste0("lambda = ", l, "\noffset = ", offset, "\nyear")) +
+    facet_wrap(. ~ interaction(n, city, state, sep = ", "), ncol = 6, scales = "free_y") 
+  
+  
+  p_b <- ggplot(data = df_smooth %>% filter(n == i)) +
+    geom_point(aes(x = date, y = count), col = "gray") +
+    geom_vline(xintercept = (df_smooth %>% filter(n == i, doy == offset))$date, col = "blue") +
+    geom_line(aes(x = date, y = count_whit)) +
+    scale_y_continuous(
+      trans = scales::log_trans(),
+      breaks = scales::trans_breaks("log", function(x) exp(x)),
+      labels = scales::trans_format("log", scales::math_format(e^.x))
+    ) +
+    ylab("count") +
+    scale_x_datetime(breaks = "1 year", date_labels = "%Y") +
+    facet_wrap(. ~ interaction(n, city, state, sep = ", "), ncol = 6, scales = "free_y")
+  
+
+  df_plot$a[[i]] <- p_a
+  df_plot$b[[i]] <- p_b
+}
+
+write_rds(df_fill_smooth_offset, str_c(.path$dat_process, "2023-04-25/fill_smooth_offset.rds"))
+write_rds(df_plot, str_c(.path$dat_process, "2023-04-25/fill_smooth_offset_plot.rds"))
+
+# save plots to pdf file
+pdf(
+  "output/figures/p_offset_a.pdf",
+  width = 12,
+  height = 5
+)
+for (i in c(3, 6, 17, 22, 29, 40, 11, 50)) {
+  p <- grid.arrange(df_plot$a[[i]], df_plot$b[[i]], ncol = 2)
+}
+dev.off()
