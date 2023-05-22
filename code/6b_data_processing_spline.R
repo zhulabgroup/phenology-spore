@@ -1,26 +1,26 @@
 df <- read_rds(str_c(.path$dat_process, "2023-04-25/spore_dat.rds"))
 
-# station_year combination, measurements > 18, years > 5
-df_siteyear <- df %>%
-  filter(family == "Total") %>%
+# station_year combination, measurements >= 10, years >= 3
+df_siteyear <- df %>% 
+  filter(family == "Total") %>% 
   mutate(count = abs(count)) %>% 
   filter(count > 0) %>% 
-  mutate(year = format(date, "%Y") %>% as.integer()) %>%
-  group_by(city, id, year) %>%
-  mutate(nobservation = n()) %>%
-  filter(nobservation >= 10) %>%
-  ungroup() %>%
-  group_by(city, id) %>%
-  mutate(nyear = length(unique(year))) %>%
-  filter(nyear >= 3) %>%
-  ungroup() %>%
+  mutate(year = format(date, "%Y") %>% as.integer()) %>% 
+  group_by(city, id, year) %>% 
+  mutate(nobservation = n()) %>% 
+  filter(nobservation >= 10) %>% 
+  ungroup() %>% 
+  group_by(city, id) %>% 
+  mutate(nyear = length(unique(year))) %>% 
+  filter(nyear >= 3) %>% 
+  ungroup() %>% 
   dplyr::select(lat, lon, station, city, state, country, id, year, date, count)
 
-# linear interpolation + whittaker smoothing
+# fill the dates to full years
 df_fill <- df_siteyear %>% 
-  group_by(lat, lon, station, city, state, country, id) %>%
+  group_by(lat, lon, station, city, state, country, id) %>% 
   complete(date = seq(min(year) %>% paste0("-01-01") %>% ymd(), max(year) %>% paste0("-12-31") %>% ymd(), by = "day")) %>% 
-  mutate(year = format(date, "%Y") %>% as.integer()) %>%
+  mutate(year = format(date, "%Y") %>% as.integer()) %>% 
   mutate(doy = format(date, "%j") %>% as.integer()) %>% 
   ungroup() %>% 
   filter(doy <= 365) %>% 
@@ -30,7 +30,8 @@ df_fill <- df_siteyear %>%
               dplyr::select(-count, -date, -year),
             by = c("lat", "lon", "station", "city", "state", "country", "id")) %>% 
   dplyr::select(lat, lon, station, city, state, country, id, n, year, doy, date, count)
-# Whittaker smooth
+
+# linear interpolation + whittaker smoothing
 # Function for smoothing, because ptw::whit1 does not take NA in the time series
 whitfun <- function(x, lambda) {
   max_id <- 0
@@ -72,6 +73,7 @@ for (i in 1:60) {
 
 write_rds(df_o, str_c(.path$dat_process, "2023-04-25/fill_whit_spline.rds"))
 
+# visualization
 p_ts_whit_spline <- ggplot(data = df_o, aes(x = date)) +
   geom_point(aes(y = count), col = "gray") +
   geom_line(aes(y = count_spline), col = "red") +
