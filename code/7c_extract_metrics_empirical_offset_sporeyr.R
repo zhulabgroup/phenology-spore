@@ -34,7 +34,22 @@ df_peak <- df_smooth %>%
     peak = head(count_whit, 1),
     peak_doy = head(doy_new, 1),
     peak_date_old = head(date, 1)
+  ) %>% 
+  filter(peak_doy %in% 11:355) %>% 
+  right_join(df_smooth, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>% 
+  drop_na(peak_doy) %>%
+  group_by(lat, lon, station, city, state, country, id, n, offset, year_new) %>%
+  filter(doy_new %in% (peak_doy - 10):(peak_doy + 10)) %>% 
+  mutate(check_NA = case_when(
+    any(is.na(count_whit)) ~ 1,
+    TRUE ~ 0)) %>% 
+  filter(check_NA == 0) %>% 
+  summarise(
+    peak = head(peak, 1),
+    peak_doy = head(peak_doy, 1),
+    peak_date_old = head(peak_date_old, 1)
   )
+  
 
 df_integral <- df_smooth %>%
   drop_na(count_whit) %>%
@@ -48,6 +63,8 @@ df_integral <- df_smooth %>%
 df_season <- df_smooth %>%
   drop_na(count_whit) %>%
   group_by(lat, lon, station, city, state, country, id, n, offset, year_new) %>%
+  mutate(observ_percent = n() / 365) %>%
+  filter(observ_percent >= 1) %>% 
   filter(count_whit >= quantile(count_whit, 0.3, na.rm = T)) %>%
   summarise(
     sos = min(doy_new),
