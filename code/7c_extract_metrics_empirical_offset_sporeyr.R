@@ -35,21 +35,22 @@ df_peak <- df_smooth %>%
     peak_doy = head(doy_new, 1),
     peak_date_old = head(date, 1)
   ) %>% 
-  filter(peak_doy %in% 11:355) %>% 
-  right_join(df_smooth, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>% 
-  drop_na(peak_doy) %>%
+  mutate(peak_check = case_when(
+    peak_doy %in% 11:355 ~ 1,
+    TRUE ~ 0
+  )) %>% 
+  right_join(df_smooth %>% drop_na(count_whit), by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, year_new) %>%
   filter(doy_new %in% (peak_doy - 10):(peak_doy + 10)) %>% 
-  mutate(check_NA = case_when(
-    any(is.na(count_whit)) ~ 1,
-    TRUE ~ 0)) %>% 
-  filter(check_NA == 0) %>% 
+  mutate(peak_check = case_when(
+    any(is.na(count_whit)) ~ 0,
+    TRUE ~ peak_check)) %>% 
   summarise(
     peak = head(peak, 1),
     peak_doy = head(peak_doy, 1),
-    peak_date_old = head(peak_date_old, 1)
+    peak_date_old = head(peak_date_old, 1),
+    peak_check = head(peak_check, 1)
   )
-  
 
 df_integral <- df_smooth %>%
   drop_na(count_whit) %>%
@@ -57,20 +58,34 @@ df_integral <- df_smooth %>%
   filter(month %in% 4:10) %>%
   group_by(lat, lon, station, city, state, country, id, n, offset, year_new) %>%
   mutate(observ_percent = n() / 214) %>%
-  filter(observ_percent >= 0.8) %>% 
-  summarise(integral = sum(count_whit) / n() * 214)
+  ungroup() %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, year_new, observ_percent) %>%
+  summarise(integral = sum(count_whit) / n() * 214) %>% 
+  mutate(integral_check = case_when(
+  observ_percent >= 0.8 ~ 1,
+  TRUE ~ 0
+  )) %>% 
+  dplyr::select(-observ_percent)
 
 df_season <- df_smooth %>%
   drop_na(count_whit) %>%
   group_by(lat, lon, station, city, state, country, id, n, offset, year_new) %>%
   mutate(observ_percent = n() / 365) %>%
-  filter(observ_percent >= 1) %>% 
+  ungroup() %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, year_new, observ_percent) %>%
   filter(count_whit >= quantile(count_whit, 0.3, na.rm = T)) %>%
   summarise(
     sos = min(doy_new),
-    eos = max(doy_new)
+    eos = max(doy_new),
+    sos_date_old = min(date),
+    eos_date_old = max(date)
   ) %>%
-  mutate(los = eos - sos)
+  mutate(los = eos - sos) %>% 
+  mutate(season_check = case_when(
+    observ_percent >= 1 ~ 1,
+    TRUE ~ 0
+  )) %>% 
+  dplyr::select(-observ_percent)
 
 df_metrics <- list(df_peak, df_integral, df_season) %>% reduce(full_join, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
 write_rds(df_metrics, str_c(.path$dat_process, "2023-04-25/metrics_offset.rds"))
