@@ -39,11 +39,12 @@ df_peak <- df_smooth %>%
     peak_doy %in% 11:355 ~ 1,
     TRUE ~ 0
   )) %>% 
-  right_join(df_smooth %>% drop_na(count_whit), by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>% 
+  right_join(df_smooth, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>% 
+  drop_na(peak_doy) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, year_new) %>%
   filter(doy_new %in% (peak_doy - 10):(peak_doy + 10)) %>% 
   mutate(peak_check = case_when(
-    any(is.na(count_whit)) ~ 0,
+    sum(is.na(count_whit)) != 0 ~ 0,
     TRUE ~ peak_check)) %>% 
   summarise(
     peak = head(peak, 1),
@@ -62,8 +63,8 @@ df_integral <- df_smooth %>%
   group_by(lat, lon, station, city, state, country, id, n, offset, year_new, observ_percent) %>%
   summarise(integral = sum(count_whit) / n() * 214) %>% 
   mutate(integral_check = case_when(
-  observ_percent >= 0.8 ~ 1,
-  TRUE ~ 0
+    observ_percent >= 0.8 ~ 1,
+    TRUE ~ 0
   )) %>% 
   dplyr::select(-observ_percent)
 
