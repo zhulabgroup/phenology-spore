@@ -35,7 +35,7 @@ df_integral <- df_smooth %>%
   group_by(lat, lon, station, city, state, country, id, n, offset, year_new, observ_percent) %>%
   summarise(integral = sum(count_whit) / n() * 365) %>% 
   mutate(integral_check = case_when(
-    observ_percent >= 1 ~ 1,
+    observ_percent >= 0.6 ~ 1,
     TRUE ~ 0
   )) %>% 
   dplyr::select(-observ_percent)
@@ -46,7 +46,7 @@ df_season <- df_smooth %>%
   mutate(observ_percent = n() / 365) %>%
   ungroup() %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, year_new, observ_percent) %>%
-  filter(cumsum(count_whit) >= 0.3 * sum(count_whit)) %>%
+  filter(cumsum(count_whit) >= 0.3 * sum(count_whit) & cumsum(count_whit) <= 0.7 * sum(count_whit)) %>%
   summarise(
     sos = min(doy_new),
     eos = max(doy_new),
@@ -61,3 +61,4 @@ df_season <- df_smooth %>%
   dplyr::select(-observ_percent)
 
 df_metrics <- list(df_peak, df_integral, df_season) %>% reduce(full_join, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
+write_rds(df_metrics, str_c(.path$dat_process, "2023-04-25/metrics_offset_percentage.rds"))

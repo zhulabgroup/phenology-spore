@@ -1,16 +1,3 @@
-nlme_peak <- lme(peak ~ year_new, data = df_peak, random = ~ year_new | n)
-summary(nlme_peak)
-nlme_peak_doy <- lme(peak_doy ~ year_new, data = df_peak, random = ~ year_new | n)
-summary(nlme_peak_doy)
-nlme_integral <- lme(integral ~ year_new, data = df_integral %>% filter(integral_check == 1), random = ~ year_new | n)
-summary(nlme_integral)
-nlme_sos <- lme(sos ~ year_new, data = df_season %>% filter(season_check == 1), random = ~ year_new | n)
-summary(nlme_sos)
-nlme_eos <- lme(eos ~ year_new, data = df_season %>% filter(season_check == 1), random = ~ year_new | n)
-summary(nlme_eos)
-nlme_los <- lme(los ~ year_new, data = df_season %>% filter(season_check == 1), random = ~ year_new | n)
-summary(nlme_los)
-
 # log(peak_con+1)~year
 ## read the data
 # old dataset
