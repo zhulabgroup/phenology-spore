@@ -28,7 +28,7 @@ df_plot <- tibble(
 )
 
 for (i in c(1:60)) {
-  
+
   df <- df_c %>% 
     filter(n == i)
   
@@ -125,7 +125,7 @@ for (i in c(1:60)) {
 }
 
 pdf(
-  "output/figures/p_offset_percentage_a.pdf",
+  "output/figures/p_offset_80percentage_a.pdf",
   width = 12,
   height = 4
 )
@@ -138,7 +138,7 @@ for (i in c(3, 6, 17, 22, 29, 40, 11, 50)) {
 dev.off()
 
 pdf(
-  "output/figures/p_offset_percentage_b.pdf",
+  "output/figures/p_offset_80percentage_b.pdf",
   width = 12,
   height = 4
 )
@@ -151,7 +151,7 @@ for (i in c(8, 18, 19, 24, 26, 27, 28, 30, 31, 34, 37, 38, 44, 45, 49, 51, 57, 3
 dev.off()
 
 pdf(
-  "output/figures/p_offset_percentage_c.pdf",
+  "output/figures/p_offset_80percentage_c.pdf",
   width = 12,
   height = 4
 )
