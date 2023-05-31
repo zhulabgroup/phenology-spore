@@ -10,3 +10,19 @@ nlme_eos <- lme(eos ~ year_new, data = df_season %>% filter(season_check == 1), 
 summary(nlme_eos)
 nlme_los <- lme(los ~ year_new, data = df_season %>% filter(season_check == 1), random = ~ year_new | n)
 summary(nlme_los)
+
+# , control = lmeControl(opt = "optim")
+
+# remove CA, MI, ID
+nlme_peak <- lme(peak ~ year_new, data = df_peak %>% filter(peak_check == 1)%>% filter(!(n %in% c(3, 6, 17, 22, 29, 40, 11, 50))), random = ~ year_new | n)
+summary(nlme_peak)
+nlme_peak_doy <- lme(peak_doy ~ year_new, data = df_peak %>% filter(peak_check == 1)%>% filter(!(n %in% c(3, 6, 17, 22, 29, 40, 11, 50))), random = ~ year_new | n)
+summary(nlme_peak_doy)
+nlme_integral <- lme(integral ~ year_new, data = df_integral %>% filter(integral_check == 1)%>% filter(!(n %in% c(3, 6, 17, 22, 29, 40, 11, 50))), random = ~ year_new | n)
+summary(nlme_integral)
+nlme_sos <- lme(sos ~ year_new, data = df_season %>% filter(season_check == 1)%>% filter(!(n %in% c(3, 6, 17, 22, 29, 40, 11, 50))), random = ~ year_new | n)
+summary(nlme_sos)
+nlme_eos <- lme(eos ~ year_new, data = df_season %>% filter(season_check == 1)%>% filter(!(n %in% c(3, 6, 17, 22, 29, 40, 11, 50))), random = ~ year_new | n, control = lmeControl(opt = "optim"))
+summary(nlme_eos)
+nlme_los <- lme(los ~ year_new, data = df_season %>% filter(season_check == 1)%>% filter(!(n %in% c(3, 6, 17, 22, 29, 40, 11, 50))), random = ~ year_new | n, control = lmeControl(opt = "optim"))
+summary(nlme_los)

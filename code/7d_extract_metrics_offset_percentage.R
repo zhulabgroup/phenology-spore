@@ -46,7 +46,7 @@ df_season <- df_smooth %>%
   mutate(observ_percent = n() / 365) %>%
   ungroup() %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, year_new, observ_percent) %>%
-  filter(cumsum(count_whit) >= 0.3 * sum(count_whit) & cumsum(count_whit) <= 0.7 * sum(count_whit)) %>%
+  filter(cumsum(count_whit) >= 0.1 * sum(count_whit) & cumsum(count_whit) <= 0.9 * sum(count_whit)) %>%
   summarise(
     sos = min(doy_new),
     eos = max(doy_new),
