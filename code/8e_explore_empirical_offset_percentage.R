@@ -162,3 +162,16 @@ for (i in c(12, 42, 53, 1, 2, 4, 5, 7, 9, 10, 13, 14, 15, 16, 20, 21, 23, 25, 32
   )
 }
 dev.off()
+
+pdf(
+  "output/figures/p_offset_80percentage.pdf",
+  width = 12,
+  height = 4
+)
+for (i in 1:60) {
+  p <- grid.arrange(df_plot$a[[i]], df_plot$b[[i]],
+                    ncol = 2,
+                    widths = c(3,4)
+  )
+}
+dev.off()
