@@ -47,5 +47,17 @@ df_season <- df %>%
   ) %>%
   mutate(los = eos - sos)
 
+df_allergy_season <- df %>% 
+  filter(count_whit >= 6500) %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, year_new, observ_pct) %>% 
+  summarise(
+    sas = min(doy_new),
+    eas = max(doy_new),
+    sas_date_old = min(date),
+    eas_date_old = max(date)
+  ) %>% 
+  
+  
+
 df_metrics <- list(df_peak, df_integral, df_season) %>% reduce(full_join, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new", "observ_pct"))
 write_rds(df_metrics, str_c(.path$dat_process, "2023-04-25/metrics_offset_flags.rds"))
