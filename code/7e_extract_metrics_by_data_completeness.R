@@ -49,15 +49,15 @@ df_season <- df %>%
 
 find_sas <- function(x) {
   # find the first day of 10 consecutive days with spore count >= 6500
-  # and ensure 10 values before sas are not NA
+  # 10 values before sas are not NA, otherwise, return NA
+  # if sas <= 10, all the values before sas should not be NA, otherwise return NA
   # reverse order for eas
   consecutive_count <- 0
   you <- NA
   you_date_old <- NA
   for (i in 1:nrow(x)) {
     if (!is.na(x$count_whit[i]) && x$count_whit[i] >= 6500) {
-      if (i > 10 && all(!is.na(x$count_whit[(i - 10):i]))) {
-        consecutive_count <- consecutive_count + 1
+      consecutive_count <- consecutive_count + 1
         if (consecutive_count == 1) {
           you <- x$doy_new[i]
           you_date_old <- x$date[i]
@@ -65,28 +65,21 @@ find_sas <- function(x) {
         if (consecutive_count == 10) {
           break
         }
-      } else if (i <= 10 && all(!is.na(x$count_whit[1:i]))) {
-        consecutive_count <- consecutive_count + 1
-        if (consecutive_count == 1) {
-          you <- x$doy_new[i]
-          you_date_old <- x$date[i]
-        }
-        if (consecutive_count == 10) {
-          break
-        }
-      } else {
-        consecutive_count <- 0
-      }
     } else {
       consecutive_count <- 0
     }
+  }
+  if (!is.na(you) && i > 10 && any(is.na(x$count_whit[(i - 10):i]))) {
+    you <- NA
+    you_date_old <- NA
+  } else if (!is.na(you) && i <= 10 && any(is.na(x$count_whit[1:i]))) {
+    you <- NA
+    you_date_old <- NA
   }
   x$you <- you
   x$you_date_old <- you_date_old
   return(x)
 }
-
-view(df_allergy_season %>% distinct(id, year_new, .keep_all = T) %>% drop_na(eas))
 
 df_allergy_season <- df_smooth %>% 
   drop_na(count_whit) %>%
@@ -109,7 +102,39 @@ df_allergy_season <- df_smooth %>%
     eas = you,
     eas_date_old = you_date_old
   ) %>% 
-  mutate(las = )
+  mutate(las = eas - sas + 1) %>%
+  drop_na(count_whit) %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, year_new, observ_pct) %>%
+  summarise(
+    sas = head(sas, 1),
+    eas = head(eas, 1),
+    las = head(las, 1),
+    sas_date_old = head(sas_date_old, 1),
+    eas_date_old = head(eas_date_old, 1)
+  )
 
-df_metrics <- list(df_peak, df_integral, df_season) %>% reduce(full_join, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new", "observ_pct"))
+df_integral_as <- df_allergy_season %>% 
+  right_join(df, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new", "observ_pct")) %>% 
+  filter(!is.na(las)) %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, year_new, observ_pct, sas, eas, las, sas_date_old, eas_date_old) %>% 
+  filter(doy_new %in% sas:eas) %>% 
+  summarise(
+    observ_pct_as = n() / las,
+    integral_as = sum(count_whit) / n() * las
+    ) %>% 
+  ungroup() %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, year_new, observ_pct) %>% 
+  summarise(
+    observ_pct_as = head(observ_pct_as, 1),
+    integral_as = head(integral_as, 1)
+    )
+
+df_metrics <- list(
+  df_peak,
+  df_integral,
+  df_season,
+  df_allergy_season,
+  df_integral_as
+  ) %>% 
+  reduce(full_join, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new", "observ_pct"))
 write_rds(df_metrics, str_c(.path$dat_process, "2023-04-25/metrics_offset_flags.rds"))
