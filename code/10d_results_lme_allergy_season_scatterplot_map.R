@@ -1,7 +1,6 @@
 df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_offset_flags.rds"))
 
 ## peak
-
 # filter data
 data_peak <- df_metrics %>% 
   drop_na(peak) %>% 
@@ -64,6 +63,7 @@ dev.off()
 
 
 ## peak date
+# filter data
 data_peak_doy <- df_metrics %>% 
   drop_na(peak) %>% 
   filter(peak_check == 1) %>%
@@ -95,6 +95,7 @@ summary(lme_peak_doy)
 
 
 ## annual integral
+# filter data
 data_integral <- df_metrics %>% 
   drop_na(integral) %>% 
   filter(observ_pct >= 0.7) %>%
@@ -153,6 +154,7 @@ dev.off()
 
 
 ## sos
+# filter data
 data_sos <- df_metrics %>% 
   drop_na(sos) %>% 
   filter(observ_pct >= 1) %>%
@@ -183,6 +185,7 @@ summary(lme_sos)
 
 
 ## eos
+# filter data
 data_eos <- df_metrics %>% 
   drop_na(eos) %>% 
   filter(observ_pct >= 1) %>%
@@ -213,6 +216,7 @@ summary(lme_eos)
 
 
 ## los
+# filter data
 data_los <- df_metrics %>% 
   drop_na(los) %>% 
   filter(observ_pct >= 1) %>%
@@ -241,3 +245,150 @@ lme_los <- lme(
 summary(lme_los)
 
 
+
+## sas
+# filter data
+data_sas <- df_metrics %>% 
+  drop_na(sas) %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
+  mutate(start_year = min(year_new)) %>% 
+  mutate(end_year = max(year_new)) %>% 
+  mutate(Nyear = end_year - start_year + 1) %>%
+  mutate(Nrcd = n()) %>% 
+  ungroup() %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, start_year, end_year, Nyear, Nrcd) %>% 
+  # mutate(intercept = lm(sas ~ year_new)$coefficients[1]) %>% 
+  # mutate(slope = lm(sas ~ year_new)$coefficients[2]) %>% 
+  filter(Nrcd >= 5) %>% 
+  ungroup()
+
+# fit lme
+lme_sas <- lme(
+  sas ~ year_new,
+  data = data_sas
+  %>% filter(state != "PR")
+  ,
+  random = ~ year_new | n
+  # ,
+  # control = lmeControl(opt = "optim")
+)
+summary(lme_sas)
+
+
+
+## eas
+# filter data
+data_eas <- df_metrics %>% 
+  drop_na(eas) %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
+  mutate(start_year = min(year_new)) %>% 
+  mutate(end_year = max(year_new)) %>% 
+  mutate(Nyear = end_year - start_year + 1) %>%
+  mutate(Nrcd = n()) %>% 
+  ungroup() %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, start_year, end_year, Nyear, Nrcd) %>% 
+  # mutate(intercept = lm(eas ~ year_new)$coefficients[1]) %>% 
+  # mutate(slope = lm(eas ~ year_new)$coefficients[2]) %>% 
+  filter(Nrcd >= 5) %>% 
+  ungroup()
+
+# fit lme
+lme_eas <- lme(
+  eas ~ year_new,
+  data = data_eas
+  %>% filter(state != "PR")
+  ,
+  random = ~ year_new | n
+  # ,
+  # control = lmeControl(opt = "optim")
+)
+summary(lme_eas)
+
+
+
+## las
+# filter data
+data_las <- df_metrics %>% 
+  drop_na(las) %>% 
+  filter(observ_pct_as >= 0.7) %>%
+  group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
+  mutate(start_year = min(year_new)) %>% 
+  mutate(end_year = max(year_new)) %>% 
+  mutate(Nyear = end_year - start_year + 1) %>%
+  mutate(Nrcd = n()) %>% 
+  ungroup() %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, start_year, end_year, Nyear, Nrcd) %>% 
+  # mutate(intercept = lm(las ~ year_new)$coefficients[1]) %>% 
+  # mutate(slope = lm(las ~ year_new)$coefficients[2]) %>% 
+  filter(Nrcd >= 5) %>% 
+  ungroup()
+
+# fit lme
+lme_las <- lme(
+  las ~ year_new,
+  data = data_las
+  # %>% filter(state != "PR")
+  ,
+  random = ~ year_new | n
+  # ,
+  # control = lmeControl(opt = "optim")
+)
+summary(lme_las)
+
+
+
+## allergy season integral
+# filter data
+data_integral_as <- df_metrics %>% 
+  drop_na(integral_as) %>% 
+  filter(observ_pct_as >= 0.8) %>%
+  group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
+  mutate(start_year = min(year_new)) %>% 
+  mutate(end_year = max(year_new)) %>% 
+  mutate(Nyear = end_year - start_year + 1) %>%
+  mutate(Nrcd = n()) %>% 
+  ungroup() %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, start_year, end_year, Nyear, Nrcd) %>% 
+  # mutate(intercept = lm(integral_as ~ year_new)$coefficients[1]) %>% 
+  # mutate(slope = lm(integral_as ~ year_new)$coefficients[2]) %>% 
+  filter(Nrcd >= 5) %>% 
+  ungroup()
+
+# fit lme
+lme_integral_as <- lme(
+  integral_as ~ year_new,
+  # log(integral_as) ~ year_new,
+  data = data_integral_as
+  # %>% filter(state != "PR")
+  ,
+  random = ~ year_new | n
+  # ,
+  # control = lmeControl(opt = "optim")
+)
+summary(lme_integral_as)
+
+# check residuals
+df_residuals <- residuals(lme_integral_as) %>% 
+  data.frame() %>% 
+  rename("residual" = ".")
+p17 <- ggplot(df_residuals, aes(x = residual)) +
+  geom_density(color = "black") +
+  labs(x = "Residuals", y = "Density") +
+  ggtitle(paste0("data completeness: 80%", "\nlog(integral_as) ~ year")) +
+  theme_classic()
+p18 <- ggplot(df_residuals, aes(sample = residual)) +
+  geom_qq() +
+  geom_qq_line(color = "red") +
+  labs(x = "Theoretical Quantiles", y = "Sample Quantiles") +
+  ggtitle(paste0("slope = 0.013964", "\np-value = 0.3185")) +
+  # ggtitle("QQ Plot of Residuals") +
+  theme_classic()
+pdf(
+  "output/figures/p_residuals_integral_as.pdf",
+  width = 10,
+  height = 10*0.618
+)
+grid.arrange(p1, p3, p5, p2, p4, p6, ncol = 3)
+grid.arrange(p7, p9, p11, p8, p10, p12, ncol = 3)
+grid.arrange(p13, p15, p17, p14, p16, p18, ncol = 3)
+dev.off()
