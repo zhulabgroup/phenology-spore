@@ -23,7 +23,7 @@ whitfun <- function(x, lambda) {
 
 df_plot <- tibble(
   n = 1:60,
-  p = vector("list", 60),
+  a = vector("list", 60),
   b = vector("list", 60)
 )
 
@@ -156,6 +156,19 @@ pdf(
   height = 4
 )
 for (i in c(12, 42, 53, 1, 2, 4, 5, 7, 9, 10, 13, 14, 15, 16, 20, 21, 23, 25, 32, 43, 46, 47, 48, 54, 55, 56, 59)) {
+  p <- grid.arrange(df_plot$a[[i]], df_plot$b[[i]],
+                    ncol = 2,
+                    widths = c(3,4)
+  )
+}
+dev.off()
+
+pdf(
+  "output/figures/p_offset_80percentage.pdf",
+  width = 12,
+  height = 4
+)
+for (i in 1:60) {
   p <- grid.arrange(df_plot$a[[i]], df_plot$b[[i]],
                     ncol = 2,
                     widths = c(3,4)
