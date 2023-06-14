@@ -23,7 +23,7 @@ whitfun <- function(x, lambda) {
 
 df_plot <- tibble(
   n = 1:60,
-  p = vector("list", 60),
+  a = vector("list", 60),
   b = vector("list", 60)
 )
 
