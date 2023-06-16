@@ -1,5 +1,20 @@
 df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds"))
 
+data <- df_daymet %>% 
+  drop_na(count_whit) %>% 
+  filter(state != "PR") %>% 
+  filter(country == "US")
+
+lme <- lme(
+  count_whit ~ temp * prcp,
+  data = data,
+  random = ~ 1 | n
+  # ,
+  # control = lmeControl(opt = "optim")
+)
+summary(lme)
+
+
 
 ## peak
 data_peak <- df_metrics %>% 
