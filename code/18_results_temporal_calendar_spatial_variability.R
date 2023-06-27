@@ -15,7 +15,7 @@ df_calendar <- df_smooth %>%
   mutate(order = interaction(city, state, n))
 
 p_calendar <- 
-  ggplot(data = df_calendar %>% filter(state != "PR")) +
+  ggplot(data = df_calendar %>% filter(state != "PR") %>% filter(country == "US")) +
   geom_tile(aes(x = doy, y = reorder(interaction(city, state, n), lon), fill = count_mean %>% log(10)), alpha = 1) +
   ylab("") +
   xlab("") +
