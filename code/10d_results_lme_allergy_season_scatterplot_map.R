@@ -1,10 +1,12 @@
-df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_offset_flags.rds"))
+# df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_offset_flags.rds"))
+pct = 1
 
 ## peak
 # filter data
 data_peak <- df_metrics %>% 
   filter(peak_check == 1) %>%
-  filter(observ_pct >= 0.7) %>% 
+  drop_na(peak) %>% 
+  filter(observ_pct >= pct) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
   do({
   result <- lm(log(peak) ~ year_new, .)
@@ -29,15 +31,17 @@ data_peak <- df_metrics %>%
   rename("slope" = "year_new", "intercept" = "(Intercept)") %>%
   ungroup() %>% 
   right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>% 
-  drop_na(peak) %>% 
   filter(peak_check == 1) %>%
-  filter(observ_pct >= 0.7) %>% 
+  drop_na(peak) %>% 
+  filter(observ_pct >= pct) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, intercept, slope, r_squared, p_value) %>% 
   mutate(start_year = min(year_new)) %>% 
   mutate(end_year = max(year_new)) %>% 
   mutate(Nyear = end_year - start_year + 1) %>%
   mutate(Nrcd = n()) %>% 
   filter(Nrcd >= 5) %>% 
+  filter(state != "PR") %>% 
+  filter(country == "US") %>% 
   ungroup()
 view(data_peak %>% distinct(n, .keep_all = T))
 

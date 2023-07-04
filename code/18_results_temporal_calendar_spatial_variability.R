@@ -1,4 +1,4 @@
-df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/fill_smooth_offset.rds"))
+# df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/fill_smooth_offset.rds"))
 
 df_calendar <- df_smooth %>%
   group_by(lat, lon, station, city, state, country, id, n, offset, doy) %>%
@@ -39,10 +39,10 @@ p_calendar <-
     name = "Spore concentration\n(grains / m^3)"
   )
 
-pdf(
-  "output/figures/p_calendar_raw.pdf",
-  width = 10 * .618,
-  height = 10
-)
-p_calendar
-dev.off()
+# pdf(
+#   "output/figures/p_calendar_raw.pdf",
+#   width = 10 * .618,
+#   height = 10
+# )
+# p_calendar
+# dev.off()
