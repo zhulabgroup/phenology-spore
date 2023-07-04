@@ -39,9 +39,11 @@ pacman::p_load(ggeffects)
 pacman::p_load(greenbrown)
 pacman::p_load(lubridate)
 pacman::p_load(gridExtra)
+pacman::p_load(grid)
 pacman::p_load(plotly)
 pacman::p_load(pracma)
-
+pacman::p_load(daymetr)
+pacman::p_load(cowplot)
 
 
 # ln -s /nfs/turbo/seas-zhukai/phenology/phenology_fungal_spore/ data

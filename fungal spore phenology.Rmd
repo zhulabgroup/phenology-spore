@@ -1,0 +1,32 @@
+---
+title: "Results"
+author: "Ruoyu Wu"
+date: "2023-06-30"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache=TRUE,  warning = FALSE, message = FALSE)
+source("code/0_utils.R")
+df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/fill_smooth_offset.rds"))
+df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_offset_flags.rds"))
+```
+
+# Main Text
+```{r calendar-fig, fig.width=8, fig.height=8*1.618, fig.cap = "Pollen calendar for all the stations that met our criteria. \nDaily long-term mean of fungal spore concentration, 2003-2022."}
+source("code/18_results_temporal_calendar_spatial_variability.R")
+p_calendar
+```
+
+```{r metrics-fig, fig.width=10, fig.height=10*0.618, fig.cap="100% data completeness"}
+pct = 1
+source("code/8g_explore_summary_metrics.R")
+p_metrics
+```
+
+```{r trend-fig, fig.width=8, fig.height=10*1.618}
+pct = 1
+source("code/19_results_lme_trend.R")
+grid.arrange(p_trend_c1, p_trend_c2, ncol=2)
+```
+
