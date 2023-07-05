@@ -1,5 +1,5 @@
-# df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_offset_flags.rds"))
-pct = 1
+# df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds"))
+# pct = 1
 
 ## peak
 # filter data
@@ -92,7 +92,8 @@ p_trend_peak <- ggplot() +
   ylab("Ln(Peak)") +
   ggtitle("A") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10))
+        plot.margin = margin(10, 10, 20, 10),
+        plot.title = element_text(face = "bold"))
 
 
 
@@ -185,7 +186,8 @@ p_trend_integral <- ggplot() +
   ylab("Ln(Annual spore integral)") +
   ggtitle("B") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10))
+        plot.margin = margin(10, 10, 20, 10),
+        plot.title = element_text(face = "bold"))
 
 
 
@@ -278,7 +280,8 @@ p_trend_integral_as <- ggplot() +
   ylab("Ln(Allergy season spore integral)") +
   ggtitle("C") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10))
+        plot.margin = margin(10, 10, 20, 10),
+        plot.title = element_text(face = "bold"))
 
 
 
@@ -286,7 +289,7 @@ p_trend_integral_as <- ggplot() +
 # filter data
 data_sos <- df_metrics %>% 
   drop_na(sos) %>% 
-  filter(observ_pct >= pct) %>% 
+  filter(observ_pct >= 1) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
   do({
     result <- lm(sos ~ year_new, .)
@@ -312,7 +315,7 @@ data_sos <- df_metrics %>%
   ungroup() %>% 
   right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>% 
   drop_na(sos) %>% 
-  filter(observ_pct >= pct) %>% 
+  filter(observ_pct >= 1) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, intercept, slope, r_squared, p_value) %>% 
   mutate(start_year = min(year_new)) %>% 
   mutate(end_year = max(year_new)) %>% 
@@ -371,7 +374,8 @@ p_trend_sos <- ggplot() +
   ylab("Sos") +
   ggtitle("D") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10))
+        plot.margin = margin(10, 10, 20, 10),
+        plot.title = element_text(face = "bold"))
 
 
 
@@ -379,7 +383,7 @@ p_trend_sos <- ggplot() +
 # filter data
 data_los <- df_metrics %>% 
   drop_na(los) %>% 
-  filter(observ_pct >= pct) %>% 
+  filter(observ_pct >= 1) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
   do({
     result <- lm(los ~ year_new, .)
@@ -405,7 +409,7 @@ data_los <- df_metrics %>%
   ungroup() %>% 
   right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>% 
   drop_na(los) %>% 
-  filter(observ_pct >= pct) %>% 
+  filter(observ_pct >= 1) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, intercept, slope, r_squared, p_value) %>% 
   mutate(start_year = min(year_new)) %>% 
   mutate(end_year = max(year_new)) %>% 
@@ -464,7 +468,8 @@ p_trend_los <- ggplot() +
   ylab("Los") +
   ggtitle("E") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10))
+        plot.margin = margin(10, 10, 20, 10),
+        plot.title = element_text(face = "bold"))
 
 
 
@@ -555,7 +560,8 @@ p_trend_sas <- ggplot() +
   ylab("Sas") +
   ggtitle("F") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10))
+        plot.margin = margin(10, 10, 20, 10),
+        plot.title = element_text(face = "bold"))
 
 
 
@@ -648,7 +654,8 @@ p_trend_las <- ggplot() +
   ylab("Las") +
   ggtitle("G") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10))
+        plot.margin = margin(10, 10, 20, 10),
+        plot.title = element_text(face = "bold"))
 
 p_trend_c1 <- arrangeGrob(p_trend_peak, p_trend_integral, p_trend_integral_as, ncol = 1)
 p_trend_c2 <- arrangeGrob(p_trend_sos, p_trend_los, p_trend_sas, p_trend_las, ncol = 1)

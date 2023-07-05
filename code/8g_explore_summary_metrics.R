@@ -12,7 +12,7 @@ df_summary <- df_metrics %>%
 df_summary$Metric <- factor(df_summary$Metric, levels = c("peak", "ln_peak", "peak_doy", "integral", "ln_integral", "sos", "eos", "los", "sas", "eas", "las", "integral_as", "ln_integral_as"))
 
 p_metrics_1 <- ggplot(data = df_summary %>% filter(Metric %in% c("ln_peak", "ln_integral", "ln_integral_as")), aes(x = Metric, y = Value)) +
-  geom_boxplot() +
+  geom_boxplot(width = 0.5) +
   theme_classic() +
   ylab("Fungal spore concentration (grains / m^3)") +
   theme(axis.line = element_line(colour = "black"),
@@ -20,7 +20,7 @@ p_metrics_1 <- ggplot(data = df_summary %>% filter(Metric %in% c("ln_peak", "ln_
         axis.title = element_text(size = 14, colour = "black"))
 
 p_metrics_2 <- ggplot(data = df_summary %>% filter(Metric %in% c("peak_doy", "sos", "eos", "los", "sas", "eas", "las")), aes(x = Metric, y = Value)) +
-  geom_boxplot() +
+  geom_boxplot(width = 0.5) +
   theme_classic() +
   ylab("Day of year") +
   theme(axis.line = element_line(colour = "black"),
