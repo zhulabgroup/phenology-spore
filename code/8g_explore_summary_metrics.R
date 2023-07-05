@@ -8,18 +8,23 @@ df_summary <- df_metrics %>%
   gather(key = "Metric", value = "Value", peak, ln_peak, peak_doy, integral, ln_integral, sos, eos, los, sas, eas, las, integral_as, ln_integral_as) %>% 
   mutate(observ_pct = ifelse(Metric %in% c("sas", "eas"), 1, observ_pct)) %>% 
   mutate(observ_pct = ifelse(Metric %in% c("las", "integral_as", "ln_integral_as"), observ_pct_as, observ_pct)) %>% 
-  filter(observ_pct >= pct)
-df_summary$Metric <- factor(df_summary$Metric, levels = c("peak", "ln_peak", "peak_doy", "integral", "ln_integral", "sos", "eos", "los", "sas", "eas", "las", "integral_as", "ln_integral_as"))
+  filter(observ_pct >= pct) %>% 
+  filter(Metric %in% c("ln_peak", "ln_integral", "ln_integral_as", "peak_doy", "sos", "eos", "los", "sas", "eas", "las")) %>% 
+  mutate(Metric = ifelse(Metric == "ln_peak", "peak", Metric)) %>% 
+  mutate(Metric = ifelse(Metric == "ln_integral", "integral", Metric)) %>% 
+  mutate(Metric = ifelse(Metric == "ln_integral_as", "as integral", Metric)) %>% 
+  mutate(Metric = ifelse(Metric == "peak_doy", "peak date", Metric))
+df_summary$Metric <- factor(df_summary$Metric, levels = c("peak", "peak date", "integral", "sos", "eos", "los", "sas", "eas", "las", "as integral"))
 
-p_metrics_1 <- ggplot(data = df_summary %>% filter(Metric %in% c("ln_peak", "ln_integral", "ln_integral_as")), aes(x = Metric, y = Value)) +
+p_metrics_1 <- ggplot(data = df_summary %>% filter(Metric %in% c("peak", "integral", "as integral")), aes(x = Metric, y = Value)) +
   geom_boxplot(width = 0.5) +
   theme_classic() +
-  ylab("Fungal spore concentration (grains / m^3)") +
+  ylab("ln(concentration)") +
   theme(axis.line = element_line(colour = "black"),
         axis.text = element_text(size = 12, colour = "black"),
         axis.title = element_text(size = 14, colour = "black"))
 
-p_metrics_2 <- ggplot(data = df_summary %>% filter(Metric %in% c("peak_doy", "sos", "eos", "los", "sas", "eas", "las")), aes(x = Metric, y = Value)) +
+p_metrics_2 <- ggplot(data = df_summary %>% filter(Metric %in% c("peak date", "sos", "eos", "los", "sas", "eas", "las")), aes(x = Metric, y = Value)) +
   geom_boxplot(width = 0.5) +
   theme_classic() +
   ylab("Day of year") +

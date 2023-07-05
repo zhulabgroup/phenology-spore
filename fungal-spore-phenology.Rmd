@@ -15,14 +15,14 @@ df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds")
 
 # Fig. 1
 
-```{r calendar-fig, fig.width=8, fig.height=8*1.618, fig.cap = "Pollen calendar for all the stations that met our criteria. \nDaily long-term mean of fungal spore concentration, 2003-2022."}
+```{r calendar-fig, fig.width=8, fig.height=8*1.618, fig.cap = "Fungal spore calendar for all the stations meeting our criteria. \nDisplayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. Stations are sorted by longitude."}
 source("code/18_results_temporal_calendar_spatial_variability.R")
 p_calendar
 ```
 
 # Fig. 2
 
-```{r metrics-fig, fig.cap="100% data completeness", fig.height=11*0.618, fig.width=11}
+```{r metrics-fig, fig.cap="Summary of 7 fungal spore phenology metrics. Each box represents the interquartile range (IQR) of the metric, with the median value indicated by the line inside. Whiskers extend to the minimum and maximum values within 1.5 times the IQR, while points beyond the whiskers are considered outliers. All station-year data selected for analysis have achieved at least 80% data completeness. Concentration metrics are displayed in a natural logarithm-transformed scale (A), while date metrics are presented in Day of Year (DOY) format (B).", fig.height=11*0.618, fig.width=11}
 pct = 0.8
 source("code/8g_explore_summary_metrics.R")
 p_metrics
