@@ -14,7 +14,8 @@ df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds")
 ```
 
 # Fig. 1
-
+That's the reason why we need to define a spore year.
+Weather can affect the fungal spore concentration.
 ```{r calendar-fig, fig.width=8, fig.height=8*1.618, fig.cap = "Fungal spore calendar for all the stations meeting our criteria. \nDisplayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. Stations are sorted by longitude."}
 source("code/18_results_temporal_calendar_spatial_variability.R")
 p_calendar
@@ -31,9 +32,8 @@ p_metrics
 # Fig. 3
 
 ```{r trend-fig, fig.width=8, fig.height=10*1.618, fig.cap="Temporal trends of 7 fungal spore phenology metrics (continental level). Predicted slope from linear mixed effects models across stations of year against the peak spore concentrations (A), total annual spore integrals (B), allergy season spore integrals (C), spore season start date (DOY) (D), total spore season length (days) (E), allergy season start date (DOY) (F), allergy season length (days) (G). Points are individual years at individual stations. Colorful lines are station-level trends. Point/line colors are stations. Shaded areas indicate the 95% CI of the fixed effect. Concentration metrics are transformed using the natural logarithm. The analysis includes station-year data with a minimum data completeness of 80%."}
-pct = 0.8
 source("code/19_results_lme_trend.R")
-grid.arrange(p_trend_c1, p_trend_c2, ncol=2)
+p_trend
 ```
 
 # Fig. 4
