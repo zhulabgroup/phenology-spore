@@ -89,11 +89,13 @@ p_trend_peak <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Ln(Peak)") +
-  ggtitle("A") +
-  theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10),
-        plot.title = element_text(face = "bold"))
+  ylab("Peak concentration (grains / m^3)") +
+  scale_y_continuous(labels = scales::math_format(e^.x)) +
+  labs(title = expression(paste(bold("A      "), italic("Decreased Peak Concentration")))) +
+  theme(
+    plot.title.position = "plot",
+    plot.margin = margin(10, 10, 10, 10)
+    )
 
 
 
@@ -183,11 +185,15 @@ p_trend_integral <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Ln(Annual spore integral)") +
-  ggtitle("B") +
-  theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10),
-        plot.title = element_text(face = "bold"))
+  ylab("Annual spore integral (grains / m^3)") +
+  scale_y_continuous(labels = scales::math_format(e^.x)) +
+  labs(title = expression(paste(bold("B      "), italic("Decreased Annual Integral")))) +
+  theme(
+    plot.title.position = "plot",
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+
 
 
 
@@ -277,11 +283,15 @@ p_trend_integral_as <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Ln(Allergy season spore integral)") +
-  ggtitle("C") +
-  theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10),
-        plot.title = element_text(face = "bold"))
+  ylab("Allergy season spore integral (grains / m^3)") +
+  scale_y_continuous(labels = scales::math_format(e^.x)) +
+  labs(title = expression(paste(bold("C      "), italic("Increased Allergy Season Integral")))) +
+  theme(
+    plot.title.position = "plot",
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+
 
 
 
@@ -371,11 +381,13 @@ p_trend_sos <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Sos") +
-  ggtitle("D") +
-  theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10),
-        plot.title = element_text(face = "bold"))
+  ylab("Sos (day of year)") +
+  labs(title = expression(paste(bold("D      "), italic("Advanced Start of Spore Season")))) +
+  theme(
+    plot.title.position = "plot",
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
 
 
 
@@ -465,11 +477,13 @@ p_trend_los <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Los") +
-  ggtitle("E") +
-  theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10),
-        plot.title = element_text(face = "bold"))
+  ylab("Los (days)") +
+  labs(title = expression(paste(bold("F      "), italic("Extended Length of Spore Season")))) +
+  theme(
+    plot.title.position = "plot",
+    plot.margin = margin(10, 10, 10, 10)
+  )
+  
 
 
 
@@ -557,11 +571,14 @@ p_trend_sas <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Sas") +
-  ggtitle("F") +
-  theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10),
-        plot.title = element_text(face = "bold"))
+  ylab("Sas (day of year)") +
+  ylab("Los (days)") +
+  labs(title = expression(paste(bold("E      "), italic("Advanced Start of Allergy Season")))) +
+  theme(
+    plot.title.position = "plot",
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
 
 
 
@@ -651,11 +668,20 @@ p_trend_las <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Las") +
-  ggtitle("G") +
-  theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 20, 10),
-        plot.title = element_text(face = "bold"))
+  ylab("Las (days)") +
+  labs(title = expression(paste(bold("G      "), italic("Extended Length of Allergy Season")))) +
+  theme(
+    plot.title.position = "plot",
+    plot.margin = margin(10, 10, 10, 10)
+  )
 
-p_trend_c1 <- arrangeGrob(p_trend_peak, p_trend_integral, p_trend_integral_as, ncol = 1)
-p_trend_c2 <- arrangeGrob(p_trend_sos, p_trend_los, p_trend_sas, p_trend_las, ncol = 1)
+p_trend_space <- ggplot() +
+  theme_void() +
+  theme(plot.margin = margin(10, 10, 10, 10))
+title1 <- ggdraw() + draw_label("Ecology Perspective", hjust = 0.5, vjust = 1, fontface = "bold")
+p_trend_c1 <- plot_grid(title1, p_trend_peak, p_trend_integral, p_trend_sos, p_trend_los, ncol = 1,
+                        rel_heights = c(0.1, 1, 1, 1, 1))
+title2 <- ggdraw() + draw_label("Public Health Perspective", hjust = 0.5, vjust = 1, fontface = "bold")
+p_trend_c2 <- plot_grid(title2, p_trend_space, p_trend_integral_as, p_trend_sas, p_trend_las, ncol = 1,
+                        rel_heights = c(0.1, 1, 1, 1, 1))
+p_trend <- plot_grid(p_trend_c1, p_trend_c2, ncol = 2)

@@ -11,33 +11,37 @@ knitr::opts_chunk$set(echo = FALSE, cache=TRUE,  warning = FALSE, message = FALS
 source("code/0_utils.R")
 df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/fill_smooth_offset.rds"))
 df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds"))
+pct = 0.8
 ```
 
 # Fig. 1
-
+We firstly check the fungal spore calendar and find some spatial variabilities.  
+1) Variability in seasonality: the fungal spores in different states tend to explode in different seasons. This requests us to define a spore year as we need to determine spore season based on cumsum.  
+2) Variability in concentration: states with lower annual precipitation, like NV, CO tend to have fewer spores during whole year. FL, PA: higher. This inspires us to explore the relationship between trend of spore phenology and climate change.
 ```{r calendar-fig, fig.width=8, fig.height=8*1.618, fig.cap = "Fungal spore calendar for all the stations meeting our criteria. \nDisplayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. Stations are sorted by longitude."}
 source("code/18_results_temporal_calendar_spatial_variability.R")
 p_calendar
 ```
 
 # Fig. 2
-
-```{r metrics-fig, fig.cap="Summary of 10 fungal spore phenology metrics. Each box represents the interquartile range (IQR) of the metric, with the median value indicated by the line inside. Whiskers extend to the minimum and maximum values within 1.5 times the IQR, while points beyond the whiskers are considered outliers. All station-year data selected for analysis have achieved at least 80% data completeness. Concentration metrics are displayed in a natural logarithm-transformed scale (A), while date metrics are presented in Day of Year (DOY) format (B).", fig.height=11*0.618, fig.width=11}
-pct = 0.8
+We define spore year by determining the offset: doy with fewest spore concentration.  
+Within spore year, we extracted 10 metrics of fungal spore phenology. Ecology perspective: peak concentration, peak date, annual integral, sos, eos, los; Public Health perspective: sas, eas, las, allergy season integral.
+```{r metrics-fig, fig.cap="Summary of 10 fungal spore phenology metrics. The annotation of 10 fungal spore phenology metics (A). Each box represents the interquartile range (IQR) of the metric, with the median value indicated by the line inside. Whiskers extend to the minimum and maximum values within 1.5 times the IQR, while points beyond the whiskers are considered outliers. All station-year data selected for analysis have achieved at least 80% data completeness. Concentration metrics are displayed in a natural logarithm-transformed scale (B), while date metrics are presented in Day of Year (DOY) format (C).", fig.height=11, fig.width=11}
 source("code/8g_explore_summary_metrics.R")
 p_metrics
 ```
 
 # Fig. 3
-
-```{r trend-fig, fig.width=8, fig.height=10*1.618, fig.cap="Temporal trends of 7 fungal spore phenology metrics (continental level). Predicted slope from linear mixed effects models across stations of year against the peak spore concentrations (A), total annual spore integrals (B), allergy season spore integrals (C), spore season start date (DOY) (D), total spore season length (days) (E), allergy season start date (DOY) (F), allergy season length (days) (G). Points are individual years at individual stations. Colorful lines are station-level trends. Point/line colors are stations. Shaded areas indicate the 95% CI of the fixed effect. Concentration metrics are transformed using the natural logarithm. The analysis includes station-year data with a minimum data completeness of 80%."}
-pct = 0.8
+We then analyze the temporal trend of those metrics at continental level, and finally the results of 7 metrics are more convincing.  
+Peak concentration and annual integral decreased, while allergy season integral increased.  
+Both sos and sas are advanced. Both los and las extended.
+```{r trend-fig, fig.width=8, fig.height=10*1.618, fig.cap="Temporal trends of 7 fungal spore phenology metrics (continental level). Predicted slope from linear mixed effects models across stations of year against the peak spore concentrations (A), total annual spore integrals (B), allergy season spore integrals (C), spore season start date (DOY) (D), total spore season length (days) (F), allergy season start date (DOY) (E), allergy season length (days) (G). Points are individual years at individual stations. Colorful lines are station-level trends. Point/line colors are stations. Shaded areas indicate the 95% CI of the fixed effect. Concentration metrics are transformed using the natural logarithm. The analysis includes station-year data with a minimum data completeness of 80%."}
 source("code/19_results_lme_trend.R")
-grid.arrange(p_trend_c1, p_trend_c2, ncol=2)
+p_trend
 ```
 
 # Fig. 4
-
+Finally, we zoom in the individual-station-level temporal trends of the 7 metrics and explore their relationship with climate change. 
 ```{r climate-fig, fig.height=12*3, fig.width=12, fig.cap="Temporal trends of 7 fungal spore phenology metrics (individual station level) and their correlation with climate change. Linear trend over individual stations of the peak spore concentrations (A), total annual spore integrals (C), allergy season spore integrals (E), spore season start date (DOY) (G), total spore season length (days) (I), allergy season start date (DOY) (K), allergy season length (days) (M). Significant correlation between climate change and trend of the peak spore concentrations (B), total annual spore integrals (D), and allergy season start date (DOY) (L).Warm colors indicate increasing spore concentrations or earlier start dates or longer season lengths and circle size is proportional to the years of data at each station. Concentration metrics are transformed using the natural logarithm. The analysis includes station-year data with a minimum data completeness of 80%."}
 source("code/20_results_lm_climate.R")
 grid.arrange(
