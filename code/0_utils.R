@@ -44,6 +44,7 @@ pacman::p_load(plotly)
 pacman::p_load(pracma)
 pacman::p_load(daymetr)
 pacman::p_load(cowplot)
+pacman::p_load(glue)
 
 
 # ln -s /nfs/turbo/seas-zhukai/phenology/phenology_fungal_spore/ data

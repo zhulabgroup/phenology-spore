@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = FALSE, cache=TRUE,  warning = FALSE, message = FALS
 source("code/0_utils.R")
 df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/fill_smooth_offset.rds"))
 df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds"))
+pct = 0.8
 ```
 
 # Fig. 1
@@ -23,8 +24,7 @@ p_calendar
 
 # Fig. 2
 
-```{r metrics-fig, fig.cap="Summary of 10 fungal spore phenology metrics. Each box represents the interquartile range (IQR) of the metric, with the median value indicated by the line inside. Whiskers extend to the minimum and maximum values within 1.5 times the IQR, while points beyond the whiskers are considered outliers. All station-year data selected for analysis have achieved at least 80% data completeness. Concentration metrics are displayed in a natural logarithm-transformed scale (A), while date metrics are presented in Day of Year (DOY) format (B).", fig.height=11*0.618, fig.width=11}
-pct = 0.8
+```{r metrics-fig, fig.cap="Summary of 10 fungal spore phenology metrics. Each box represents the interquartile range (IQR) of the metric, with the median value indicated by the line inside. Whiskers extend to the minimum and maximum values within 1.5 times the IQR, while points beyond the whiskers are considered outliers. All station-year data selected for analysis have achieved at least 80% data completeness. Concentration metrics are displayed in a natural logarithm-transformed scale (A), while date metrics are presented in Day of Year (DOY) format (B).", fig.height=11*1.618, fig.width=11}
 source("code/8g_explore_summary_metrics.R")
 p_metrics
 ```
