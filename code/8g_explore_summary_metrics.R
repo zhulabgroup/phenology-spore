@@ -7,7 +7,7 @@ df_antt <- df_smooth %>%
   filter(year == 2009 | (year == 2010 & doy <= offset*2)) %>% 
   left_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
 
-p_antt <- ggplot() +
+p_antt<- ggplot() +
   geom_ribbon(
     data = df_antt %>% filter(year_new == 2009),
     aes(x = date, ymin = 0, ymax = count_whit, fill = "annual integral"),
@@ -113,6 +113,12 @@ p_antt <- ggplot() +
     aes(x = as_datetime("2009-08-12"), y = 7955.968),
     col = "orange"
     ) +
+  geom_text(
+    aes(x = as_datetime("2009-01-01"), y = exp(7), label = "offset"),
+    hjust = 0,
+    vjust = 1,
+    col = "black"
+  ) +
   scale_y_continuous(
     trans = scales::log_trans(),
     breaks = scales::trans_breaks("log", function(x) exp(x)),
