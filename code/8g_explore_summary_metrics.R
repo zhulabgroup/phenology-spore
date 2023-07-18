@@ -168,7 +168,7 @@ df_summary <- df_metrics %>%
   mutate(Metric = ifelse(Metric == "ln_integral", "integral", Metric)) %>% 
   mutate(Metric = ifelse(Metric == "ln_integral_as", "as integral", Metric)) %>% 
   mutate(Metric = ifelse(Metric == "peak_doy", "peak\ndate", Metric))
-df_summary$Metric <- factor(df_summary$Metric, levels = c("peak", "peak\ndate", "integral", "sos", "eos", "los", "sas", "eas", "las", "as integral"))
+df_summary$Metric <- factor(df_summary$Metric, levels = c("peak", "peak\ndoy", "integral", "sos", "eos", "los", "sas", "eas", "las", "as integral"))
 
 labels_e <- function(x) {parse(text = gsub("e^", x))}
 p_metrics_b <- ggplot(data = df_summary %>% filter(Metric %in% c("peak", "integral", "as integral")), aes(x = Metric, y = Value)) +
@@ -184,7 +184,7 @@ p_metrics_b <- ggplot(data = df_summary %>% filter(Metric %in% c("peak", "integr
   theme(plot.title.position = "plot",
         plot.margin = margin(10, 0, 10, 10))
 
-p_metrics_c <- ggplot(data = df_summary %>% filter(Metric %in% c("peak\ndate", "sos", "eos", "los", "sas", "eas", "las")), aes(x = Metric, y = Value)) +
+p_metrics_c <- ggplot(data = df_summary %>% filter(Metric %in% c("peak\ndoy", "sos", "eos", "los", "sas", "eas", "las")), aes(x = Metric, y = Value)) +
   geom_boxplot(width = 0.5) +
   theme_classic() +
   ylab("Day of year") +

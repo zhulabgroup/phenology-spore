@@ -16,9 +16,9 @@ pct = 0.8
 
 # Fig. 1
 We firstly check the fungal spore calendar and find some spatial variabilities.  
-1) Variability in seasonality: the fungal spores in different states tend to explode in different seasons. This requests us to define a spore year as we need to determine spore season based on cumsum.  
-2) Variability in concentration: states with lower annual precipitation, like NV, CO tend to have fewer spores during whole year. FL, PA: higher. This inspires us to explore the relationship between trend of spore phenology and climate change.
-```{r calendar-fig, fig.width=8, fig.height=8*1.618, fig.cap = "Fungal spore calendar for all the stations meeting our criteria. \nDisplayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. Stations are sorted by longitude."}
+1) Variability in seasonality: the fungal spores in different states tend to explode in different seasons (A). This requests us to define a spore year as we need to determine spore season based on cumsum.
+2) Variability in concentration: states with lower annual precipitation, like NV, CA tend to have fewer spores during whole year. FL, TX: higher (B). This inspires us to explore the relationship between trend of spore phenology and climate change.
+```{r calendar-fig, fig.width=8, fig.height=4*0.618, fig.cap = "Fungal spore calendar for 10 sample stations. Displayed is the daily long-term mean of fungal spore concentration, 2003-2022. Stations showing variability in seasonality are sorted by longitude (A). Stations showing variability in concentration are sorted by latitude (B). Darker colors indicate higher concentrations, while missing data are represented in white."}
 source("code/18_results_temporal_calendar_spatial_variability.R")
 p_calendar
 ```

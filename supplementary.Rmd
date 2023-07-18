@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = FALSE, cache=TRUE,  warning = FALSE, message = FALS
 source("code/0_utils.R")
 df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/fill_smooth_offset.rds"))
 df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds"))
+pct = 0.8
 ```
 
 # Table S1
@@ -18,5 +19,11 @@ df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds")
 source("code/21_spp_trend_flag_tab.R")
 df_trend_flag %>%
   knitr::kable(caption = "Temporal trends of 7 fungal spore phenology metrics. Displayed is the slope of spore metrics with ln-transformation for concentrations, change over 2003-2022 in % for concentrations (back-transformed) and days for start date and season length metrics, and the p-value of the mixed effexts model.", col.names = NULL)
+```
+
+# Figure S1
+```{r calendar-fig, fig.width=8, fig.height=8*1.618, fig.cap = "Figure S1: Fungal spore calendar for all the stations meeting our criteria. \nDisplayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. Stations are sorted by longitude."}
+source("code/18_results_temporal_calendar_spatial_variability.R")
+p_calendar_suppl
 ```
 
