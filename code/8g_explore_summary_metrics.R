@@ -43,7 +43,7 @@ p_antt <- ggplot() +
   ) +
   geom_ribbon_pattern(
     data = df_antt %>% filter(year_new == 2009 & doy_new %in% 1:78),
-    aes(x = date, ymin = 0, ymax = count_whit, pattern_fill = "30% of the annual integral"),
+    aes(x = date, ymin = 0, ymax = count_whit, pattern_fill = "10% of the annual integral"),
     pattern = "stripe",
     pattern_colour = "orange",
     fill = NA
