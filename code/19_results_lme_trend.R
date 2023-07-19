@@ -1,5 +1,5 @@
 # df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds"))
-# pct = 1
+# pct = 0.8
 
 ## peak
 # filter data
@@ -49,7 +49,8 @@ lme_peak <- lme(
   data = data_peak,
   random = ~ year_new | n
 )
-fixed_effects_peak_lme <- fixef(lme_peak)
+slope_peak <- fixef(lme_peak)[["year_new"]] %>% round(3)
+p_peak <- summary(lme_peak)$tTable[["year_new", "p-value"]] %>% round(3)
 peak_fit_lme <- data_peak %>% 
   mutate(
     lme.fixed = lme_peak$fitted[, 1],
@@ -91,11 +92,30 @@ p_trend_peak <- ggplot() +
   xlab("Year") +
   ylab("Peak concentration (grains / m^3)") +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
-  labs(title = expression(paste(bold("A      "), italic("Decreased Peak Concentration")))) +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.ticks.x = element_line(color = "black"),
+    axis.ticks.y = element_line(color = "black"),
+    axis.text.y = element_text(color = "black")
+  ) +
+  labs(title = expression(paste(bold("A      "), italic("Decreased")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(10, 10, 10, 10)
-    )
+  ) +
+  geom_text(
+    aes(
+      x = 2003,
+      y = 11,
+      label = paste0(
+        "\nSlope: ", slope_peak,
+        "\nP-value: ", p_peak
+      )
+    ),
+    hjust = 0,
+    vjust = 0.5,
+    col = "black"
+  )
 
 
 
@@ -145,7 +165,8 @@ lme_integral <- lme(
   data = data_integral,
   random = ~ year_new | n
 )
-fixed_effects_integral_lme <- fixef(lme_integral)
+slope_integral <- fixef(lme_integral)[["year_new"]] %>% round(3)
+p_integral <- summary(lme_integral)$tTable[["year_new", "p-value"]] %>% round(3)
 integral_fit_lme <- data_integral %>% 
   mutate(
     lme.fixed = lme_integral$fitted[, 1],
@@ -187,10 +208,29 @@ p_trend_integral <- ggplot() +
   xlab("Year") +
   ylab("Annual spore integral (grains / m^3)") +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
-  labs(title = expression(paste(bold("B      "), italic("Decreased Annual Integral")))) +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.ticks.x = element_line(color = "black"),
+    axis.ticks.y = element_line(color = "black"),
+    axis.text.y = element_text(color = "black")
+  ) +
+  labs(title = expression(paste(bold("B      "), italic("Decreased")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(10, 10, 10, 10)
+  ) +
+  geom_text(
+    aes(
+      x = 2003,
+      y = 16.5,
+      label = paste0(
+        "\nSlope: ", slope_integral,
+        "\nP-value: ", p_integral
+      )
+    ),
+    hjust = 0,
+    vjust = 0.5,
+    col = "black"
   )
 
 
@@ -243,7 +283,8 @@ lme_integral_as <- lme(
   data = data_integral_as,
   random = ~ year_new | n
 )
-fixed_effects_integral_as_lme <- fixef(lme_integral_as)
+slope_integral_as <- fixef(lme_integral_as)[["year_new"]] %>% round(3)
+p_integral_as <- summary(lme_integral_as)$tTable[["year_new", "p-value"]] %>% round(3)
 integral_as_fit_lme <- data_integral_as %>% 
   mutate(
     lme.fixed = lme_integral_as$fitted[, 1],
@@ -285,10 +326,29 @@ p_trend_integral_as <- ggplot() +
   xlab("Year") +
   ylab("Allergy season spore integral (grains / m^3)") +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
-  labs(title = expression(paste(bold("C      "), italic("Increased Allergy Season Integral")))) +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.ticks.x = element_line(color = "black"),
+    axis.ticks.y = element_line(color = "black"),
+    axis.text.y = element_text(color = "black")
+  ) +
+  labs(title = expression(paste(bold("C      "), italic("Increased")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(10, 10, 10, 10)
+  ) +
+  geom_text(
+    aes(
+      x = 2003,
+      y = 16.5,
+      label = paste0(
+        "\nSlope: ", slope_integral_as,
+        "\nP-value: ", p_integral_as
+      )
+    ),
+    hjust = 0,
+    vjust = 0.5,
+    col = "black"
   )
 
 
@@ -341,7 +401,8 @@ lme_sos <- lme(
   data = data_sos,
   random = ~ year_new | n
 )
-fixed_effects_sos_lme <- fixef(lme_sos)
+slope_sos <- fixef(lme_sos)[["year_new"]] %>% round(3)
+p_sos <- summary(lme_sos)$tTable[["year_new", "p-value"]] %>% round(3)
 sos_fit_lme <- data_sos %>% 
   mutate(
     lme.fixed = lme_sos$fitted[, 1],
@@ -382,10 +443,29 @@ p_trend_sos <- ggplot() +
   theme(legend.position = "none") +
   xlab("Year") +
   ylab("Sos (day of year)") +
-  labs(title = expression(paste(bold("D      "), italic("Advanced Start of Spore Season")))) +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.ticks.x = element_line(color = "black"),
+    axis.ticks.y = element_line(color = "black"),
+    axis.text.y = element_text(color = "black")
+  ) +
+  labs(title = expression(paste(bold("D      "), italic("Advanced")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(10, 10, 10, 10)
+  ) +
+  geom_text(
+    aes(
+      x = 2003,
+      y = 120,
+      label = paste0(
+        "\nSlope: ", slope_sos,
+        "\nP-value: ", p_sos
+      )
+    ),
+    hjust = 0,
+    vjust = 0.5,
+    col = "black"
   )
 
 
@@ -437,7 +517,8 @@ lme_los <- lme(
   data = data_los,
   random = ~ year_new | n
 )
-fixed_effects_los_lme <- fixef(lme_los)
+slope_los <- fixef(lme_los)[["year_new"]] %>% round(3)
+p_los <- summary(lme_los)$tTable[["year_new", "p-value"]] %>% round(3)
 los_fit_lme <- data_los %>% 
   mutate(
     lme.fixed = lme_los$fitted[, 1],
@@ -478,10 +559,29 @@ p_trend_los <- ggplot() +
   theme(legend.position = "none") +
   xlab("Year") +
   ylab("Los (days)") +
-  labs(title = expression(paste(bold("F      "), italic("Extended Length of Spore Season")))) +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.ticks.x = element_line(color = "black"),
+    axis.ticks.y = element_line(color = "black"),
+    axis.text.y = element_text(color = "black")
+  ) +
+  labs(title = expression(paste(bold("F      "), italic("Extended")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(10, 10, 10, 10)
+  ) +
+  geom_text(
+    aes(
+      x = 2003,
+      y = 290,
+      label = paste0(
+        "\nSlope: ", slope_los,
+        "\nP-value: ", p_los
+      )
+    ),
+    hjust = 0,
+    vjust = 0.5,
+    col = "black"
   )
   
 
@@ -531,7 +631,8 @@ lme_sas <- lme(
   data = data_sas,
   random = ~ year_new | n
 )
-fixed_effects_sas_lme <- fixef(lme_sas)
+slope_sas <- fixef(lme_sas)[["year_new"]] %>% round(3)
+p_sas <- summary(lme_sas)$tTable[["year_new", "p-value"]] %>% round(3)
 sas_fit_lme <- data_sas %>% 
   mutate(
     lme.fixed = lme_sas$fitted[, 1],
@@ -573,10 +674,29 @@ p_trend_sas <- ggplot() +
   xlab("Year") +
   ylab("Sas (day of year)") +
   ylab("Los (days)") +
-  labs(title = expression(paste(bold("E      "), italic("Advanced Start of Allergy Season")))) +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.ticks.x = element_line(color = "black"),
+    axis.ticks.y = element_line(color = "black"),
+    axis.text.y = element_text(color = "black")
+  ) +
+  labs(title = expression(paste(bold("E      "), italic("Advanced")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(10, 10, 10, 10)
+  ) +
+  geom_text(
+    aes(
+      x = 2003,
+      y = 320,
+      label = paste0(
+        "\nSlope: ", slope_sas,
+        "\nP-value: ", p_sas
+      )
+    ),
+    hjust = 0,
+    vjust = 0.5,
+    col = "black"
   )
 
 
@@ -628,7 +748,8 @@ lme_las <- lme(
   data = data_las,
   random = ~ year_new | n
 )
-fixed_effects_las_lme <- fixef(lme_las)
+slope_las <- fixef(lme_las)[["year_new"]] %>% round(3)
+p_las <- summary(lme_las)$tTable[["year_new", "p-value"]] %>% round(3)
 las_fit_lme <- data_las %>% 
   mutate(
     lme.fixed = lme_las$fitted[, 1],
@@ -669,19 +790,58 @@ p_trend_las <- ggplot() +
   theme(legend.position = "none") +
   xlab("Year") +
   ylab("Las (days)") +
-  labs(title = expression(paste(bold("G      "), italic("Extended Length of Allergy Season")))) +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.ticks.x = element_line(color = "black"),
+    axis.ticks.y = element_line(color = "black"),
+    axis.text.y = element_text(color = "black")
+  ) +
+  labs(title = expression(paste(bold("G      "), italic("Extended")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(10, 10, 10, 10)
+  ) +
+  geom_text(
+    aes(
+      x = 2003,
+      y = 365,
+      label = paste0(
+        "\nSlope: ", slope_las,
+        "\nP-value: ", p_las
+      )
+    ),
+    hjust = 0,
+    vjust = 0.5,
+    col = "black"
   )
+
 
 p_trend_space <- ggplot() +
   theme_void() +
   theme(plot.margin = margin(10, 10, 10, 10))
-title1 <- ggdraw() + draw_label("Ecology Perspective", hjust = 0.5, vjust = 1, fontface = "bold")
-p_trend_c1 <- plot_grid(title1, p_trend_peak, p_trend_integral, p_trend_sos, p_trend_los, ncol = 1,
-                        rel_heights = c(0.1, 1, 1, 1, 1))
-title2 <- ggdraw() + draw_label("Public Health Perspective", hjust = 0.5, vjust = 1, fontface = "bold")
-p_trend_c2 <- plot_grid(title2, p_trend_space, p_trend_integral_as, p_trend_sas, p_trend_las, ncol = 1,
-                        rel_heights = c(0.1, 1, 1, 1, 1))
-p_trend <- plot_grid(p_trend_c1, p_trend_c2, ncol = 2)
+title1 <- ggdraw() + draw_label("Ecology\nPerspective", hjust = 0.5, vjust = 0.5, fontface = "bold")
+title2 <- ggdraw() + draw_label("Public Health\nPerspective", hjust = 0.5, vjust = 0.5, fontface = "bold")
+p_trend_c1 <- plot_grid(title1,
+                        title2,
+                        ncol = 1,
+                        rel_heights = c(1, 1))
+p_trend_c2 <- plot_grid(p_trend_space,
+                        p_trend_peak,
+                        p_trend_space,
+                        ncol = 1,
+                        rel_heights = c(0.5, 1, 0.5))
+p_trend_c3 <- plot_grid(p_trend_integral,
+                        p_trend_integral_as,
+                        ncol = 1,
+                        rel_heights = c(1, 1))
+p_trend_c4 <- plot_grid(p_trend_sos,
+                        p_trend_sas,
+                        ncol = 1,
+                        rel_heights = c(1, 1))
+p_trend_c5 <- plot_grid(p_trend_los,
+                        p_trend_las,
+                        ncol = 1,
+                        rel_heights = c(1, 1))
+p_trend <- plot_grid(p_trend_c1, p_trend_c2, p_trend_c3, p_trend_c4, p_trend_c5,
+                     ncol = 5,
+                     rel_widths = c(0.6, 1, 1, 1, 1))
