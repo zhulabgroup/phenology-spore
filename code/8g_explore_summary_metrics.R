@@ -27,11 +27,7 @@ ggplot(df_antt %>% filter(year_new == 2009 & doy_new %in% 137:236),
                     guide = guide_legend(alpha = 0.4)) +
   theme_classic()
 
-
-
-
-p_antt
-ggplot() +
+p_antt <- ggplot() +
   geom_ribbon_pattern(
     data = df_antt %>% filter(year_new == 2009 & doy_new %in% 137:236),
     aes(x = date, ymin = 0, ymax = count_whit, pattern_colour = "allergy season integral"),
@@ -192,7 +188,7 @@ ggplot() +
   xlab("Day of spore year") +
   theme_classic() +
   theme(
-    legend.position = c(0.8, 0.8),
+    legend.position = c(1, 1),
     legend.justification = c("right", "top"),
     legend.box.just = "left"
   ) +
@@ -222,12 +218,12 @@ df_summary <- df_metrics %>%
   mutate(Metric = ifelse(Metric == "ln_peak", "peak", Metric)) %>% 
   mutate(Metric = ifelse(Metric == "ln_integral", "integral", Metric)) %>% 
   mutate(Metric = ifelse(Metric == "ln_integral_as", "as integral", Metric)) %>% 
-  mutate(Metric = ifelse(Metric == "peak_doy", "peak\ndate", Metric))
-df_summary$Metric <- factor(df_summary$Metric, levels = c("peak", "peak\ndoy", "integral", "sos", "eos", "los", "sas", "eas", "las", "as integral"))
+  mutate(Metric = ifelse(Metric == "peak_doy", "peak\ndoy", Metric))
+df_summary$Metric <- factor(df_summary$Metric, levels = c("peak", "integral", "as integral", "las", "eas", "sas", "los", "eos", "sos", "peak\ndoy"))
 
 labels_e <- function(x) {parse(text = gsub("e^", x))}
 p_metrics_b <- ggplot(data = df_summary %>% filter(Metric == "peak"), aes(x = Metric, y = Value)) +
-  geom_boxplot(width = 0.5) +
+  geom_boxplot(width = 0.2) +
   theme_classic() +
   ylab("Spore concentration\n(grains / m^3)") +
   scale_y_continuous(
@@ -268,7 +264,7 @@ p_metrics_c <- ggplot(data = df_summary %>% filter(Metric %in% c("peak\ndoy", "s
   coord_flip()
 
 p_metrics_d <- ggplot(data = df_summary %>% filter(Metric %in% c("integral", "as integral")), aes(x = Metric, y = Value)) +
-  geom_boxplot(width = 0.5) +
+  geom_boxplot(width = 0.4) +
   theme_classic() +
   ylab("Spore concentration * days\n(grains / m^3 * days)") +
   scale_y_continuous(

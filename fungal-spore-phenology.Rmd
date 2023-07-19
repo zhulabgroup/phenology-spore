@@ -7,7 +7,7 @@ output:
 ---
 
 ```{r setup, include=FALSE, message=FALSE}
-knitr::opts_chunk$set(echo = FALSE, cache=TRUE,  warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = FALSE, cache=FALSE, warning = FALSE, message = FALSE)
 source("code/0_utils.R")
 df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/fill_smooth_offset.rds"))
 df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds"))
@@ -16,9 +16,9 @@ pct = 0.8
 
 # Fig. 1
 We firstly check the fungal spore calendar and find some spatial variabilities.  
-1) Variability in seasonality: the fungal spores in different states tend to explode in different seasons (A). This requests us to define a spore year as we need to determine spore season based on cumsum.
+1) Variability in seasonality: the fungal spores in different states tend to explode in different seasons (A). This requests us to define a spore year as we need to determine spore season based on cumsum.  
 2) Variability in concentration: states with lower annual precipitation, like NV, CA tend to have fewer spores during whole year. FL, TX: higher (B). This inspires us to explore the relationship between trend of spore phenology and climate change.
-```{r calendar-fig, fig.width=8, fig.height=4*0.618, fig.cap = "Fungal spore calendar for 10 sample stations. Displayed is the daily long-term mean of fungal spore concentration, 2003-2022. Stations showing variability in seasonality are sorted by longitude (A). Stations showing variability in concentration are sorted by latitude (B). Darker colors indicate higher concentrations, while missing data are represented in white."}
+```{r calendar-fig, fig.width=8, fig.height=5*0.8, fig.cap = "Fungal spore calendar for 10 sample stations. Displayed is the daily long-term mean of fungal spore concentration, 2003-2022. Stations showing variability in seasonality are sorted by longitude (A). Stations showing variability in concentration are sorted by latitude (B). Darker colors indicate higher concentrations, while missing data are represented in white."}
 source("code/18_results_temporal_calendar_spatial_variability.R")
 p_calendar
 ```
@@ -35,7 +35,7 @@ p_metrics
 We then analyze the temporal trend of those metrics at continental level, and finally the results of 7 metrics are more convincing.  
 Peak concentration and annual integral decreased, while allergy season integral increased.  
 Both sos and sas are advanced. Both los and las extended.
-```{r trend-fig, fig.width=8, fig.height=10*1.618, fig.cap="Temporal trends of 7 fungal spore phenology metrics (continental level). Predicted slope from linear mixed effects models across stations of year against the peak spore concentrations (A), total annual spore integrals (B), allergy season spore integrals (C), spore season start date (DOY) (D), total spore season length (days) (F), allergy season start date (DOY) (E), allergy season length (days) (G). Points are individual years at individual stations. Colorful lines are station-level trends. Point/line colors are stations. Shaded areas indicate the 95% CI of the fixed effect. Concentration metrics are transformed using the natural logarithm. The analysis includes station-year data with a minimum data completeness of 80%."}
+```{r trend-fig, fig.width=11, fig.height=11*0.7, fig.cap="Temporal trends of 7 fungal spore phenology metrics (continental level). Predicted slope from linear mixed effects models across stations of year against the peak spore concentrations (A), total annual spore integrals (B), allergy season spore integrals (C), spore season start date (DOY) (D), total spore season length (days) (F), allergy season start date (DOY) (E), allergy season length (days) (G). Points are individual years at individual stations. Colorful lines are station-level trends. Point/line colors are stations. Shaded areas indicate the 95% CI of the fixed effect. Concentration metrics are transformed using the natural logarithm. The analysis includes station-year data with a minimum data completeness of 80%."}
 source("code/19_results_lme_trend.R")
 p_trend
 ```

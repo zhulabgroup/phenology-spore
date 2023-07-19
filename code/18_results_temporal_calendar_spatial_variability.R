@@ -110,7 +110,9 @@ p_calendar_b <- ggplot(data = df_calendar %>% filter(n %in% c(5, 7, 48, 56, 40))
     plot.margin = margin(10, 10, 10, 10)
   )
 
-p_calendar <- plot_grid(p_calendar_a, p_calendar_b, ncol = 2)
+legend_grob <- get_legend(p_calendar_a)
+p_calendar_r1 <- plot_grid(p_calendar_a + theme(legend.position = 'none'), p_calendar_b + theme(legend.position = 'none'), ncol = 2, rel_widths = c(1, 1))
+p_calendar <- plot_grid(p_calendar_r1, legend_grob, ncol = 1, align = 'v', rel_heights = c(4, 1))
 
 p_calendar_suppl <- ggplot(data = df_calendar) +
   geom_tile(aes(x = doy, y = reorder(interaction(city, state, n), lon), fill = count_re), alpha = 1) +
