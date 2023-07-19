@@ -1,52 +1,26 @@
 # df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/fill_smooth_offset.rds"))
 
-
 df_calendar <- df_smooth %>%
   filter(state != "PR") %>% 
   filter(country == "US") %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, doy) %>%
   summarise(count_mean = mean(count, na.rm = T)) %>%
-  mutate() %>% 
-  ungroup() %>%
-  group_by(lat, lon, station, city, state, country, id, n, offset) %>%
-  ungroup() %>% 
-  mutate(city = factor(city)) %>% 
-  mutate(state = factor(state)) %>% 
-  mutate(n = factor(n)) %>% 
-  arrange(lon) %>% 
-  mutate(order = interaction(city, state, n)) %>% 
-  mutate(count_re = ifelse(count_mean < 6500, count_mean, 6500))
+  mutate(count_mean = ifelse(is.nan(count_mean), NA, count_mean)) %>% 
+  mutate(count_re = ifelse(count_mean < 6500, count_mean, 6500)) %>% 
+  left_join(
+    df_metrics %>% 
+      group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
+      summarise(tap_mean = mean(tap)),
+    by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")
+  )
 
 labelfunc_x <- function(x) {
   origin <- as.Date("2003-01-01")
   format(origin + x, format = "%b")
 }
 
-p_calendar_a <- ggplot(data = df_calendar %>% filter(n %in% c(10, 9, 22, 29, 6))) +
-  geom_tile(aes(x = doy, y = reorder(interaction(city, state, n), lon), fill = count_re), alpha = 1) +
-  ylab("") +
-  xlab("") +
-  scale_y_discrete(labels = function(x) {
-    parts <- strsplit(as.character(x), "\\.")
-    city <- sapply(parts, "[", 1)
-    state <- sapply(parts, "[", 2)
-    n <- sapply(parts, "[", 3)
-    paste(city, state, n, sep = ", ")
-  }) +
-  scale_x_continuous(labels = labelfunc_x) +
-  theme_classic() +
-  # scale_x_continuous(breaks = scales::pretty_breaks(n = 2)) +
-  # scale_x_continuous(labels = labelfunc_x) +
-  theme(
-    axis.line.y = element_blank(),
-    # axis.text.y = element_blank(),
-    axis.ticks.y = element_blank()
-  ) +
-  # theme(strip.text.y= element_text(angle = 0))+
-  theme(
-    legend.position = "bottom",
-    legend.key.width = unit(1, "cm")
-  ) +
+p_calendar_a <- ggplot(data = df_calendar %>% filter(n %in% c(10, 9, 22, 13, 6))) +
+  geom_tile(aes(x = doy, y = reorder(interaction(city, state, lon), lon), fill = count_re), alpha = 1) +
   scale_fill_gradient(
     low = "light yellow", high = "dark red", na.value = "white",
     breaks = c(1, 1000, 3000, 5000),
@@ -54,11 +28,26 @@ p_calendar_a <- ggplot(data = df_calendar %>% filter(n %in% c(10, 9, 22, 29, 6))
     limits = c(1, 6500),
     name = "Spore concentration\n(grains / m^3)"
   ) +
+  scale_y_discrete(labels = function(x) {
+    parts <- strsplit(as.character(x), "\\.")
+    city <- sapply(parts, "[", 1)
+    state <- sapply(parts, "[", 2)
+    lon <- sapply(parts, "[", 3)
+    paste(city, state, lon, sep = ", ")
+  }) +
+  scale_x_continuous(labels = labelfunc_x) +
+  theme_classic() +
+  ylab("") +
+  xlab("") +
   theme(
-    legend.margin = margin(t = -20, r = 0, b = 0, l = 0),
+    axis.line.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_text(color = "black"),
     axis.text.x = element_text(color = "black"),
     axis.ticks.x = element_line(color = "black"),
-    axis.text.y = element_text(color = "black")
+    legend.position = "bottom",
+    legend.key.width = unit(1, "cm"),
+    legend.margin = margin(t = -20, r = 0, b = 0, l = 0)
   ) +
   labs(title = expression(paste(bold("A")))) +
   theme(
@@ -67,42 +56,34 @@ p_calendar_a <- ggplot(data = df_calendar %>% filter(n %in% c(10, 9, 22, 29, 6))
   )
 
 p_calendar_b <- ggplot(data = df_calendar %>% filter(n %in% c(5, 7, 48, 56, 40))) +
-  geom_tile(aes(x = doy, y = reorder(interaction(city, state, n), lat), fill = count_re), alpha = 1) +
-  ylab("") +
+  geom_tile(aes(x = doy, y = reorder(interaction(city, state, tap_mean), tap_mean), fill = count_re), alpha = 1) +
+  scale_fill_gradient(
+    low = "light yellow", high = "dark red", na.value = "white",
+    breaks = c(1, 1000, 3000, 5000),
+    labels = c(1, 1000, 3000, 5000),
+    limits = c(1, 6500),
+    name = "Spore concentration\n(grains / m^3)"
+  ) +
   scale_y_discrete(labels = function(x) {
     parts <- strsplit(as.character(x), "\\.")
     city <- sapply(parts, "[", 1)
     state <- sapply(parts, "[", 2)
-    n <- sapply(parts, "[", 3)
-    paste(city, state, n, sep = ", ")
+    tap_mean <- sapply(parts, "[", 3)
+    paste(city, state, tap_mean, sep = ", ")
   }) +
-  xlab("") +
   scale_x_continuous(labels = labelfunc_x) +
   theme_classic() +
-  # scale_x_continuous(breaks = scales::pretty_breaks(n = 2)) +
-  # scale_x_continuous(labels = labelfunc_x) +
+  ylab("") +
+  xlab("") +
   theme(
     axis.line.y = element_blank(),
-    # axis.text.y = element_blank(),
-    axis.ticks.y = element_blank()
-  ) +
-  # theme(strip.text.y= element_text(angle = 0))+
-  theme(
-    legend.position = "bottom",
-    legend.key.width = unit(1, "cm")
-  ) +
-  scale_fill_gradient(
-    low = "light yellow", high = "dark red", na.value = "white",
-    breaks = c(1, 3000, 5000),
-    labels = c(1, 3000, 5000),
-    limits = c(1, 6500),
-    name = "Spore concentration\n(grains / m^3)"
-  ) +
-  theme(
-    legend.margin = margin(t = -20, r = 0, b = 0, l = 0),
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_text(color = "black"),
     axis.text.x = element_text(color = "black"),
     axis.ticks.x = element_line(color = "black"),
-    axis.text.y = element_text(color = "black")
+    legend.position = "bottom",
+    legend.key.width = unit(1, "cm"),
+    legend.margin = margin(t = -20, r = 0, b = 0, l = 0)
   ) +
   labs(title = expression(paste(bold("B")))) +
   theme(
@@ -111,7 +92,7 @@ p_calendar_b <- ggplot(data = df_calendar %>% filter(n %in% c(5, 7, 48, 56, 40))
   )
 
 legend_grob <- get_legend(p_calendar_a)
-p_calendar_r1 <- plot_grid(p_calendar_a + theme(legend.position = 'none'), p_calendar_b + theme(legend.position = 'none'), ncol = 2, rel_widths = c(1, 1))
+p_calendar_r1 <- plot_grid(p_calendar_a + theme(legend.position = 'none'), p_calendar_b + theme(legend.position = 'none'), ncol = 2, align = "v", rel_widths = c(1, 1))
 p_calendar <- plot_grid(p_calendar_r1, legend_grob, ncol = 1, align = 'v', rel_heights = c(4, 1))
 
 p_calendar_suppl <- ggplot(data = df_calendar) +
