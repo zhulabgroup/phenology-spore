@@ -94,7 +94,11 @@ p_climate_1a <- ggplot() +
     ) +
   geom_point(data = data_peak_climate, aes(x = lon, y = lat, size = Nyear, shape = ifelse(p_value > 0.05, "> 0.05", "<= 0.05"))) +
   scale_shape_manual(values = c(10, 1), guide = guide_legend(title = "P-value", override.aes = list(size = c(4, 4)))) +
-  ggtitle("A") +
+  guides(
+    size = "none",
+    shape = "none"
+  ) +
+  ggtitle("F") +
   theme(plot.title.position = "plot",
         plot.margin = margin(10, 5, 10, 10),
         plot.title = element_text(face = "bold"),
@@ -137,7 +141,7 @@ p_climate_1b <- ggplot(data_peak_climate, aes(x = slope_tap)) +
   ) +
   xlab("Temporal trend of tap") +
   ylab("Temporal trend of ln(peak)") +
-  ggtitle("B") +
+  ggtitle("G") +
   theme(plot.title.position = "plot",
         plot.margin = margin(10, 10, 10, 5),
         plot.title = element_text(face = "bold")) +
@@ -244,7 +248,11 @@ p_climate_2c <- ggplot() +
   ) +
   geom_point(data = data_integral_climate, aes(x = lon, y = lat, size = Nyear, shape = ifelse(p_value > 0.05, "> 0.05", "<= 0.05"))) +
   scale_shape_manual(values = c(10, 1), guide = guide_legend(title = "P-value", override.aes = list(size = c(4, 4)))) +
-  ggtitle("C") +
+  guides(
+    size = "none",
+    shape = "none"
+  ) +
+  ggtitle("D") +
   theme(plot.title.position = "plot",
         plot.margin = margin(10, 5, 10, 10),
         plot.title = element_text(face = "bold"),
@@ -287,7 +295,7 @@ p_climate_2d <- ggplot(data_integral_climate, aes(x = slope_tap)) +
   ) +
   xlab("Temporal trend of tap") +
   ylab("Temporal trend of ln(annual integral)") +
-  ggtitle("D") +
+  ggtitle("E") +
   theme(plot.title.position = "plot",
         plot.margin = margin(10, 10, 10, 5),
         plot.title = element_text(face = "bold")) +
@@ -772,7 +780,11 @@ p_climate_3e <- ggplot() +
   ) +
   geom_point(data = data_sas_climate, aes(x = lon, y = lat, size = Nyear, shape = ifelse(p_value > 0.05, "> 0.05", "<= 0.05"))) +
   scale_shape_manual(values = c(10, 1), guide = guide_legend(title = "P-value", override.aes = list(size = c(4, 4)))) +
-  ggtitle("E") +
+  guides(
+    size = "none",
+    shape = "none"
+  ) +
+  ggtitle("A") +
   theme(plot.title.position = "plot",
         plot.margin = margin(10, 5, 10, 10),
         plot.title = element_text(face = "bold"),
@@ -815,7 +827,7 @@ p_climate_3f <- ggplot(data_sas_climate, aes(x = slope_mat)) +
   ) +
   xlab("Temporal trend of mat") +
   ylab("Temporal trend of sas") +
-  ggtitle("F") +
+  ggtitle("B") +
   theme(plot.title.position = "plot",
         plot.margin = margin(10, 10, 10, 5),
         plot.title = element_text(face = "bold")) +
@@ -868,7 +880,7 @@ p_climate_3g <- ggplot(data_sas_climate, aes(x = slope_tap)) +
   ) +
   xlab("Temporal trend of tap") +
   ylab("Temporal trend of sas") +
-  ggtitle("G") +
+  ggtitle("C") +
   theme(plot.title.position = "plot",
         plot.margin = margin(10, 10, 10, 5),
         plot.title = element_text(face = "bold")) +
@@ -884,6 +896,42 @@ p_climate_3g <- ggplot(data_sas_climate, aes(x = slope_tap)) +
     vjust = 0.5
   )
 
+
+
+p_climate_space <- ggplot() +
+  theme_void() +
+  theme(plot.margin = margin(10, 10, 10, 10))
+p_climate_4 <- ggplot() +
+  geom_polygon(data = map_data("state"), aes(x = long, y = lat, group = group), fill = "white") +
+  geom_path(data = map_data("state"), aes(x = long, y = lat, group = group), color = "grey50", alpha = 0.5, lwd = 0.2) +
+  coord_map("conic", lat0 = 30) +
+  theme_void() +
+  geom_point(
+    data = data_sas_climate, 
+    aes(x = lon, y = lat, size = Nyear, color = rescaled_slope),
+    alpha = 0.8
+  ) +
+  scale_size_continuous(
+    range = c(3, 5),
+    breaks = round(seq(min(data_sas_climate$Nyear), max(data_sas_climate$Nyear), length.out = 5)),
+    name = "Number of year"
+  ) +
+  scale_color_gradient2(
+    low = "red", mid= "white", high = "blue", midpoint = 0,
+    breaks = c(min(data_sas_climate$rescaled_slope), min(data_sas_climate$rescaled_slope)/2, 0, max(data_sas_climate$rescaled_slope)/2, max(data_sas_climate$rescaled_slope)),
+    labels = c(min(data_sas_climate$rescaled_slope), min(data_sas_climate$rescaled_slope)/2, 0, max(data_sas_climate$rescaled_slope)/2, max(data_sas_climate$rescaled_slope))^3 %>% round(4),
+    name = "Temporal trend of\nsas",
+  ) +
+  guides(color = "none") +
+  geom_point(data = data_sas_climate, aes(x = lon, y = lat, size = Nyear, shape = ifelse(p_value > 0.05, "> 0.05", "<= 0.05"))) +
+  scale_shape_manual(values = c(10, 1), guide = guide_legend(title = "P-value", override.aes = list(size = c(4, 4)))) +
+  ggtitle("A") +
+  theme(plot.title.position = "plot",
+        plot.margin = margin(10, 5, 10, 10),
+        plot.title = element_text(face = "bold"),
+        legend.position = "bottom",
+        legend.box = "vertical")
+legend_grob <- get_legend(p_climate_4)
 p_climate_1 <- plot_grid(
   p_climate_1a, p_climate_1b,
   ncol = 2,
@@ -908,11 +956,17 @@ p_climate_3 <- plot_grid(
   rel_widths = c(
     3, 1
   ))
+p_climate_lgd <- plot_grid(
+  legend_grob, p_climate_space,
+  ncol = 2,
+  rel_widths = c(
+    3, 1
+  ))
 p_climate <- plot_grid(
-  p_climate_1, p_climate_2, p_climate_3,
+  p_climate_3, p_climate_2, p_climate_1, p_climate_lgd,
   ncol = 1,
   rel_heights = c(
-    1, 1, 1
+    1, 1, 1, 0.2
   ))
 
 # ## las

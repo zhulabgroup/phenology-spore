@@ -26,7 +26,7 @@ p_calendar_a <- ggplot(data = df_calendar %>% filter(n %in% c(10, 9, 22, 13, 6))
     breaks = c(1, 1000, 3000, 5000),
     labels = c(1, 1000, 3000, 5000),
     limits = c(1, 6500),
-    name = "Spore concentration\n(grains / m^3)"
+    name = expression(atop("Spore concentration (grains / m"^3*")"))
   ) +
   scale_y_discrete(labels = function(x) {
     parts <- strsplit(as.character(x), "\\.")
@@ -62,7 +62,7 @@ p_calendar_b <- ggplot(data = df_calendar %>% filter(n %in% c(5, 7, 48, 56, 40))
     breaks = c(1, 1000, 3000, 5000),
     labels = c(1, 1000, 3000, 5000),
     limits = c(1, 6500),
-    name = "Spore concentration\n(grains / m^3)"
+    name = expression(atop("Spore concentration (grains / m"^3*")"))
   ) +
   scale_y_discrete(labels = function(x) {
     parts <- strsplit(as.character(x), "\\.")
@@ -125,7 +125,7 @@ p_calendar_suppl <- ggplot(data = df_calendar) +
     breaks = c(1, 3000, 5000),
     labels = c(1, 3000, 5000),
     limits = c(1, 6500),
-    name = "Spore concentration\n(grains / m^3)"
+    name = expression(atop("Spore concentration", "(grains / m"^3*")"))
   ) +
   theme(
     legend.margin = margin(t = -20, r = 0, b = 0, l = 0),
