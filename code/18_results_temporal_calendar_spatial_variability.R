@@ -6,13 +6,19 @@ df_calendar <- df_smooth %>%
   group_by(lat, lon, station, city, state, country, id, n, offset, doy) %>%
   summarise(count_mean = mean(count, na.rm = T)) %>%
   mutate(count_mean = ifelse(is.nan(count_mean), NA, count_mean)) %>% 
-  mutate(count_re = ifelse(count_mean < 6500, count_mean, 6500)) %>% 
+  mutate(count_new = ifelse(count_mean < 50000, count_mean, 50000)) %>% 
+  mutate(count_new = ifelse(count_mean > 100, count_mean, 100)) %>% 
   left_join(
     df_metrics %>% 
       group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
-      summarise(tap_mean = mean(tap)),
+      summarise(
+        tap_mean = mean(tap),
+        mat_mean = mean(mat)
+      ),
     by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")
-  )
+  ) %>% 
+  mutate(ylab_lon = paste0(city, ", ", state, " (", round(lat), "° N, ", round(-lon), "° W)")) %>% 
+  mutate(ylab_tap = paste0(city, ", ", state, " (", round(mat_mean), " °C, ", round(tap_mean), " mm)"))
 
 labelfunc_x <- function(x) {
   origin <- as.Date("2003-01-01")
@@ -20,21 +26,14 @@ labelfunc_x <- function(x) {
 }
 
 p_calendar_a <- ggplot(data = df_calendar %>% filter(n %in% c(10, 9, 22, 13, 6))) +
-  geom_tile(aes(x = doy, y = reorder(interaction(city, state, lon), lon), fill = count_re), alpha = 1) +
+  geom_tile(aes(x = doy, y = reorder(ylab_lon, lon), fill = count_new %>% log(10)), alpha = 1) +
   scale_fill_gradient(
     low = "light yellow", high = "dark red", na.value = "white",
-    breaks = c(1, 1000, 3000, 5000),
-    labels = c(1, 1000, 3000, 5000),
-    limits = c(1, 6500),
-    name = expression(atop("Spore concentration (grains / m"^3*")"))
+    breaks = c(1, 100, 1000, 10000, 1000000) %>% log(10),
+    labels = c(1, 100, 1000, 10000, 1000000),
+    limits = c(100, 50000) %>% log(10),
+    name = expression(atop("Spore concentration (grains*m"^-3*")"))
   ) +
-  scale_y_discrete(labels = function(x) {
-    parts <- strsplit(as.character(x), "\\.")
-    city <- sapply(parts, "[", 1)
-    state <- sapply(parts, "[", 2)
-    lon <- sapply(parts, "[", 3)
-    paste(city, state, lon, sep = ", ")
-  }) +
   scale_x_continuous(labels = labelfunc_x) +
   theme_classic() +
   ylab("") +
@@ -56,21 +55,14 @@ p_calendar_a <- ggplot(data = df_calendar %>% filter(n %in% c(10, 9, 22, 13, 6))
   )
 
 p_calendar_b <- ggplot(data = df_calendar %>% filter(n %in% c(5, 7, 48, 56, 40))) +
-  geom_tile(aes(x = doy, y = reorder(interaction(city, state, tap_mean), tap_mean), fill = count_re), alpha = 1) +
+  geom_tile(aes(x = doy, y = reorder(ylab_tap, tap_mean), fill = count_new %>% log(10)), alpha = 1) +
   scale_fill_gradient(
     low = "light yellow", high = "dark red", na.value = "white",
-    breaks = c(1, 1000, 3000, 5000),
-    labels = c(1, 1000, 3000, 5000),
-    limits = c(1, 6500),
-    name = expression(atop("Spore concentration (grains / m"^3*")"))
+    breaks = c(1, 100, 1000, 10000, 1000000) %>% log(10),
+    labels = c(1, 100, 1000, 10000, 1000000),
+    limits = c(100, 50000) %>% log(10),
+    name = expression(atop("Spore concentration (grains*m"^-3*")"))
   ) +
-  scale_y_discrete(labels = function(x) {
-    parts <- strsplit(as.character(x), "\\.")
-    city <- sapply(parts, "[", 1)
-    state <- sapply(parts, "[", 2)
-    tap_mean <- sapply(parts, "[", 3)
-    paste(city, state, tap_mean, sep = ", ")
-  }) +
   scale_x_continuous(labels = labelfunc_x) +
   theme_classic() +
   ylab("") +
@@ -96,42 +88,29 @@ p_calendar_r1 <- plot_grid(p_calendar_a + theme(legend.position = 'none'), p_cal
 p_calendar <- plot_grid(p_calendar_r1, legend_grob, ncol = 1, align = 'v', rel_heights = c(4, 1))
 
 p_calendar_suppl <- ggplot(data = df_calendar) +
-  geom_tile(aes(x = doy, y = reorder(interaction(city, state, n), lon), fill = count_re), alpha = 1) +
+  geom_tile(aes(x = doy, y = reorder(ylab_lon, lon), fill = count_new %>% log(10)), alpha = 1) +
   ylab("") +
   xlab("") +
-  scale_y_discrete(labels = function(x) {
-    parts <- strsplit(as.character(x), "\\.")
-    city <- sapply(parts, "[", 1)
-    state <- sapply(parts, "[", 2)
-    n <- sapply(parts, "[", 3)
-    paste(city, state, n, sep = ", ")
-  }) +
   scale_x_continuous(labels = labelfunc_x) +
   theme_classic() +
-  # scale_x_continuous(breaks = scales::pretty_breaks(n = 2)) +
-  # scale_x_continuous(labels = labelfunc_x) +
   theme(
     axis.line.y = element_blank(),
-    # axis.text.y = element_blank(),
-    axis.ticks.y = element_blank()
-  ) +
-  # theme(strip.text.y= element_text(angle = 0))+
-  theme(
-    legend.position = "bottom",
-    legend.key.width = unit(1, "cm")
-  ) +
-  scale_fill_gradient(
-    low = "light yellow", high = "dark red", na.value = "white",
-    breaks = c(1, 3000, 5000),
-    labels = c(1, 3000, 5000),
-    limits = c(1, 6500),
-    name = expression(atop("Spore concentration", "(grains / m"^3*")"))
-  ) +
-  theme(
-    legend.margin = margin(t = -20, r = 0, b = 0, l = 0),
+    axis.ticks.y = element_blank(),
     axis.text.x = element_text(color = "black"),
     axis.ticks.x = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
+  ) +
+  theme(
+    legend.position = "bottom",
+    legend.key.width = unit(1, "cm"),
+    legend.margin = margin(t = -20, r = 0, b = 0, l = 0)
+  ) +
+  scale_fill_gradient(
+    low = "light yellow", high = "dark red", na.value = "white",
+    breaks = c(1, 100, 10000, 1000000) %>% log(10),
+    labels = c(1, 100, 10000, 1000000),
+    limits = c(100, 50000) %>% log(10),
+    name = expression(atop("Spore concentration (grains*m"^-3*")"))
   ) +
   theme(
     plot.title.position = "plot",
