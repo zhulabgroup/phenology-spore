@@ -79,18 +79,18 @@ p_trend_peak <- ggplot() +
   geom_ribbon(
     data = ci_peak_lme,
     aes(x = x, ymin = log(conf.low), ymax = log(conf.high)),
-    col = "gray",
+    fill = "blue",
     alpha = 0.2
   ) +
   geom_path(
     data = peak_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "black", linewidth = 1
+    col = "blue", linewidth = 1
   ) +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Peak concentration (grains / m^3)") +
+  ylab(expression("Peak concentration (grains / m"^3*")")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
@@ -98,10 +98,10 @@ p_trend_peak <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("A      "), italic("Decreased")))) +
+  labs(title = expression(paste(bold("G      \n"), italic("Decreased\npeak concentration")))) +
   theme(
     plot.title.position = "plot",
-    plot.margin = margin(10, 10, 10, 10)
+    plot.margin = margin(15, 10, 10, 10)
   ) +
   geom_text(
     aes(
@@ -195,18 +195,18 @@ p_trend_integral <- ggplot() +
   geom_ribbon(
     data = ci_integral_lme,
     aes(x = x, ymin = log(conf.low), ymax = log(conf.high)),
-    col = "gray",
+    fill = "blue",
     alpha = 0.2
   ) +
   geom_path(
     data = integral_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "black", linewidth = 1
+    col = "blue", linewidth = 1
   ) +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Annual spore integral (grains / m^3)") +
+  ylab(expression("Annual spore integral (grains / m"^3*" * days)")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
@@ -214,10 +214,10 @@ p_trend_integral <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("B      "), italic("Decreased")))) +
+  labs(title = expression(paste(bold("E      \n"), italic("Decreased\nannual integral")))) +
   theme(
     plot.title.position = "plot",
-    plot.margin = margin(10, 10, 10, 10)
+    plot.margin = margin(15, 10, 10, 10)
   ) +
   geom_text(
     aes(
@@ -313,18 +313,18 @@ p_trend_integral_as <- ggplot() +
   geom_ribbon(
     data = ci_integral_as_lme,
     aes(x = x, ymin = log(conf.low), ymax = log(conf.high)),
-    col = "gray",
+    fill = "red",
     alpha = 0.2
   ) +
   geom_path(
     data = integral_as_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "black", linewidth = 1
+    col = "red", linewidth = 1
   ) +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Allergy season spore integral (grains / m^3)") +
+  ylab(expression("Allergy season integral (grains / m"^3*" * days)")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
@@ -332,10 +332,10 @@ p_trend_integral_as <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("C      "), italic("Increased")))) +
+  labs(title = expression(paste(bold("F      \n"), italic("Increased allergy\nseason integral")))) +
   theme(
     plot.title.position = "plot",
-    plot.margin = margin(10, 10, 10, 10)
+    plot.margin = margin(15, 10, 10, 10)
   ) +
   geom_text(
     aes(
@@ -431,13 +431,13 @@ p_trend_sos <- ggplot() +
   geom_ribbon(
     data = ci_sos_lme,
     aes(x = x, ymin = conf.low, ymax = conf.high),
-    col = "gray",
+    fill = "red",
     alpha = 0.2
   ) +
   geom_path(
     data = sos_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "black", linewidth = 1
+    col = "red", linewidth = 1
   ) +
   theme_classic() +
   theme(legend.position = "none") +
@@ -449,10 +449,10 @@ p_trend_sos <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("D      "), italic("Advanced")))) +
+  labs(title = expression(paste(bold("A      \n"), italic("Advanced\nspore season")))) +
   theme(
     plot.title.position = "plot",
-    plot.margin = margin(10, 10, 10, 10)
+    plot.margin = margin(15, 10, 10, 10)
   ) +
   geom_text(
     aes(
@@ -547,13 +547,13 @@ p_trend_los <- ggplot() +
   geom_ribbon(
     data = ci_los_lme,
     aes(x = x, ymin = conf.low, ymax = conf.high),
-    col = "gray",
+    fill = "red",
     alpha = 0.2
   ) +
   geom_path(
     data = los_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "black", linewidth = 1
+    col = "red", linewidth = 1
   ) +
   theme_classic() +
   theme(legend.position = "none") +
@@ -565,10 +565,10 @@ p_trend_los <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("F      "), italic("Extended")))) +
+  labs(title = expression(paste(bold("C      \n"), italic("Extended\nspore season")))) +
   theme(
     plot.title.position = "plot",
-    plot.margin = margin(10, 10, 10, 10)
+    plot.margin = margin(15, 10, 10, 10)
   ) +
   geom_text(
     aes(
@@ -661,29 +661,28 @@ p_trend_sas <- ggplot() +
   geom_ribbon(
     data = ci_sas_lme,
     aes(x = x, ymin = conf.low, ymax = conf.high),
-    col = "gray",
+    fill = "red",
     alpha = 0.2
   ) +
   geom_path(
     data = sas_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "black", linewidth = 1
+    col = "red", linewidth = 1
   ) +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
   ylab("Sas (day of year)") +
-  ylab("Los (days)") +
   theme(
     axis.text.x = element_text(color = "black"),
     axis.ticks.x = element_line(color = "black"),
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("E      "), italic("Advanced")))) +
+  labs(title = expression(paste(bold("B      \n "), italic("Advanced\nallergy season")))) +
   theme(
     plot.title.position = "plot",
-    plot.margin = margin(10, 10, 10, 10)
+    plot.margin = margin(15, 10, 10, 10)
   ) +
   geom_text(
     aes(
@@ -778,13 +777,13 @@ p_trend_las <- ggplot() +
   geom_ribbon(
     data = ci_las_lme,
     aes(x = x, ymin = conf.low, ymax = conf.high),
-    col = "gray",
+    fill = "red",
     alpha = 0.2
   ) +
   geom_path(
     data = las_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "black", linewidth = 1
+    col = "red", linewidth = 1
   ) +
   theme_classic() +
   theme(legend.position = "none") +
@@ -796,10 +795,10 @@ p_trend_las <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("G      "), italic("Extended")))) +
+  labs(title = expression(paste(bold("D      \n"), italic("Extended\nallergy season")))) +
   theme(
     plot.title.position = "plot",
-    plot.margin = margin(10, 10, 10, 10)
+    plot.margin = margin(15, 10, 10, 10)
   ) +
   geom_text(
     aes(
@@ -825,20 +824,20 @@ p_trend_c1 <- plot_grid(title1,
                         title2,
                         ncol = 1,
                         rel_heights = c(1, 1))
-p_trend_c2 <- plot_grid(p_trend_space,
+p_trend_c5 <- plot_grid(p_trend_space,
                         p_trend_peak,
                         p_trend_space,
                         ncol = 1,
                         rel_heights = c(0.5, 1, 0.5))
-p_trend_c3 <- plot_grid(p_trend_integral,
+p_trend_c4 <- plot_grid(p_trend_integral,
                         p_trend_integral_as,
                         ncol = 1,
                         rel_heights = c(1, 1))
-p_trend_c4 <- plot_grid(p_trend_sos,
+p_trend_c2 <- plot_grid(p_trend_sos,
                         p_trend_sas,
                         ncol = 1,
                         rel_heights = c(1, 1))
-p_trend_c5 <- plot_grid(p_trend_los,
+p_trend_c3 <- plot_grid(p_trend_los,
                         p_trend_las,
                         ncol = 1,
                         rel_heights = c(1, 1))

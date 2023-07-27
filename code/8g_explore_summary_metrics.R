@@ -7,25 +7,6 @@ df_antt <- df_smooth %>%
   filter(year == 2009 | (year == 2010 & doy <= offset*2)) %>% 
   left_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
 
-ggplot(df_antt %>% filter(year_new == 2009 & doy_new %in% 137:236),
-       aes(x = date, ymin = 0, ymax = count_whit)) +
-  geom_ribbon_pattern(aes(pattern_colour = "annual"),
-                      pattern = "stripe",
-                      pattern_density = 0.2,
-                      pattern_angle = 45,
-                      pattern_fill = "dark red",
-                      fill = NA,
-                      alpha = 0.4) +
-  scale_pattern_colour_manual(name = "",
-                              values = "dark red",
-                              guide = guide_legend(alpha = 0.4)) +
-  geom_ribbon(data = df_antt %>% filter(year_new == 2009 & doy_new %in% 137:236),
-              aes(x = date, ymin = 0, ymax = count_whit, fill = "allergy season integral"),
-              alpha = 0.4) +
-  scale_fill_manual(name = "",
-                    values = "orange",
-                    guide = guide_legend(alpha = 0.4)) +
-  theme_classic()
 
 p_antt <- ggplot() +
   geom_ribbon_pattern(
@@ -43,7 +24,7 @@ p_antt <- ggplot() +
   ) +
   geom_ribbon_pattern(
     data = df_antt %>% filter(year_new == 2009 & doy_new %in% 1:78),
-    aes(x = date, ymin = 0, ymax = count_whit, pattern_fill = "30% of the annual integral"),
+    aes(x = date, ymin = 0, ymax = count_whit, pattern_fill = "10% of the annual integral"),
     pattern = "stripe",
     pattern_colour = "orange",
     fill = NA
@@ -123,7 +104,7 @@ p_antt <- ggplot() +
     col = "dark red"
   ) +
   geom_text(
-    aes(x = as_datetime("2009-08-16"), y = exp(9.25), label = "las"),
+    aes(x = as_datetime("2009-08-16"), y = exp(9.25), label = "length of allergy season"),
     hjust = 0.5,
     vjust = -0.3,
     col = "dark red"
@@ -139,7 +120,7 @@ p_antt <- ggplot() +
     col = "orange"
   ) +
   geom_text(
-    aes(x = as_datetime("2009-08-09"), y = exp(9.5), label = "los"),
+    aes(x = as_datetime("2009-08-09"), y = exp(9.5), label = "length of spore season"),
     hjust = 0.5,
     vjust = -0.3,
     col = "orange"
@@ -178,13 +159,13 @@ p_antt <- ggplot() +
   ) +
   scale_x_datetime(
     breaks = c(as_datetime("2009-02-10"), as_datetime("2009-04-29"), as_datetime("2009-06-27"), as_datetime("2009-08-12"), as_datetime("2009-10-04"), as_datetime("2009-11-19"), as_datetime("2010-02-10")), 
-    date_labels = c("1", "sos", "sas", "peak doy", "eas", "eos", "365")
+    date_labels = c("1", "start of spore season", "start of allergy season", "peak day of year", "end of allergy season", "end of spore season", "365")
   ) +
   coord_cartesian(
     xlim = c(as_datetime("2009-01-21"), max(df_antt$date)),
     ylim = c(exp(7), exp(10))
   ) +
-  ylab("Concentration (grains / m^3)") +
+  ylab(expression("Spore concentration (grains / m"^3*")")) +
   xlab("Day of spore year") +
   theme_classic() +
   theme(
@@ -193,7 +174,11 @@ p_antt <- ggplot() +
     legend.box.just = "left"
   ) +
   theme(
-    axis.text.x = element_text(color = "black"),
+    axis.text.x = element_text(
+      color = "black",
+      angle = 15,
+      hjust = 1
+    ),
     axis.ticks.x = element_line(color = "black"),
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
@@ -225,7 +210,7 @@ labels_e <- function(x) {parse(text = gsub("e^", x))}
 p_metrics_b <- ggplot(data = df_summary %>% filter(Metric == "peak"), aes(x = Metric, y = Value)) +
   geom_boxplot(width = 0.2) +
   theme_classic() +
-  ylab("Spore concentration\n(grains / m^3)") +
+  ylab(expression("Spore concentration (grains / m"^3*")")) +
   scale_y_continuous(
     breaks = seq(5, 17, by = 2),
     labels = scales::math_format(e^.x)
@@ -266,7 +251,7 @@ p_metrics_c <- ggplot(data = df_summary %>% filter(Metric %in% c("peak\ndoy", "s
 p_metrics_d <- ggplot(data = df_summary %>% filter(Metric %in% c("integral", "as integral")), aes(x = Metric, y = Value)) +
   geom_boxplot(width = 0.4) +
   theme_classic() +
-  ylab("Spore concentration * days\n(grains / m^3 * days)") +
+  ylab(expression("Spore concentration * days (grains / m"^3*" * days)")) +
   scale_y_continuous(
     breaks = seq(5, 17, by = 2),
     labels = scales::math_format(e^.x)
