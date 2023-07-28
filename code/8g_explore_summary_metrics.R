@@ -60,16 +60,37 @@ p_antt <- ggplot() +
   ) +
   geom_segment(
     aes(x = as_datetime("2009-01-01"), xend = as_datetime("2009-08-12"), y = 7955.968, yend = 7955.968),
-    col = "orange"
+    col = "dark red"
   ) +
   geom_text(
-    aes(x = as_datetime("2009-01-01"), y = 7955.968, label = "peak concentration"),
+    aes(x = as_datetime("2009-01-01"), y = 7955.968, label = "peak"),
+    hjust = 0,
+    vjust = -0.5,
+    col = "dark red"
+  ) +
+  geom_segment(
+    aes(x = as_datetime("2009-08-12"), xend = as_datetime("2009-08-12"), y = 0, yend = 7955.968),
+    col = "dark red"
+  ) +
+  geom_segment(
+    aes(x = as_datetime("2009-01-01"), xend = as_datetime("2009-02-11"), y = 1333.443, yend = 1333.443),
+    col = "orange",
+    linetype = "dashed"
+  ) +
+  geom_text(
+    aes(x = as_datetime("2009-01-01"), y = 1333.443, label = "trough"),
     hjust = 0,
     vjust = -0.5,
     col = "orange"
   ) +
   geom_segment(
-    aes(x = as_datetime("2009-08-12"), xend = as_datetime("2009-08-12"), y = 0, yend = 7955.968),
+    aes(x = as_datetime("2009-02-11"), xend = as_datetime("2009-02-11"), y = 1333.443, yend = 7955.968),
+    col = "orange"
+  ) +
+  geom_text(
+    aes(x = as_datetime("2009-02-11"), y = exp((log(1333.443) + log(7955.968)) / 2), label = "amplitude"),
+    hjust = 0,
+    vjust = -0.5,
     col = "orange"
   ) +
   geom_segment(
@@ -144,7 +165,7 @@ p_antt <- ggplot() +
   ) +
   geom_point(
     aes(x = as_datetime("2009-08-12"), y = 7955.968),
-    col = "orange"
+    col = "dark red"
   ) +
   geom_text(
     aes(x = as_datetime("2009-01-01"), y = exp(7), label = "offset"),
@@ -165,7 +186,7 @@ p_antt <- ggplot() +
     xlim = c(as_datetime("2009-01-21"), max(df_antt$date)),
     ylim = c(exp(7), exp(10))
   ) +
-  ylab(expression("Spore concentration (grains / m"^3*")")) +
+  ylab(expression("Spore concentration (grains*m"^-3*")")) +
   xlab("Day of spore year") +
   theme_classic() +
   theme(
@@ -194,23 +215,25 @@ df_summary <- df_metrics %>%
   mutate(ln_peak = log(peak + 1)) %>% 
   mutate(ln_integral = log(integral + 1)) %>% 
   mutate(ln_integral_as = log(integral_as + 1)) %>% 
+  mutate(ln_amplitude = log(amplitude + 1)) %>% 
   mutate(peak = ifelse(peak_check == 1, peak, NA)) %>% 
-  gather(key = "Metric", value = "Value", peak, ln_peak, peak_doy, integral, ln_integral, sos, eos, los, sas, eas, las, integral_as, ln_integral_as) %>% 
+  gather(key = "Metric", value = "Value", peak, ln_peak, peak_doy, amplitude, ln_amplitude, integral, ln_integral, sos, eos, los, sas, eas, las, integral_as, ln_integral_as) %>% 
   mutate(observ_pct = ifelse(Metric %in% c("sas", "eas"), 1, observ_pct)) %>% 
   mutate(observ_pct = ifelse(Metric %in% c("las", "integral_as", "ln_integral_as"), observ_pct_as, observ_pct)) %>% 
   filter(observ_pct >= pct) %>% 
-  filter(Metric %in% c("ln_peak", "ln_integral", "ln_integral_as", "peak_doy", "sos", "eos", "los", "sas", "eas", "las")) %>% 
+  filter(Metric %in% c("ln_peak", "ln_amplitude", "ln_integral", "ln_integral_as", "peak_doy", "sos", "eos", "los", "sas", "eas", "las")) %>% 
   mutate(Metric = ifelse(Metric == "ln_peak", "peak", Metric)) %>% 
+  mutate(Metric = ifelse(Metric == "ln_amplitude", "amplitude", Metric)) %>% 
   mutate(Metric = ifelse(Metric == "ln_integral", "integral", Metric)) %>% 
   mutate(Metric = ifelse(Metric == "ln_integral_as", "as integral", Metric)) %>% 
   mutate(Metric = ifelse(Metric == "peak_doy", "peak\ndoy", Metric))
-df_summary$Metric <- factor(df_summary$Metric, levels = c("peak", "integral", "as integral", "las", "eas", "sas", "los", "eos", "sos", "peak\ndoy"))
+df_summary$Metric <- factor(df_summary$Metric, levels = c("peak", "amplitude", "integral", "as integral", "las", "eas", "sas", "los", "eos", "sos", "peak\ndoy"))
 
 labels_e <- function(x) {parse(text = gsub("e^", x))}
-p_metrics_b <- ggplot(data = df_summary %>% filter(Metric == "peak"), aes(x = Metric, y = Value)) +
+p_metrics_b <- ggplot(data = df_summary %>% filter(Metric %in% c("peak", "amplitude")), aes(x = Metric, y = Value)) +
   geom_boxplot(width = 0.2) +
   theme_classic() +
-  ylab(expression("Spore concentration (grains / m"^3*")")) +
+  ylab(expression("Spore concentration (grains*m"^-3*")")) +
   scale_y_continuous(
     breaks = seq(5, 17, by = 2),
     labels = scales::math_format(e^.x)
@@ -251,7 +274,7 @@ p_metrics_c <- ggplot(data = df_summary %>% filter(Metric %in% c("peak\ndoy", "s
 p_metrics_d <- ggplot(data = df_summary %>% filter(Metric %in% c("integral", "as integral")), aes(x = Metric, y = Value)) +
   geom_boxplot(width = 0.4) +
   theme_classic() +
-  ylab(expression("Spore concentration * days (grains / m"^3*" * days)")) +
+  ylab(expression("Spore concentration * days (grains*m"^-3*" * days)")) +
   scale_y_continuous(
     breaks = seq(5, 17, by = 2),
     labels = scales::math_format(e^.x)

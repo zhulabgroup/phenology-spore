@@ -10,7 +10,7 @@ output:
 knitr::opts_chunk$set(echo = FALSE, cache=FALSE, warning = FALSE, message = FALSE)
 source("code/0_utils.R")
 df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/fill_smooth_offset.rds"))
-df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds"))
+df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_amplitude.rds"))
 pct = 0.8
 ```
 

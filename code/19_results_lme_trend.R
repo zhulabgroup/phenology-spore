@@ -98,7 +98,7 @@ p_trend_peak <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("G      \n"), italic("Decreased\npeak concentration")))) +
+  labs(title = expression(paste(bold("H      \n"), italic("Decreased\npeak concentration")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(15, 10, 10, 10)
@@ -815,6 +815,122 @@ p_trend_las <- ggplot() +
   )
 
 
+
+
+data_amplitude <- df_metrics %>% 
+  drop_na(amplitude) %>% 
+  filter(observ_pct >= pct) %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
+  do({
+    result <- lm(log(amplitude) ~ year_new, .)
+    data_frame(
+      r_squared =
+        result %>%
+        summary() %>%
+        magrittr::use_series(adj.r.squared),
+      p_value =
+        result %>%
+        anova() %>%
+        magrittr::use_series(`Pr(>F)`) %>%
+        magrittr::extract2(1)
+    ) %>%
+      bind_cols(
+        result %>%
+          coef() %>%
+          as.list() %>%
+          as_data_frame()
+      )
+  }) %>%
+  rename("slope" = "year_new", "intercept" = "(Intercept)") %>%
+  ungroup() %>% 
+  right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>% 
+  drop_na(amplitude) %>% 
+  filter(observ_pct >= pct) %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, intercept, slope, r_squared, p_value) %>% 
+  mutate(start_year = min(year_new)) %>% 
+  mutate(end_year = max(year_new)) %>% 
+  mutate(Nyear = end_year - start_year + 1) %>%
+  mutate(Nrcd = n()) %>% 
+  filter(Nrcd >= 5) %>% 
+  filter(state != "PR") %>% 
+  filter(country == "US") %>% 
+  ungroup()
+lme_amplitude <- lme(
+  log(amplitude) ~ year_new,
+  data = data_amplitude,
+  random = ~ year_new | n
+)
+# summary(lme_amplitude)
+slope_amplitude <- fixef(lme_amplitude)[["year_new"]] %>% round(3)
+p_amplitude <- summary(lme_amplitude)$tTable[["year_new", "p-value"]] %>% round(3)
+amplitude_fit_lme <- data_amplitude %>% 
+  mutate(
+    lme.fixed = lme_amplitude$fitted[, 1],
+    lme.random = lme_amplitude$fitted[, 2]
+  ) %>%
+  mutate(n = as.character(n)) %>% 
+  as_tibble()
+ci_amplitude_lme <- ggpredict(lme_amplitude, terms = c("year_new", "n"), type = "re") %>%
+  as_tibble()
+p_trend_amplitude <- ggplot() +
+  geom_point(
+    data = amplitude_fit_lme,
+    aes(x = year_new, y = log(amplitude), col = n),
+    alpha = 0.5,
+    size = 0.5
+  ) +
+  geom_smooth(
+    data = amplitude_fit_lme,
+    method = "lm",
+    se = FALSE,
+    aes(x = year_new, y = log(amplitude), group = n, col = n),
+    alpha = 0.5,
+    linewidth = 0.5
+  ) +
+  geom_ribbon(
+    data = ci_amplitude_lme,
+    aes(x = x, ymin = log(conf.low), ymax = log(conf.high)),
+    fill = "black",
+    alpha = 0.2
+  ) +
+  geom_path(
+    data = amplitude_fit_lme,
+    aes(x = year_new, y = lme.fixed),
+    col = "black", linewidth = 1
+  ) +
+  theme_classic() +
+  theme(legend.position = "none") +
+  xlab("Year") +
+  ylab(expression("Amplitude (grains*m"^-3*")")) +
+  scale_y_continuous(labels = scales::math_format(e^.x)) +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.ticks.x = element_line(color = "black"),
+    axis.ticks.y = element_line(color = "black"),
+    axis.text.y = element_text(color = "black")
+  ) +
+  labs(title = expression(paste(bold("G      \n"), italic("Decreased\namplitude")))) +
+  theme(
+    plot.title.position = "plot",
+    plot.margin = margin(15, 10, 10, 10)
+  ) +
+  geom_text(
+    aes(
+      x = 2003,
+      y = 11,
+      label = paste0(
+        "\nSlope: ", slope_amplitude,
+        "\nP-value: ", p_amplitude
+      )
+    ),
+    hjust = 0,
+    vjust = 0.5,
+    col = "black"
+  )
+
+
+
+
 p_trend_space <- ggplot() +
   theme_void() +
   theme(plot.margin = margin(10, 10, 10, 10))
@@ -824,11 +940,10 @@ p_trend_c1 <- plot_grid(title1,
                         title2,
                         ncol = 1,
                         rel_heights = c(1, 1))
-p_trend_c5 <- plot_grid(p_trend_space,
+p_trend_c5 <- plot_grid(p_trend_amplitude,
                         p_trend_peak,
-                        p_trend_space,
                         ncol = 1,
-                        rel_heights = c(0.5, 1, 0.5))
+                        rel_heights = c(1, 1))
 p_trend_c4 <- plot_grid(p_trend_integral,
                         p_trend_integral_as,
                         ncol = 1,

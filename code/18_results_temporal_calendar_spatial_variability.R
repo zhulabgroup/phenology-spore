@@ -17,8 +17,8 @@ df_calendar <- df_smooth %>%
       ),
     by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")
   ) %>% 
-  mutate(ylab_lon = paste0(city, ", ", state, " (", round(lat), "° N, ", round(-lon), "° W)")) %>% 
-  mutate(ylab_tap = paste0(city, ", ", state, " (", round(mat_mean), " °C, ", round(tap_mean), " mm)"))
+  mutate(ylab_lon = paste0(city, ", ", state, " (",round(-lon), "° W)")) %>% 
+  mutate(ylab_tap = paste0(city, ", ", state, " (", round(tap_mean), " mm)"))
 
 labelfunc_x <- function(x) {
   origin <- as.Date("2003-01-01")

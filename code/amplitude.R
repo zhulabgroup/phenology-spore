@@ -1,5 +1,5 @@
-df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_amplitude.rds"))\
-pct = 1
+df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_amplitude.rds"))
+pct = 0.8
 data_amplitude <- df_metrics %>% 
   drop_na(amplitude) %>% 
   filter(observ_pct >= pct) %>% 
@@ -178,7 +178,12 @@ data_amplitude_climate <- data_amplitude %>%
 lm_amplitude <- lm(
   slope ~ 1 + slope_mat + slope_tap,
   data = data_amplitude_climate)
-# summary(lm_amplitude)
+summary(lm_amplitude)
+
+
+
+
+
 ggplot() +
   geom_polygon(data = map_data("state"), aes(x = long, y = lat, group = group), fill = "white") +
   geom_path(data = map_data("state"), aes(x = long, y = lat, group = group), color = "grey50", alpha = 0.5, lwd = 0.2) +

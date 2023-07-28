@@ -1,5 +1,5 @@
 # source("code/19_results_lme_trend.R")
-# pct = 1
+# pct = 0.8
 
 
 
@@ -82,15 +82,17 @@ p_climate_1a <- ggplot() +
     alpha = 0.8
     ) +
   scale_size_continuous(
-    range = c(3, 5),
+    range = c(5, 7),
     breaks = round(seq(min(data_peak_climate$Nyear), max(data_peak_climate$Nyear), length.out = 5)),
     name = "Number of year"
     ) +
   scale_color_gradient2(
     low = "blue", mid= "white", high = "red", midpoint = 0,
-    breaks = c(min(data_peak_climate$rescaled_slope), min(data_peak_climate$rescaled_slope)/2, 0, max(data_peak_climate$rescaled_slope)/2, max(data_peak_climate$rescaled_slope)),
-    labels = c(min(data_peak_climate$rescaled_slope), min(data_peak_climate$rescaled_slope)/2, 0, max(data_peak_climate$rescaled_slope)/2, max(data_peak_climate$rescaled_slope))^3 %>% round(4),
-    name = "Temporal trend of\nln(peak)"
+    breaks = c(-0.6, -0.3, 0, 0.2, 0.4),
+    labels = function(x) {
+      ifelse(x == 0, "0", paste0(x, "\u00B3"))
+    },
+    name = "Temporal trend of ln(peak)"
     ) +
   geom_point(data = data_peak_climate, aes(x = lon, y = lat, size = Nyear, shape = ifelse(p_value > 0.05, "> 0.05", "<= 0.05"))) +
   scale_shape_manual(values = c(10, 1), guide = guide_legend(title = "P-value", override.aes = list(size = c(4, 4)))) +
@@ -102,7 +104,7 @@ p_climate_1a <- ggplot() +
   theme(plot.title.position = "plot",
         plot.margin = margin(10, 5, 10, 10),
         plot.title = element_text(face = "bold"),
-        legend.position = "left")
+        legend.position = "bottom")
 
 slope_lm_peak <- summary(lm_peak)$coefficients["slope_tap", "Estimate"]
 p_lm_peak <- summary(lm_peak)$coefficients["slope_tap", "Pr(>|t|)"] %>% round(3)
@@ -236,14 +238,16 @@ p_climate_2c <- ggplot() +
     alpha = 0.8
   ) +
   scale_size_continuous(
-    range = c(3, 5),
+    range = c(5, 7),
     breaks = round(seq(min(data_integral_climate$Nyear), max(data_integral_climate$Nyear), length.out = 5)),
     name = "Number of year"
   ) +
   scale_color_gradient2(
     low = "blue", mid= "white", high = "red", midpoint = 0,
-    breaks = c(min(data_integral_climate$rescaled_slope), min(data_integral_climate$rescaled_slope)/2, 0, max(data_integral_climate$rescaled_slope)/2, max(data_integral_climate$rescaled_slope)),
-    labels = c(min(data_integral_climate$rescaled_slope), min(data_integral_climate$rescaled_slope)/2, 0, max(data_integral_climate$rescaled_slope)/2, max(data_integral_climate$rescaled_slope))^3 %>% round(4),
+    breaks = c(-0.6, -0.3, 0, 0.2, 0.4),
+    labels = function(x) {
+      ifelse(x == 0, "0", paste0(x, "\u00B3"))
+    },
     name = "Temporal trend of\nln(annual integral)"
   ) +
   geom_point(data = data_integral_climate, aes(x = lon, y = lat, size = Nyear, shape = ifelse(p_value > 0.05, "> 0.05", "<= 0.05"))) +
@@ -768,14 +772,16 @@ p_climate_3e <- ggplot() +
     alpha = 0.8
   ) +
   scale_size_continuous(
-    range = c(3, 5),
+    range = c(5, 7),
     breaks = round(seq(min(data_sas_climate$Nyear), max(data_sas_climate$Nyear), length.out = 5)),
     name = "Number of year"
   ) +
   scale_color_gradient2(
     low = "red", mid= "white", high = "blue", midpoint = 0,
-    breaks = c(min(data_sas_climate$rescaled_slope), min(data_sas_climate$rescaled_slope)/2, 0, max(data_sas_climate$rescaled_slope)/2, max(data_sas_climate$rescaled_slope)),
-    labels = c(min(data_sas_climate$rescaled_slope), min(data_sas_climate$rescaled_slope)/2, 0, max(data_sas_climate$rescaled_slope)/2, max(data_sas_climate$rescaled_slope))^3 %>% round(4),
+    breaks = c(-15, -5, -1, 0, 1, 6) %>% {
+      sign(.) * abs(.)^(1/3)
+    },
+    labels = c(-15, -5, -1, 0, 1, 6),
     name = "Temporal trend of\nsas"
   ) +
   geom_point(data = data_sas_climate, aes(x = lon, y = lat, size = Nyear, shape = ifelse(p_value > 0.05, "> 0.05", "<= 0.05"))) +
@@ -786,7 +792,7 @@ p_climate_3e <- ggplot() +
   ) +
   ggtitle("A") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 5, 10, 10),
+        plot.margin = margin(10, 0, 10, 10),
         plot.title = element_text(face = "bold"),
         legend.position = "left")
 
@@ -829,7 +835,7 @@ p_climate_3f <- ggplot(data_sas_climate, aes(x = slope_mat)) +
   ylab("Temporal trend of sas") +
   ggtitle("B") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 10, 5),
+        plot.margin = margin(10, 10, 10, 0),
         plot.title = element_text(face = "bold")) +
   geom_text(
     aes(
@@ -882,7 +888,7 @@ p_climate_3g <- ggplot(data_sas_climate, aes(x = slope_tap)) +
   ylab("Temporal trend of sas") +
   ggtitle("C") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 10, 5),
+        plot.margin = margin(10, 10, 10, 0),
         plot.title = element_text(face = "bold")) +
   geom_text(
     aes(
@@ -912,14 +918,16 @@ p_climate_4 <- ggplot() +
     alpha = 0.8
   ) +
   scale_size_continuous(
-    range = c(3, 5),
+    range = c(5, 7),
     breaks = round(seq(min(data_sas_climate$Nyear), max(data_sas_climate$Nyear), length.out = 5)),
     name = "Number of year"
   ) +
   scale_color_gradient2(
     low = "red", mid= "white", high = "blue", midpoint = 0,
-    breaks = c(min(data_sas_climate$rescaled_slope), min(data_sas_climate$rescaled_slope)/2, 0, max(data_sas_climate$rescaled_slope)/2, max(data_sas_climate$rescaled_slope)),
-    labels = c(min(data_sas_climate$rescaled_slope), min(data_sas_climate$rescaled_slope)/2, 0, max(data_sas_climate$rescaled_slope)/2, max(data_sas_climate$rescaled_slope))^3 %>% round(4),
+    breaks = c(-15, -5, -1, 0, 1, 6) %>% {
+      sign(.) * abs(.)^(1/3)
+    },
+    labels = c(-15, -5, -1, 0, 1, 6),
     name = "Temporal trend of\nsas",
   ) +
   guides(color = "none") +
@@ -927,7 +935,7 @@ p_climate_4 <- ggplot() +
   scale_shape_manual(values = c(10, 1), guide = guide_legend(title = "P-value", override.aes = list(size = c(4, 4)))) +
   ggtitle("A") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 5, 10, 10),
+        plot.margin = margin(10, 0, 10, 10),
         plot.title = element_text(face = "bold"),
         legend.position = "bottom",
         legend.box = "vertical")
