@@ -79,18 +79,18 @@ p_trend_peak <- ggplot() +
   geom_ribbon(
     data = ci_peak_lme,
     aes(x = x, ymin = log(conf.low), ymax = log(conf.high)),
-    fill = "blue",
+    fill = "black",
     alpha = 0.2
   ) +
-  geom_path(
+  geom_line(
     data = peak_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "blue", linewidth = 1
+    col = "black", linewidth = 1, linetype = "dashed"
   ) +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab(expression("Peak concentration (grains / m"^3*")")) +
+  ylab(expression("Peak concentration (grains*m"^-3*")")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
@@ -195,18 +195,18 @@ p_trend_integral <- ggplot() +
   geom_ribbon(
     data = ci_integral_lme,
     aes(x = x, ymin = log(conf.low), ymax = log(conf.high)),
-    fill = "blue",
+    fill = "black",
     alpha = 0.2
   ) +
-  geom_path(
+  geom_line(
     data = integral_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "blue", linewidth = 1
+    col = "black", linewidth = 1, linetype = "dashed"
   ) +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab(expression("Annual spore integral (grains / m"^3*" * days)")) +
+  ylab(expression("Annual spore integral (grains*m"^-3*"*days)")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
@@ -313,18 +313,18 @@ p_trend_integral_as <- ggplot() +
   geom_ribbon(
     data = ci_integral_as_lme,
     aes(x = x, ymin = log(conf.low), ymax = log(conf.high)),
-    fill = "red",
+    fill = "black",
     alpha = 0.2
   ) +
-  geom_path(
+  geom_line(
     data = integral_as_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "red", linewidth = 1
+    col = "black", linewidth = 1, linetype = "dashed"
   ) +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab(expression("Allergy season integral (grains / m"^3*" * days)")) +
+  ylab(expression("Allergy season integral (grains*m"^-3*"*days)")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
@@ -431,13 +431,13 @@ p_trend_sos <- ggplot() +
   geom_ribbon(
     data = ci_sos_lme,
     aes(x = x, ymin = conf.low, ymax = conf.high),
-    fill = "red",
+    fill = "black",
     alpha = 0.2
   ) +
-  geom_path(
+  geom_line(
     data = sos_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "red", linewidth = 1
+    col = "black", linewidth = 1
   ) +
   theme_classic() +
   theme(legend.position = "none") +
@@ -547,13 +547,13 @@ p_trend_los <- ggplot() +
   geom_ribbon(
     data = ci_los_lme,
     aes(x = x, ymin = conf.low, ymax = conf.high),
-    fill = "red",
+    fill = "black",
     alpha = 0.2
   ) +
-  geom_path(
+  geom_line(
     data = los_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "red", linewidth = 1
+    col = "black", linewidth = 1, linetype = "dashed"
   ) +
   theme_classic() +
   theme(legend.position = "none") +
@@ -661,13 +661,13 @@ p_trend_sas <- ggplot() +
   geom_ribbon(
     data = ci_sas_lme,
     aes(x = x, ymin = conf.low, ymax = conf.high),
-    fill = "red",
+    fill = "black",
     alpha = 0.2
   ) +
-  geom_path(
+  geom_line(
     data = sas_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "red", linewidth = 1
+    col = "black", linewidth = 1
   ) +
   theme_classic() +
   theme(legend.position = "none") +
@@ -777,13 +777,13 @@ p_trend_las <- ggplot() +
   geom_ribbon(
     data = ci_las_lme,
     aes(x = x, ymin = conf.low, ymax = conf.high),
-    fill = "red",
+    fill = "black",
     alpha = 0.2
   ) +
-  geom_path(
+  geom_line(
     data = las_fit_lme,
     aes(x = year_new, y = lme.fixed),
-    col = "red", linewidth = 1
+    col = "black", linewidth = 1, linetype = "dashed"
   ) +
   theme_classic() +
   theme(legend.position = "none") +

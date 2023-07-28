@@ -60,4 +60,4 @@ df_metrics_daymet <- df_daymet %>%
   ) %>%
   right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
 
-write_rds(df_metrics_daymet, str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds"))
+write_rds(df_metrics_daymet, str_c(.path$dat_process, "2023-04-25/metrics_amplitude.rds"))
