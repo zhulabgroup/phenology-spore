@@ -92,7 +92,7 @@ p_climate_1a <- ggplot() +
     labels = function(x) {
       ifelse(x == 0, "0", paste0(x, "\u00B3"))
     },
-    name = "Temporal trend of ln(peak)"
+    name = "Temporal trend of\nln(peak)"
     ) +
   geom_point(data = data_peak_climate, aes(x = lon, y = lat, size = Nyear, shape = ifelse(p_value > 0.05, "> 0.05", "<= 0.05"))) +
   scale_shape_manual(values = c(10, 1), guide = guide_legend(title = "P-value", override.aes = list(size = c(4, 4)))) +
@@ -100,11 +100,11 @@ p_climate_1a <- ggplot() +
     size = "none",
     shape = "none"
   ) +
-  ggtitle("F") +
+  ggtitle("D") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 5, 10, 10),
+        plot.margin = margin(10, 0, 0, 0),
         plot.title = element_text(face = "bold"),
-        legend.position = "bottom")
+        legend.position = "left")
 
 slope_lm_peak <- summary(lm_peak)$coefficients["slope_tap", "Estimate"]
 p_lm_peak <- summary(lm_peak)$coefficients["slope_tap", "Pr(>|t|)"] %>% round(3)
@@ -143,9 +143,9 @@ p_climate_1b <- ggplot(data_peak_climate, aes(x = slope_tap)) +
   ) +
   xlab("Temporal trend of tap") +
   ylab("Temporal trend of ln(peak)") +
-  ggtitle("G") +
+  ggtitle("E") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 10, 5),
+        plot.margin = margin(0, 20, 10, 0),
         plot.title = element_text(face = "bold")) +
   geom_text(
     aes(
@@ -248,7 +248,7 @@ p_climate_2c <- ggplot() +
     labels = function(x) {
       ifelse(x == 0, "0", paste0(x, "\u00B3"))
     },
-    name = "Temporal trend of\nln(annual integral)"
+    name = "Temporal trend of\nln(AIn)"
   ) +
   geom_point(data = data_integral_climate, aes(x = lon, y = lat, size = Nyear, shape = ifelse(p_value > 0.05, "> 0.05", "<= 0.05"))) +
   scale_shape_manual(values = c(10, 1), guide = guide_legend(title = "P-value", override.aes = list(size = c(4, 4)))) +
@@ -256,9 +256,9 @@ p_climate_2c <- ggplot() +
     size = "none",
     shape = "none"
   ) +
-  ggtitle("D") +
+  ggtitle("F") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 5, 10, 10),
+        plot.margin = margin(10, 0, 0, 0),
         plot.title = element_text(face = "bold"),
         legend.position = "left")
 
@@ -298,10 +298,10 @@ p_climate_2d <- ggplot(data_integral_climate, aes(x = slope_tap)) +
     axis.text.y = element_text(color = "black")
   ) +
   xlab("Temporal trend of tap") +
-  ylab("Temporal trend of ln(annual integral)") +
-  ggtitle("E") +
+  ylab("Temporal trend of ln(AIn)") +
+  ggtitle("G") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 10, 10, 5),
+        plot.margin = margin(0, 20, 10, 0),
         plot.title = element_text(face = "bold")) +
   geom_text(
     aes(
@@ -935,23 +935,44 @@ p_climate_4 <- ggplot() +
   scale_shape_manual(values = c(10, 1), guide = guide_legend(title = "P-value", override.aes = list(size = c(4, 4)))) +
   ggtitle("A") +
   theme(plot.title.position = "plot",
-        plot.margin = margin(10, 0, 10, 10),
+        plot.margin = margin(0, 0, 0, 0),
         plot.title = element_text(face = "bold"),
         legend.position = "bottom",
         legend.box = "vertical")
 legend_grob <- get_legend(p_climate_4)
-p_climate_1 <- plot_grid(
-  p_climate_1a, p_climate_1b,
+p_climate_lgd <- plot_grid(
+  legend_grob, p_climate_space,
   ncol = 2,
   rel_widths = c(
     3, 1
+  ))
+
+legend_1 <- get_legend(p_climate_1a)
+p_climate_1_2 <- plot_grid(
+  legend_1, p_climate_1b,
+  ncol = 2,
+  rel_widths = c(
+    1, 2
+  ))
+p_climate_1 <- plot_grid(
+  p_climate_1a + theme(legend.position = "none"), p_climate_1_2,
+  nrow = 2,
+  rel_heights = c(1, 1)
+  )
+
+legend_2 <- get_legend(p_climate_2c)
+p_climate_2_2 <- plot_grid(
+  legend_2, p_climate_2d,
+  ncol = 2,
+  rel_widths = c(
+    1, 2
   ))
 p_climate_2 <- plot_grid(
-  p_climate_2c, p_climate_2d,
-  ncol = 2,
-  rel_widths = c(
-    3, 1
-  ))
+  p_climate_2c + theme(legend.position = "none"), p_climate_2_2,
+  nrow = 2,
+  rel_heights = c(1, 1)
+)
+
 p_climate_3r <- plot_grid(
   p_climate_3f, p_climate_3g,
   ncol = 1,
@@ -964,19 +985,20 @@ p_climate_3 <- plot_grid(
   rel_widths = c(
     3, 1
   ))
-p_climate_lgd <- plot_grid(
-  legend_grob, p_climate_space,
+
+p_climate_4 <- plot_grid(
+  p_climate_1, p_climate_2,
   ncol = 2,
   rel_widths = c(
-    3, 1
-  ))
-p_climate <- plot_grid(
-  p_climate_3, p_climate_2, p_climate_1, p_climate_lgd,
-  ncol = 1,
-  rel_heights = c(
-    1, 1, 1, 0.2
+    1, 1
   ))
 
+p_climate <- plot_grid(
+  p_climate_3, p_climate_4, legend_grob,
+  ncol = 1,
+  rel_heights = c(
+    4.5, 6, 3
+  ))
 # ## las
 # # filter data
 # data_las_climate <- data_las %>% 

@@ -2,6 +2,7 @@
 
 df_calendar <- df_smooth %>%
   filter(state != "PR") %>% 
+  filter(state != "AK") %>% 
   filter(country == "US") %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, doy) %>%
   summarise(count_mean = mean(count, na.rm = T)) %>%

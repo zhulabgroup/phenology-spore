@@ -98,7 +98,7 @@ p_trend_peak <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("H      \n"), italic("Decreased\npeak concentration")))) +
+  labs(title = expression(paste(bold("F      \n"), italic("Decreased\npeak concentration")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(15, 10, 10, 10)
@@ -214,7 +214,7 @@ p_trend_integral <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("E      \n"), italic("Decreased\nannual integral")))) +
+  labs(title = expression(paste(bold("G      \n"), italic("Decreased\nannual integral")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(15, 10, 10, 10)
@@ -332,7 +332,7 @@ p_trend_integral_as <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("F      \n"), italic("Increased allergy\nseason integral")))) +
+  labs(title = expression(paste(bold("H      \n"), italic("Increased allergy\nseason integral")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(15, 10, 10, 10)
@@ -705,7 +705,7 @@ p_trend_sas <- ggplot() +
 # filter data
 data_las <- df_metrics %>% 
   drop_na(las) %>% 
-  filter(observ_pct_as >= pct) %>% 
+  filter(observ_pct_as >= 0) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
   do({
     result <- lm(las ~ year_new, .)
@@ -731,7 +731,7 @@ data_las <- df_metrics %>%
   ungroup() %>% 
   right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>% 
   drop_na(las) %>% 
-  filter(observ_pct_as >= pct) %>% 
+  filter(observ_pct_as >= 0) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, intercept, slope, r_squared, p_value) %>% 
   mutate(start_year = min(year_new)) %>% 
   mutate(end_year = max(year_new)) %>% 
@@ -909,7 +909,7 @@ p_trend_amplitude <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("G      \n"), italic("Decreased\namplitude")))) +
+  labs(title = expression(paste(bold("E      \n"), italic("Decreased\namplitude")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(15, 10, 10, 10)
@@ -940,11 +940,11 @@ p_trend_c1 <- plot_grid(title1,
                         title2,
                         ncol = 1,
                         rel_heights = c(1, 1))
-p_trend_c5 <- plot_grid(p_trend_amplitude,
+p_trend_c4 <- plot_grid(p_trend_amplitude,
                         p_trend_peak,
                         ncol = 1,
                         rel_heights = c(1, 1))
-p_trend_c4 <- plot_grid(p_trend_integral,
+p_trend_c5 <- plot_grid(p_trend_integral,
                         p_trend_integral_as,
                         ncol = 1,
                         rel_heights = c(1, 1))
