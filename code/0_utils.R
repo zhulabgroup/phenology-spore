@@ -47,6 +47,8 @@ pacman::p_load(cowplot)
 pacman::p_load(glue)
 # remotes::install_github("coolbutuseless/ggpattern")
 pacman::p_load(ggpattern)
+pacman::p_load(sp)
+pacman::p_load(rgdal)
 
 
 # ln -s /nfs/turbo/seas-zhukai/phenology/phenology_fungal_spore/ data
