@@ -32,6 +32,50 @@ df_peak <- df %>%
     peak_check = head(peak_check, 1)
   )
 
+df_amplitude <- df %>%
+  group_by(lat, lon, station, city, state, country, id, n, offset, year_new, observ_pct) %>%
+  filter(count_whit == min(count_whit)) %>%
+  summarise(
+    trough = head(count_whit, 1),
+    trough_doy = head(doy_new, 1),
+    trough_date_old = head(date, 1)
+  ) %>% 
+  mutate(
+    trough_start = case_when(
+      trough_doy <= 10 ~ 1,
+      TRUE ~ trough_doy - 10
+    )
+  ) %>% 
+  mutate(
+    trough_end = case_when(
+      year_new %% 4 != 0 & trough_doy >= 356 ~ 365,
+      year_new %% 4 == 0 & trough_doy >= 357 ~ 366,
+      TRUE ~ trough_doy + 10
+    )
+  ) %>% 
+  right_join(df_smooth, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>% 
+  drop_na(trough_doy) %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, year_new, observ_pct) %>%
+  filter(doy_new %in% trough_start:trough_end) %>%
+  mutate(trough_check = case_when(
+    sum(is.na(count_whit)) != 0 ~ 0,
+    TRUE ~ 1)) %>% 
+  summarise(
+    trough = head(trough, 1),
+    trough_doy = head(trough_doy, 1),
+    trough_date_old = head(trough_date_old, 1),
+    trough_check = head(trough_check, 1)
+  ) %>% 
+  full_join(df_peak, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new", "observ_pct")) %>% 
+  mutate(amplitude = peak - trough) %>% 
+  mutate(
+    amplitude = ifelse(
+      peak_check == 1 & trough_check == 1,
+      amplitude,
+      NA
+    )
+  )
+
 df_integral <- df %>%
   group_by(lat, lon, station, city, state, country, id, n, offset, year_new, observ_pct) %>%
   summarise(integral = sum(count_whit) / n() * 365)
@@ -130,11 +174,11 @@ df_integral_as <- df_allergy_season %>%
     )
 
 df_metrics <- list(
-  df_peak,
+  df_amplitude,
   df_integral,
   df_season,
   df_allergy_season,
   df_integral_as
   ) %>% 
   reduce(full_join, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new", "observ_pct"))
-write_rds(df_metrics, str_c(.path$dat_process, "2023-04-25/metrics_offset_flags.rds"))
+write_rds(df_metrics, str_c(.path$dat_process, "2023-04-25/metrics_amplitude.rds"))
