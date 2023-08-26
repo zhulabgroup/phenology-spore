@@ -8,7 +8,8 @@ df_antt <- df_smooth %>%
   left_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
 
 
-p_antt <- ggplot() +
+p_antt 
+  ggplot() +
   geom_ribbon_pattern(
     data = df_antt %>% filter(year_new == 2009 & doy_new %in% 137:236),
     aes(x = date, ymin = 0, ymax = count_whit, pattern_colour = "allergy season integral"),
@@ -63,7 +64,7 @@ p_antt <- ggplot() +
     col = "dark red"
   ) +
   geom_text(
-    aes(x = as_datetime("2009-01-01"), y = 7955.968, label = "peak"),
+    aes(x = as_datetime("2009-01-01"), y = 7955.968, label = "peak concentration"),
     hjust = 0,
     vjust = -0.5,
     col = "dark red"
@@ -109,7 +110,7 @@ p_antt <- ggplot() +
     col = "dark red"
   ) +
   geom_text(
-    aes(x = as_datetime("2009-01-01"), y = 6500, label = "NAB shreshold"),
+    aes(x = as_datetime("2009-01-01"), y = 6500, label = "NAB allergy shreshold"),
     hjust = 0,
     vjust = 1.3,
     col = "dark red"
@@ -180,13 +181,13 @@ p_antt <- ggplot() +
   ) +
   scale_x_datetime(
     breaks = c(as_datetime("2009-02-10"), as_datetime("2009-04-29"), as_datetime("2009-06-27"), as_datetime("2009-08-12"), as_datetime("2009-10-04"), as_datetime("2009-11-19"), as_datetime("2010-02-10")), 
-    date_labels = c("1", "start of spore season", "start of allergy season", "peak day of year", "end of allergy season", "end of spore season", "365")
+    date_labels = c("1", "start of spore season", "start of allergy season", "day of peak concentration", "end of allergy season", "end of spore season", "365")
   ) +
   coord_cartesian(
     xlim = c(as_datetime("2009-01-21"), max(df_antt$date)),
     ylim = c(exp(7), exp(10))
   ) +
-  ylab(expression("Spore concentration (grains*m"^-3*")")) +
+  ylab(expression("Spore concentration (grains m"^-3*")")) +
   xlab("Day of spore year") +
   theme_classic() +
   theme(
