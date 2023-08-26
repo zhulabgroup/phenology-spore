@@ -17,6 +17,14 @@
 #   ungroup() %>%
 #   dplyr::select(lat, lon, station, city, state, country, id, year, date, count)
 # 
+# # check the proportion of missing data before interpolation
+# df_miss <- df_siteyear %>% 
+#   mutate(doy = format(date, "%j") %>% as.integer()) %>%
+#   filter(doy < 366) %>% 
+#   group_by(lat, lon, station, city, state, country, id, year) %>% 
+#   summarize(miss_ppt = 1 - n() / 365)
+# summary(df_miss$miss_ppt)
+# 
 # # fill the dates to full years
 # df_fill <- df_siteyear %>%
 #   group_by(lat, lon, station, city, state, country, id) %>%
@@ -55,7 +63,7 @@
 # 
 # df_smooth <- df_fill %>% 
 #   group_by(lat, lon, station, city, state, country, id, n) %>% 
-#   mutate(count_fill = zoo::na.approx(count, maxgap = 7, na.rm = F)) %>% 
+#   mutate(count_fill = zoo::na.approx(count, maxgap = 14, na.rm = F)) %>% 
 #   mutate(count_whit = whitfun(count_fill, lambda = 1800)) %>%
 #   ungroup()
 # 
