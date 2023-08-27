@@ -93,7 +93,7 @@ p_trend_peak <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab(expression("Peak concentration (grains*m"^-3*")")) +
+  ylab(expression("Peak concentration (grains m"^-3*")")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
@@ -209,7 +209,7 @@ p_trend_integral <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab(expression("Annual spore integral (grains*m"^-3*"*days)")) +
+  ylab(expression("Annual integral (grains m"^-3*" days)")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
@@ -327,7 +327,7 @@ p_trend_integral_as <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab(expression("Allergy season integral (grains*m"^-3*"*days)")) +
+  ylab(expression("Allergy season integral (grains m"^-3*" days)")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
@@ -445,7 +445,7 @@ p_trend_sos <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Sos (day of year)") +
+  ylab("Start of season (day of spore year)") +
   theme(
     axis.text.x = element_text(color = "black"),
     axis.ticks.x = element_line(color = "black"),
@@ -561,7 +561,7 @@ p_trend_los <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Los (days)") +
+  ylab("Length of season (days)") +
   theme(
     axis.text.x = element_text(color = "black"),
     axis.ticks.x = element_line(color = "black"),
@@ -675,7 +675,7 @@ p_trend_sas <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Sas (day of year)") +
+  ylab("Start of allergy season (day of spore year)") +
   theme(
     axis.text.x = element_text(color = "black"),
     axis.ticks.x = element_line(color = "black"),
@@ -708,7 +708,6 @@ p_trend_sas <- ggplot() +
 # filter data
 data_las <- df_metrics %>% 
   drop_na(las) %>% 
-  filter(observ_pct_as >= 0) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
   do({
     result <- lm(las ~ year_new, .)
@@ -734,7 +733,6 @@ data_las <- df_metrics %>%
   ungroup() %>% 
   right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>% 
   drop_na(las) %>% 
-  filter(observ_pct_as >= 0) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, intercept, slope, r_squared, p_value) %>% 
   mutate(start_year = min(year_new)) %>% 
   mutate(end_year = max(year_new)) %>% 
@@ -791,7 +789,7 @@ p_trend_las <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Las (days)") +
+  ylab("Length of allergy season (days)") +
   theme(
     axis.text.x = element_text(color = "black"),
     axis.ticks.x = element_line(color = "black"),
@@ -904,7 +902,7 @@ p_trend_amplitude <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab(expression("Amplitude (grains*m"^-3*")")) +
+  ylab(expression("Amplitude (grains m"^-3*")")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
