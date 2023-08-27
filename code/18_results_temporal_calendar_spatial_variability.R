@@ -26,14 +26,21 @@ labelfunc_x <- function(x) {
   format(origin + x, format = "%b")
 }
 
-p_calendar_a <- ggplot(data = df_calendar %>% filter(n %in% c(10, 9, 22, 13, 6))) +
-  geom_tile(aes(x = doy, y = reorder(ylab_lon, lon), fill = count_new %>% log(10)), alpha = 1) +
+data_a <- df_calendar %>% 
+  filter(n %in% c(10, 9, 22, 13, 6)) %>% 
+  mutate(eco = "Mediterranean California") %>% 
+  mutate(eco = ifelse(state == "OH", "Eastern Temperate Forests", eco)) %>% 
+  mutate(eco = ifelse(state == "MO", "Eastern Temperate Forests", eco)) %>% 
+  mutate(eco = ifelse(state == "OK", "Great Plains", eco)) %>% 
+  mutate(ylab_eco = paste0(city, ", ", state, " (",eco, ")"))
+p_calendar_a <- ggplot(data_a) +
+  geom_tile(aes(x = doy, y = reorder(ylab_eco, lon), fill = count_new %>% log(10)), alpha = 1) +
   scale_fill_gradient(
     low = "light yellow", high = "dark red", na.value = "white",
     breaks = c(1, 100, 1000, 10000, 1000000) %>% log(10),
     labels = c(1, 100, 1000, 10000, 1000000),
     limits = c(100, 50000) %>% log(10),
-    name = expression(atop("Spore concentration (grains*m"^-3*")"))
+    name = expression(atop("Spore concentration (grains m"^-3*")"))
   ) +
   scale_x_continuous(labels = labelfunc_x) +
   theme_classic() +
@@ -62,7 +69,7 @@ p_calendar_b <- ggplot(data = df_calendar %>% filter(n %in% c(5, 7, 48, 56, 40))
     breaks = c(1, 100, 1000, 10000, 1000000) %>% log(10),
     labels = c(1, 100, 1000, 10000, 1000000),
     limits = c(100, 50000) %>% log(10),
-    name = expression(atop("Spore concentration (grains*m"^-3*")"))
+    name = expression(atop("Spore concentration (grains m"^-3*")"))
   ) +
   scale_x_continuous(labels = labelfunc_x) +
   theme_classic() +
@@ -111,7 +118,7 @@ p_calendar_suppl <- ggplot(data = df_calendar) +
     breaks = c(1, 100, 10000, 1000000) %>% log(10),
     labels = c(1, 100, 10000, 1000000),
     limits = c(100, 50000) %>% log(10),
-    name = expression(atop("Spore concentration (grains*m"^-3*")"))
+    name = expression(atop("Spore concentration (grains m"^-3*")"))
   ) +
   theme(
     plot.title.position = "plot",
