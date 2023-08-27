@@ -30,7 +30,6 @@ data_peak_climate <- data_peak %>%
   rename("slope_tap" = "year_new", "intercept_tap" = "(Intercept)") %>%
   ungroup() %>%
   right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>%
-  filter(peak_check == 1) %>%
   filter(state != "PR") %>% 
   filter(country == "US") %>% 
   drop_na(peak) %>% 

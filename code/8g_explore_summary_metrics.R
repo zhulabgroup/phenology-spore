@@ -8,8 +8,7 @@ df_antt <- df_smooth %>%
   left_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
 
 
-p_antt 
-  ggplot() +
+p_antt <- ggplot() +
   geom_ribbon_pattern(
     data = df_antt %>% filter(year_new == 2009 & doy_new %in% 137:236),
     aes(x = date, ymin = 0, ymax = count_whit, pattern_colour = "allergy season integral"),

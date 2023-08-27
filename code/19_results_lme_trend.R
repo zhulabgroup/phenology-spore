@@ -1,10 +1,14 @@
 # df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds"))
 # pct = 0.8
 
+df_metrics <- df_metrics %>% 
+  mutate(peak = ifelse(peak_check == 0, NA, peak)) %>% 
+  mutate(peak_doy = ifelse(peak_check == 0, NA, peak_doy)) %>% 
+  mutate(peak_date_old = ifelse(peak_check == 0, NA, peak_date_old))
+
 ## peak
 # filter data
 data_peak <- df_metrics %>% 
-  filter(peak_check == 1) %>%
   drop_na(peak) %>% 
   filter(observ_pct >= pct) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
@@ -31,7 +35,6 @@ data_peak <- df_metrics %>%
   rename("slope" = "year_new", "intercept" = "(Intercept)") %>%
   ungroup() %>% 
   right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>% 
-  filter(peak_check == 1) %>%
   drop_na(peak) %>% 
   filter(observ_pct >= pct) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, intercept, slope, r_squared, p_value) %>% 
