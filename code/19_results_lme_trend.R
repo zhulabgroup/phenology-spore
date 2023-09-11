@@ -1,10 +1,14 @@
 # df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_daymet.rds"))
 # pct = 0.8
 
+df_metrics <- df_metrics %>% 
+  mutate(peak = ifelse(peak_check == 0, NA, peak)) %>% 
+  mutate(peak_doy = ifelse(peak_check == 0, NA, peak_doy)) %>% 
+  mutate(peak_date_old = ifelse(peak_check == 0, NA, peak_date_old))
+
 ## peak
 # filter data
 data_peak <- df_metrics %>% 
-  filter(peak_check == 1) %>%
   drop_na(peak) %>% 
   filter(observ_pct >= pct) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
@@ -31,7 +35,6 @@ data_peak <- df_metrics %>%
   rename("slope" = "year_new", "intercept" = "(Intercept)") %>%
   ungroup() %>% 
   right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>% 
-  filter(peak_check == 1) %>%
   drop_na(peak) %>% 
   filter(observ_pct >= pct) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, intercept, slope, r_squared, p_value) %>% 
@@ -90,7 +93,7 @@ p_trend_peak <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab(expression("Peak concentration (grains*m"^-3*")")) +
+  ylab(expression("Peak concentration (grains m"^-3*")")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
@@ -98,7 +101,7 @@ p_trend_peak <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("F      \n"), italic("Decreased\npeak concentration")))) +
+  labs(title = expression(paste(bold("H      \n"), italic("Decreased\npeak concentration")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(15, 10, 10, 10)
@@ -206,7 +209,7 @@ p_trend_integral <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab(expression("Annual spore integral (grains*m"^-3*"*days)")) +
+  ylab(expression("Annual integral (grains m"^-3*" days)")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
@@ -214,7 +217,7 @@ p_trend_integral <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("G      \n"), italic("Decreased\nannual integral")))) +
+  labs(title = expression(paste(bold("I      \n"), italic("Decreased\nannual integral")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(15, 10, 10, 10)
@@ -324,7 +327,7 @@ p_trend_integral_as <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab(expression("Allergy season integral (grains*m"^-3*"*days)")) +
+  ylab(expression("Allergy season integral (grains m"^-3*" days)")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
@@ -332,7 +335,7 @@ p_trend_integral_as <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("H      \n"), italic("Increased allergy\nseason integral")))) +
+  labs(title = expression(paste(bold("J      \n"), italic("Increased allergy\nseason integral")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(15, 10, 10, 10)
@@ -442,7 +445,7 @@ p_trend_sos <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Sos (day of year)") +
+  ylab("Start of season (day of spore year)") +
   theme(
     axis.text.x = element_text(color = "black"),
     axis.ticks.x = element_line(color = "black"),
@@ -461,6 +464,121 @@ p_trend_sos <- ggplot() +
       label = paste0(
         "\nSlope: ", slope_sos,
         "\nP-value: ", p_sos
+      )
+    ),
+    hjust = 0,
+    vjust = 0.5,
+    col = "black"
+  )
+
+
+
+## eos
+# filter data
+data_eos <- df_metrics %>% 
+  drop_na(eos) %>% 
+  filter(observ_pct >= 1) %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
+  do({
+    result <- lm(eos ~ year_new, .)
+    data_frame(
+      r_squared =
+        result %>%
+        summary() %>%
+        magrittr::use_series(adj.r.squared),
+      p_value =
+        result %>%
+        anova() %>%
+        magrittr::use_series(`Pr(>F)`) %>%
+        magrittr::extract2(1)
+    ) %>%
+      bind_cols(
+        result %>%
+          coef() %>%
+          as.list() %>%
+          as_data_frame()
+      )
+  }) %>%
+  rename("slope" = "year_new", "intercept" = "(Intercept)") %>%
+  ungroup() %>% 
+  right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>% 
+  drop_na(eos) %>% 
+  filter(observ_pct >= 1) %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, intercept, slope, r_squared, p_value) %>% 
+  mutate(start_year = min(year_new)) %>% 
+  mutate(end_year = max(year_new)) %>% 
+  mutate(Nyear = end_year - start_year + 1) %>%
+  mutate(Nrcd = n()) %>% 
+  filter(Nrcd >= 5) %>% 
+  filter(state != "PR") %>% 
+  filter(country == "US") %>% 
+  ungroup()
+# fit lme
+lme_eos <- lme(
+  eos ~ year_new,
+  data = data_eos,
+  random = ~ year_new | n
+)
+slope_eos <- fixef(lme_eos)[["year_new"]] %>% round(3)
+p_eos <- summary(lme_eos)$tTable[["year_new", "p-value"]] %>% round(3)
+eos_fit_lme <- data_eos %>% 
+  mutate(
+    lme.fixed = lme_eos$fitted[, 1],
+    lme.random = lme_eos$fitted[, 2]
+  ) %>%
+  mutate(n = as.character(n)) %>% 
+  as_tibble()
+ci_eos_lme <- ggpredict(lme_eos, terms = c("year_new", "n"), type = "re") %>%
+  as_tibble()
+# plot
+p_trend_eos <- ggplot() +
+  geom_point(
+    data = eos_fit_lme,
+    aes(x = year_new, y = eos, col = n),
+    alpha = 0.5,
+    size = 0.5
+  ) +
+  geom_smooth(
+    data = eos_fit_lme,
+    method = "lm",
+    se = FALSE,
+    aes(x = year_new, y = eos, group = n, col = n),
+    alpha = 0.5,
+    linewidth = 0.5
+  ) +
+  geom_ribbon(
+    data = ci_eos_lme,
+    aes(x = x, ymin = conf.low, ymax = conf.high),
+    fill = "black",
+    alpha = 0.2
+  ) +
+  geom_line(
+    data = eos_fit_lme,
+    aes(x = year_new, y = lme.fixed),
+    col = "black", linewidth = 1, linetype = "dashed"
+  ) +
+  theme_classic() +
+  theme(legend.position = "none") +
+  xlab("Year") +
+  ylab("End of season (day of spore year)") +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.ticks.x = element_line(color = "black"),
+    axis.ticks.y = element_line(color = "black"),
+    axis.text.y = element_text(color = "black")
+  ) +
+  labs(title = expression(paste(bold("C      \n"), italic("Advanced end\nof spore season")))) +
+  theme(
+    plot.title.position = "plot",
+    plot.margin = margin(15, 10, 10, 10)
+  ) +
+  geom_text(
+    aes(
+      x = 2003,
+      y = 350,
+      label = paste0(
+        "\nSlope: ", slope_eos,
+        "\nP-value: ", p_eos
       )
     ),
     hjust = 0,
@@ -558,14 +676,14 @@ p_trend_los <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Los (days)") +
+  ylab("Length of season (days)") +
   theme(
     axis.text.x = element_text(color = "black"),
     axis.ticks.x = element_line(color = "black"),
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("C      \n"), italic("Extended\nspore season")))) +
+  labs(title = expression(paste(bold("E      \n"), italic("Extended\nspore season")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(15, 10, 10, 10)
@@ -672,7 +790,7 @@ p_trend_sas <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Sas (day of year)") +
+  ylab("Start of allergy season (day of spore year)") +
   theme(
     axis.text.x = element_text(color = "black"),
     axis.ticks.x = element_line(color = "black"),
@@ -701,11 +819,123 @@ p_trend_sas <- ggplot() +
 
 
 
+## eas
+# filter data
+data_eas <- df_metrics %>% 
+  drop_na(eas) %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
+  do({
+    result <- lm(eas ~ year_new, .)
+    data_frame(
+      r_squared =
+        result %>%
+        summary() %>%
+        magrittr::use_series(adj.r.squared),
+      p_value =
+        result %>%
+        anova() %>%
+        magrittr::use_series(`Pr(>F)`) %>%
+        magrittr::extract2(1)
+    ) %>%
+      bind_cols(
+        result %>%
+          coef() %>%
+          as.list() %>%
+          as_data_frame()
+      )
+  }) %>%
+  rename("slope" = "year_new", "intercept" = "(Intercept)") %>%
+  ungroup() %>% 
+  right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>% 
+  drop_na(eas) %>% 
+  group_by(lat, lon, station, city, state, country, id, n, offset, intercept, slope, r_squared, p_value) %>% 
+  mutate(start_year = min(year_new)) %>% 
+  mutate(end_year = max(year_new)) %>% 
+  mutate(Nyear = end_year - start_year + 1) %>%
+  mutate(Nrcd = n()) %>% 
+  filter(Nrcd >= 5) %>% 
+  filter(state != "PR") %>% 
+  filter(country == "US") %>% 
+  ungroup()
+# fit lme
+lme_eas <- lme(
+  eas ~ year_new,
+  data = data_eas,
+  random = ~ year_new | n
+)
+slope_eas <- fixef(lme_eas)[["year_new"]] %>% round(3)
+p_eas <- summary(lme_eas)$tTable[["year_new", "p-value"]] %>% round(3)
+eas_fit_lme <- data_eas %>% 
+  mutate(
+    lme.fixed = lme_eas$fitted[, 1],
+    lme.random = lme_eas$fitted[, 2]
+  ) %>%
+  mutate(n = as.character(n)) %>% 
+  as_tibble()
+ci_eas_lme <- ggpredict(lme_eas, terms = c("year_new", "n"), type = "re") %>%
+  as_tibble()
+# plot
+p_trend_eas <- ggplot() +
+  geom_point(
+    data = eas_fit_lme,
+    aes(x = year_new, y = eas, col = n),
+    alpha = 0.5,
+    size = 0.5
+  ) +
+  geom_smooth(
+    data = eas_fit_lme,
+    method = "lm",
+    se = FALSE,
+    aes(x = year_new, y = eas, group = n, col = n),
+    alpha = 0.5,
+    linewidth = 0.5
+  ) +
+  geom_ribbon(
+    data = ci_eas_lme,
+    aes(x = x, ymin = conf.low, ymax = conf.high),
+    fill = "black",
+    alpha = 0.2
+  ) +
+  geom_line(
+    data = eas_fit_lme,
+    aes(x = year_new, y = lme.fixed),
+    col = "black", linewidth = 1, linetype = "dashed"
+  ) +
+  theme_classic() +
+  theme(legend.position = "none") +
+  xlab("Year") +
+  ylab("End of allergy season (day of spore year)") +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.ticks.x = element_line(color = "black"),
+    axis.ticks.y = element_line(color = "black"),
+    axis.text.y = element_text(color = "black")
+  ) +
+  labs(title = expression(paste(bold("D      \n "), italic("Advanced end\nof allergy season")))) +
+  theme(
+    plot.title.position = "plot",
+    plot.margin = margin(15, 10, 10, 10)
+  ) +
+  geom_text(
+    aes(
+      x = 2003,
+      y = 370,
+      label = paste0(
+        "\nSlope: ", slope_eas,
+        "\nP-value: ", p_eas
+      )
+    ),
+    hjust = 0,
+    vjust = 0.5,
+    col = "black"
+  )
+
+
+
 ## las
 # filter data
 data_las <- df_metrics %>% 
   drop_na(las) %>% 
-  filter(observ_pct_as >= 0) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset) %>% 
   do({
     result <- lm(las ~ year_new, .)
@@ -731,7 +961,6 @@ data_las <- df_metrics %>%
   ungroup() %>% 
   right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>% 
   drop_na(las) %>% 
-  filter(observ_pct_as >= 0) %>% 
   group_by(lat, lon, station, city, state, country, id, n, offset, intercept, slope, r_squared, p_value) %>% 
   mutate(start_year = min(year_new)) %>% 
   mutate(end_year = max(year_new)) %>% 
@@ -788,14 +1017,14 @@ p_trend_las <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab("Las (days)") +
+  ylab("Length of allergy season (days)") +
   theme(
     axis.text.x = element_text(color = "black"),
     axis.ticks.x = element_line(color = "black"),
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("D      \n"), italic("Extended\nallergy season")))) +
+  labs(title = expression(paste(bold("F      \n"), italic("Extended\nallergy season")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(15, 10, 10, 10)
@@ -901,7 +1130,7 @@ p_trend_amplitude <- ggplot() +
   theme_classic() +
   theme(legend.position = "none") +
   xlab("Year") +
-  ylab(expression("Amplitude (grains*m"^-3*")")) +
+  ylab(expression("Amplitude (grains m"^-3*")")) +
   scale_y_continuous(labels = scales::math_format(e^.x)) +
   theme(
     axis.text.x = element_text(color = "black"),
@@ -909,7 +1138,7 @@ p_trend_amplitude <- ggplot() +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  labs(title = expression(paste(bold("E      \n"), italic("Decreased\namplitude")))) +
+  labs(title = expression(paste(bold("G      \n"), italic("Decreased\namplitude")))) +
   theme(
     plot.title.position = "plot",
     plot.margin = margin(15, 10, 10, 10)
@@ -931,31 +1160,24 @@ p_trend_amplitude <- ggplot() +
 
 
 
+
+
+
+
 p_trend_space <- ggplot() +
   theme_void() +
   theme(plot.margin = margin(10, 10, 10, 10))
-title1 <- ggdraw() + draw_label("Ecology\nPerspective", hjust = 0.5, vjust = 0.5, fontface = "bold")
-title2 <- ggdraw() + draw_label("Public Health\nPerspective", hjust = 0.5, vjust = 0.5, fontface = "bold")
-p_trend_c1 <- plot_grid(title1,
-                        title2,
-                        ncol = 1,
-                        rel_heights = c(1, 1))
-p_trend_c4 <- plot_grid(p_trend_amplitude,
-                        p_trend_peak,
-                        ncol = 1,
-                        rel_heights = c(1, 1))
-p_trend_c5 <- plot_grid(p_trend_integral,
-                        p_trend_integral_as,
-                        ncol = 1,
-                        rel_heights = c(1, 1))
-p_trend_c2 <- plot_grid(p_trend_sos,
-                        p_trend_sas,
-                        ncol = 1,
-                        rel_heights = c(1, 1))
-p_trend_c3 <- plot_grid(p_trend_los,
-                        p_trend_las,
-                        ncol = 1,
-                        rel_heights = c(1, 1))
-p_trend <- plot_grid(p_trend_c1, p_trend_c2, p_trend_c3, p_trend_c4, p_trend_c5,
-                     ncol = 5,
-                     rel_widths = c(0.6, 1, 1, 1, 1))
+title1 <- ggdraw() + draw_label("Ecology Perspective", hjust = 0.5, vjust = 0.5, fontface = "bold")
+title2 <- ggdraw() + draw_label("Public Health Perspective", hjust = 0.5, vjust = 0.5, fontface = "bold")
+p_trend_r1 <- plot_grid(p_trend_sos, p_trend_eos, p_trend_los, p_trend_amplitude, p_trend_integral,
+                        nrow = 1,
+                        rel_widths = c(1, 1, 1, 1, 1))
+p_trend_r2 <- plot_grid(p_trend_sas, p_trend_eas, p_trend_las, p_trend_peak, p_trend_integral_as,
+                        nrow = 1,
+                        rel_widths = c(1, 1, 1, 1, 1))
+p_trend <- plot_grid(title1,
+                     p_trend_r1,
+                     title2,
+                     p_trend_r2,
+                     nrow = 4,
+                     rel_heights = c(0.1, 1, 0.1, 1))

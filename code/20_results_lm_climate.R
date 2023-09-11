@@ -30,7 +30,6 @@ data_peak_climate <- data_peak %>%
   rename("slope_tap" = "year_new", "intercept_tap" = "(Intercept)") %>%
   ungroup() %>%
   right_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>%
-  filter(peak_check == 1) %>%
   filter(state != "PR") %>% 
   filter(country == "US") %>% 
   drop_na(peak) %>% 
@@ -92,7 +91,7 @@ p_climate_1a <- ggplot() +
     labels = function(x) {
       ifelse(x == 0, "0", paste0(x, "\u00B3"))
     },
-    name = "Temporal trend of\nln(peak)"
+    name = "Temporal trend of\nln(peak concentration)"
     ) +
   geom_point(data = data_peak_climate, aes(x = lon, y = lat, size = Nyear, shape = ifelse(p_value > 0.05, "> 0.05", "<= 0.05"))) +
   scale_shape_manual(values = c(10, 1), guide = guide_legend(title = "P-value", override.aes = list(size = c(4, 4)))) +
@@ -141,7 +140,7 @@ p_climate_1b <- ggplot(data_peak_climate, aes(x = slope_tap)) +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  xlab("Temporal trend of tap") +
+  xlab("Temporal trend of TAP") +
   ylab("Temporal trend of ln(peak)") +
   ggtitle("E") +
   theme(plot.title.position = "plot",
@@ -248,7 +247,7 @@ p_climate_2c <- ggplot() +
     labels = function(x) {
       ifelse(x == 0, "0", paste0(x, "\u00B3"))
     },
-    name = "Temporal trend of\nln(AIn)"
+    name = "Temporal trend of\nln(annual integral)"
   ) +
   geom_point(data = data_integral_climate, aes(x = lon, y = lat, size = Nyear, shape = ifelse(p_value > 0.05, "> 0.05", "<= 0.05"))) +
   scale_shape_manual(values = c(10, 1), guide = guide_legend(title = "P-value", override.aes = list(size = c(4, 4)))) +
@@ -297,7 +296,7 @@ p_climate_2d <- ggplot(data_integral_climate, aes(x = slope_tap)) +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  xlab("Temporal trend of tap") +
+  xlab("Temporal trend of TAP") +
   ylab("Temporal trend of ln(AIn)") +
   ggtitle("G") +
   theme(plot.title.position = "plot",
@@ -782,7 +781,7 @@ p_climate_3e <- ggplot() +
       sign(.) * abs(.)^(1/3)
     },
     labels = c(-15, -5, -1, 0, 1, 6),
-    name = "Temporal trend of\nsas"
+    name = "Temporal trend of\nstart of allergy season"
   ) +
   geom_point(data = data_sas_climate, aes(x = lon, y = lat, size = Nyear, shape = ifelse(p_value > 0.05, "> 0.05", "<= 0.05"))) +
   scale_shape_manual(values = c(10, 1), guide = guide_legend(title = "P-value", override.aes = list(size = c(4, 4)))) +
@@ -796,11 +795,11 @@ p_climate_3e <- ggplot() +
         plot.title = element_text(face = "bold"),
         legend.position = "left")
 
-slope_lm_sas <- summary(lm_sas)$coefficients["slope_mat", "Estimate"]
-p_lm_sas <- summary(lm_sas)$coefficients["slope_mat", "Pr(>|t|)"] %>% round(3)
+slope_lm_sas_mat <- summary(lm_sas)$coefficients["slope_mat", "Estimate"]
+p_lm_sas_mat <- summary(lm_sas)$coefficients["slope_mat", "Pr(>|t|)"] %>% round(3)
 data_sas_climate$predict <- summary(lm_sas)$coefficients["(Intercept)", "Estimate"] +
   summary(lm_sas)$coefficients["slope_tap", "Estimate"] * mean(data_sas_climate$slope_tap) +
-  slope_lm_sas * data_sas_climate$slope_mat
+  slope_lm_sas_mat * data_sas_climate$slope_mat
 sas_fix_var <- ggpredict(lm_sas, terms = c("slope_mat"), type = "re") %>%
   as_tibble()
 p_climate_3f <- ggplot(data_sas_climate, aes(x = slope_mat)) +
@@ -831,8 +830,8 @@ p_climate_3f <- ggplot(data_sas_climate, aes(x = slope_mat)) +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  xlab("Temporal trend of mat") +
-  ylab("Temporal trend of sas") +
+  xlab("Temporal trend of MAT") +
+  ylab("Temporal trend of SAS") +
   ggtitle("B") +
   theme(plot.title.position = "plot",
         plot.margin = margin(10, 10, 10, 0),
@@ -842,18 +841,18 @@ p_climate_3f <- ggplot(data_sas_climate, aes(x = slope_mat)) +
       x = 0.2,
       y = 10,
       label = paste0(
-        "P-value: ", p_lm_sas
+        "P-value: ", p_lm_sas_mat
       )
     ),
     hjust = 0.5,
     vjust = 0
   )
 
-slope_lm_sas <- summary(lm_sas)$coefficients["slope_tap", "Estimate"]
-p_lm_sas <- summary(lm_sas)$coefficients["slope_tap", "Pr(>|t|)"] %>% round(3)
+slope_lm_sas_tap <- summary(lm_sas)$coefficients["slope_tap", "Estimate"]
+p_lm_sas_tap <- summary(lm_sas)$coefficients["slope_tap", "Pr(>|t|)"] %>% round(3)
 data_sas_climate$predict <- summary(lm_sas)$coefficients["(Intercept)", "Estimate"] +
   summary(lm_sas)$coefficients["slope_mat", "Estimate"] * mean(data_sas_climate$slope_mat) +
-  slope_lm_sas * data_sas_climate$slope_tap
+  slope_lm_sas_tap * data_sas_climate$slope_tap
 sas_fix_var <- ggpredict(lm_sas, terms = c("slope_tap"), type = "re") %>%
   as_tibble()
 p_climate_3g <- ggplot(data_sas_climate, aes(x = slope_tap)) +
@@ -884,8 +883,8 @@ p_climate_3g <- ggplot(data_sas_climate, aes(x = slope_tap)) +
     axis.ticks.y = element_line(color = "black"),
     axis.text.y = element_text(color = "black")
   ) +
-  xlab("Temporal trend of tap") +
-  ylab("Temporal trend of sas") +
+  xlab("Temporal trend of TAP") +
+  ylab("Temporal trend of SAS") +
   ggtitle("C") +
   theme(plot.title.position = "plot",
         plot.margin = margin(10, 10, 10, 0),
@@ -895,7 +894,7 @@ p_climate_3g <- ggplot(data_sas_climate, aes(x = slope_tap)) +
       x = 6,
       y = 10,
       label = paste0(
-        "P-value: ", p_lm_sas
+        "P-value: ", p_lm_sas_tap
       )
     ),
     hjust = 0.5,

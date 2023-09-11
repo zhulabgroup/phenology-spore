@@ -63,13 +63,9 @@ p_antt <- ggplot() +
     col = "dark red"
   ) +
   geom_text(
-    aes(x = as_datetime("2009-01-01"), y = 7955.968, label = "peak"),
+    aes(x = as_datetime("2009-01-01"), y = 7955.968, label = "peak concentration"),
     hjust = 0,
     vjust = -0.5,
-    col = "dark red"
-  ) +
-  geom_segment(
-    aes(x = as_datetime("2009-08-12"), xend = as_datetime("2009-08-12"), y = 0, yend = 7955.968),
     col = "dark red"
   ) +
   geom_segment(
@@ -109,7 +105,7 @@ p_antt <- ggplot() +
     col = "dark red"
   ) +
   geom_text(
-    aes(x = as_datetime("2009-01-01"), y = 6500, label = "NAB shreshold"),
+    aes(x = as_datetime("2009-01-01"), y = 6500, label = "NAB allergy shreshold"),
     hjust = 0,
     vjust = 1.3,
     col = "dark red"
@@ -179,14 +175,14 @@ p_antt <- ggplot() +
     labels = scales::trans_format("log", scales::math_format(e^.x))
   ) +
   scale_x_datetime(
-    breaks = c(as_datetime("2009-02-10"), as_datetime("2009-04-29"), as_datetime("2009-06-27"), as_datetime("2009-08-12"), as_datetime("2009-10-04"), as_datetime("2009-11-19"), as_datetime("2010-02-10")), 
-    date_labels = c("1", "start of spore season", "start of allergy season", "peak day of year", "end of allergy season", "end of spore season", "365")
+    breaks = c(as_datetime("2009-02-10"), as_datetime("2009-04-29"), as_datetime("2009-06-27"), as_datetime("2009-10-04"), as_datetime("2009-11-19"), as_datetime("2010-02-10")), 
+    date_labels = c("1", "start of spore season", "start of allergy season", "end of allergy season", "end of spore season", "365")
   ) +
   coord_cartesian(
     xlim = c(as_datetime("2009-01-21"), max(df_antt$date)),
     ylim = c(exp(7), exp(10))
   ) +
-  ylab(expression("Spore concentration (grains*m"^-3*")")) +
+  ylab(expression("Spore concentration (grains m"^-3*")")) +
   xlab("Day of spore year") +
   theme_classic() +
   theme(
@@ -217,23 +213,27 @@ df_summary <- df_metrics %>%
   mutate(ln_integral_as = log(integral_as + 1)) %>% 
   mutate(ln_amplitude = log(amplitude + 1)) %>% 
   mutate(peak = ifelse(peak_check == 1, peak, NA)) %>% 
+  mutate(sos = ifelse(observ_pct >= 1, sos, NA)) %>% 
+  mutate(eos = ifelse(observ_pct >= 1, eos, NA)) %>% 
+  mutate(los = ifelse(observ_pct >= 1, los, NA)) %>% 
   gather(key = "Metric", value = "Value", peak, ln_peak, peak_doy, amplitude, ln_amplitude, integral, ln_integral, sos, eos, los, sas, eas, las, integral_as, ln_integral_as) %>% 
-  mutate(observ_pct = ifelse(Metric %in% c("sas", "eas"), 1, observ_pct)) %>% 
-  mutate(observ_pct = ifelse(Metric %in% c("las", "integral_as", "ln_integral_as"), observ_pct_as, observ_pct)) %>% 
+  mutate(observ_pct = ifelse(Metric %in% c("sas", "eas", "las"), 1, observ_pct)) %>% 
+  mutate(observ_pct = ifelse(Metric %in% c("integral_as", "ln_integral_as"), observ_pct_as, observ_pct)) %>% 
   filter(observ_pct >= pct) %>% 
   filter(Metric %in% c("ln_peak", "ln_amplitude", "ln_integral", "ln_integral_as", "peak_doy", "sos", "eos", "los", "sas", "eas", "las")) %>% 
-  mutate(Metric = ifelse(Metric == "ln_peak", "peak", Metric)) %>% 
+  mutate(Metric = ifelse(Metric == "ln_peak", "peak concentration", Metric)) %>% 
   mutate(Metric = ifelse(Metric == "ln_amplitude", "amplitude", Metric)) %>% 
-  mutate(Metric = ifelse(Metric == "ln_integral", "integral", Metric)) %>% 
-  mutate(Metric = ifelse(Metric == "ln_integral_as", "as integral", Metric)) %>% 
+  mutate(Metric = ifelse(Metric == "ln_integral", "annual integral", Metric)) %>% 
+  mutate(Metric = ifelse(Metric == "ln_integral_as", "allergy season integral", Metric)) %>% 
   mutate(Metric = ifelse(Metric == "peak_doy", "peak\ndoy", Metric))
-df_summary$Metric <- factor(df_summary$Metric, levels = c("peak", "amplitude", "integral", "as integral", "las", "eas", "sas", "los", "eos", "sos", "peak\ndoy"))
+  
+df_summary$Metric <- factor(df_summary$Metric, levels = c("peak concentration", "amplitude", "annual integral", "allergy season integral", "las", "eas", "sas", "los", "eos", "sos", "peak\ndoy"))
 
 labels_e <- function(x) {parse(text = gsub("e^", x))}
-p_metrics_b <- ggplot(data = df_summary %>% filter(Metric %in% c("peak", "amplitude")), aes(x = Metric, y = Value)) +
+p_metrics_b <- ggplot(data = df_summary %>% filter(Metric %in% c("peak concentration", "amplitude")), aes(x = Metric, y = Value)) +
   geom_boxplot(width = 0.2) +
   theme_classic() +
-  ylab(expression("Spore concentration (grains*m"^-3*")")) +
+  ylab(expression("Spore concentration (grains m"^-3*")")) +
   scale_y_continuous(
     breaks = seq(5, 17, by = 2),
     labels = scales::math_format(e^.x)
@@ -248,10 +248,10 @@ p_metrics_b <- ggplot(data = df_summary %>% filter(Metric %in% c("peak", "amplit
   theme(plot.title.position = "plot",
         plot.margin = margin(10, 0, 10, 10))
 
-p_metrics_c <- ggplot(data = df_summary %>% filter(Metric %in% c("peak\ndoy", "sos", "eos", "los", "sas", "eas", "las")), aes(x = Metric, y = Value)) +
+p_metrics_c <- ggplot(data = df_summary %>% filter(Metric %in% c("sos", "eos", "los", "sas", "eas", "las")), aes(x = Metric, y = Value)) +
   geom_boxplot(width = 0.5) +
   theme_classic() +
-  ylab("Day of year") +
+  ylab("Day of spore year") +
   scale_y_continuous(
     limits = c(-15, 406),
     breaks = c(1, 100, 200, 300, 365),
@@ -271,10 +271,10 @@ p_metrics_c <- ggplot(data = df_summary %>% filter(Metric %in% c("peak\ndoy", "s
     )+
   coord_flip()
 
-p_metrics_d <- ggplot(data = df_summary %>% filter(Metric %in% c("integral", "as integral")), aes(x = Metric, y = Value)) +
+p_metrics_d <- ggplot(data = df_summary %>% filter(Metric %in% c("annual integral", "allergy season integral")), aes(x = Metric, y = Value)) +
   geom_boxplot(width = 0.4) +
   theme_classic() +
-  ylab(expression("Spore concentration * days (grains*m"^-3*" * days)")) +
+  ylab(expression("Spore concentration * days (grains m"^-3*" days)")) +
   scale_y_continuous(
     breaks = seq(5, 17, by = 2),
     labels = scales::math_format(e^.x)
