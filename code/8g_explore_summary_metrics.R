@@ -69,10 +69,6 @@ p_antt <- ggplot() +
     col = "dark red"
   ) +
   geom_segment(
-    aes(x = as_datetime("2009-08-12"), xend = as_datetime("2009-08-12"), y = 0, yend = 7955.968),
-    col = "dark red"
-  ) +
-  geom_segment(
     aes(x = as_datetime("2009-01-01"), xend = as_datetime("2009-02-11"), y = 1333.443, yend = 1333.443),
     col = "orange",
     linetype = "dashed"
@@ -179,8 +175,8 @@ p_antt <- ggplot() +
     labels = scales::trans_format("log", scales::math_format(e^.x))
   ) +
   scale_x_datetime(
-    breaks = c(as_datetime("2009-02-10"), as_datetime("2009-04-29"), as_datetime("2009-06-27"), as_datetime("2009-08-12"), as_datetime("2009-10-04"), as_datetime("2009-11-19"), as_datetime("2010-02-10")), 
-    date_labels = c("1", "start of spore season", "start of allergy season", "day of peak concentration", "end of allergy season", "end of spore season", "365")
+    breaks = c(as_datetime("2009-02-10"), as_datetime("2009-04-29"), as_datetime("2009-06-27"), as_datetime("2009-10-04"), as_datetime("2009-11-19"), as_datetime("2010-02-10")), 
+    date_labels = c("1", "start of spore season", "start of allergy season", "end of allergy season", "end of spore season", "365")
   ) +
   coord_cartesian(
     xlim = c(as_datetime("2009-01-21"), max(df_antt$date)),
@@ -252,7 +248,7 @@ p_metrics_b <- ggplot(data = df_summary %>% filter(Metric %in% c("peak concentra
   theme(plot.title.position = "plot",
         plot.margin = margin(10, 0, 10, 10))
 
-p_metrics_c <- ggplot(data = df_summary %>% filter(Metric %in% c("peak\ndoy", "sos", "eos", "los", "sas", "eas", "las")), aes(x = Metric, y = Value)) +
+p_metrics_c <- ggplot(data = df_summary %>% filter(Metric %in% c("sos", "eos", "los", "sas", "eas", "las")), aes(x = Metric, y = Value)) +
   geom_boxplot(width = 0.5) +
   theme_classic() +
   ylab("Day of spore year") +
