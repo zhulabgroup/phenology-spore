@@ -820,7 +820,7 @@ p_climate_3f <- ggplot(data_sas_climate, aes(x = slope_mat)) +
     aes(y = slope, col = rescaled_slope)
   ) +
   scale_color_gradient2(
-    low = "blue", mid= "white", high = "red", midpoint = 0
+    low = "red", mid= "white", high = "blue", midpoint = 0
   ) +
   theme_classic() +
   theme(
@@ -873,7 +873,7 @@ p_climate_3g <- ggplot(data_sas_climate, aes(x = slope_tap)) +
     aes(y = slope, col = rescaled_slope)
   ) +
   scale_color_gradient2(
-    low = "blue", mid= "white", high = "red", midpoint = 0
+    low = "red", mid= "white", high = "blue", midpoint = 0
   ) +
   theme_classic() +
   theme(

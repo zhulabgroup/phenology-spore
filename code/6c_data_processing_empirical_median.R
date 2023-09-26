@@ -136,7 +136,7 @@ write_rds(df_fill_smooth_offset, str_c(.path$dat_process, "2023-04-25/fill_smoot
 
 df_plot <- tibble(
   n = 1:60,
-  p = vector("list", 60),
+  a = vector("list", 60),
   b = vector("list", 60)
 )
 
