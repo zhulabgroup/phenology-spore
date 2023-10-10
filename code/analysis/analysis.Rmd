@@ -1,0 +1,82 @@
+---
+title: "analysis"
+author: "Ruoyu Wu"
+date: "2023-09-29"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache=FALSE, warning = FALSE, message = FALSE)
+source("~/Github/spore_phenology/code/0_utils.R")
+```
+
+# read spore data
+```{r read}
+df_spore <- read_rds(str_c(.path$dat_process, "2023-04-25/spore_dat.rds"))
+```
+
+# filter the stations
+```{r filter}
+source("filt_taxa_station_raw_data.R")
+df_siteyear <- filt_taxa_station_raw_data(df_spore, "Total", 10, 3)
+```
+
+# rename stations and tag number for each station
+```{r}
+source("tidy_rename_number_station.R")
+df_site <- tidy_rename_number_station(df_siteyear)
+```
+
+# check the proportion of missing data in each station-year
+```{r missing}
+source("calc_miss_stationyear_raw_data.R")
+df_miss <- calc_miss_stationyear_raw_data(df_site)
+summary(df_miss$miss_ppt)
+```
+
+# pre-process data: pad the date to full year round
+```{r full}
+source("tidy_fulldate_station.R")
+df_full <- tidy_fulldate_station(df_site)
+```
+
+# natural log transform the raw data before interpolation
+```{r naural }
+df_full <- df_full %>% 
+  mutate(count_ln = log(count + 1))
+```
+
+<!-- # pre-process raw data: smoothing - three methods -->
+<!-- ```{r whittaker smoothing, message=FALSE, warning=FALSE} -->
+<!-- source("tidy_smoothfillwhit_station.R") -->
+<!-- source("tidy_smoothweiwhit_station.R") -->
+<!-- source("tidy_smoothwavelet_station.R") -->
+<!-- df_smooth <- df_full %>%  -->
+<!--   tidy_smoothfillwhit_station(n_gap = 14, lambda = 1800,column_name = count, new_column_name = count_fillwhit) %>%  -->
+<!--   tidy_smoothweiwhit_station(n_gap = 14, lambda = 1800, column_name = count, new_column_name = count_weiwhit) %>%  -->
+<!--   tidy_smoothwavelet_station(column_name = count, new_column_name = count_wavelet) -->
+<!-- ``` -->
+
+<!-- # pre-process ln data: smoothing - three methods -->
+<!-- ```{r whittaker smoothing, message=FALSE, warning=FALSE} -->
+<!-- source("tidy_smoothfillwhit_station.R") -->
+<!-- source("tidy_smoothweiwhit_station.R") -->
+<!-- source("tidy_smoothwavelet_station.R") -->
+<!-- df_ln_smooth <- df_full %>%  -->
+<!--   tidy_smoothfillwhit_station(n_gap = 14, lambda = 1800,column_name = count_ln, new_column_name = count_fillwhit) %>%  -->
+<!--   tidy_smoothweiwhit_station(n_gap = 14, lambda = 1800, column_name = count_ln, new_column_name = count_weiwhit) %>%  -->
+<!--   tidy_smoothwavelet_station(column_name = count_ln, new_column_name = count_wavelet) -->
+<!-- ``` -->
+
+```{r read offset and merge with smooth data}
+source("read_offset_station.R")
+df_smooth <- df_smooth %>% 
+  left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id"))
+df_ln_smooth <- df_ln_smooth %>% 
+  left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id"))
+```
+
+```{r }
+
+```
+

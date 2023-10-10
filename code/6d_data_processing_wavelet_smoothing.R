@@ -57,10 +57,9 @@ whitfun <- function(x, lambda) {
 }
 
 df_fill_whit <- df_fill %>%
-  filter(n == 1) %>% 
   group_by(lat, lon, station, city, state, country, id, n) %>%
   mutate(count_fill = zoo::na.approx(count, maxgap = 14, na.rm = F)) %>%
-  mutate(count_fill_whit = whitfun(count_fill, lambda = 1800)) %>%
+  mutate(count_fill_whit = whitfun(count_fill, lambda = 100)) %>%
   ungroup()
 
 
@@ -136,7 +135,7 @@ get_basis = function(qmf, n) {
 # parameter, e.g. wf=0.5 uses a smoothing parameter
 # that is half as large as that selected by cross
 # validation.
-denoise = function(y, qmf, wf=0.5) {
+denoise = function(y, qmf, wf=1) {
   
   # Generate a basis on the appropriate domain.
   n = length(y)
@@ -170,7 +169,7 @@ df_wavelet <- df_fill %>%
 ggplot() +
   geom_line(data = df_fill %>% filter(n == 1), aes(x = date, y = count), col = "gray") +
   geom_line(data = df_fill_whit %>% filter(n == 1), aes(x = date, y = count_fill_whit), col = "black", alpha = 0.5) +
-  geom_line(data = df_wei_whit %>% filter(n == 1), aes(x = date, y = count_wei_whit), col = "red", alpha = 0.5) +
+  # geom_line(data = df_wei_whit %>% filter(n == 1), aes(x = date, y = count_wei_whit), col = "red", alpha = 0.5) +
   geom_line(data = df_wavelet %>% filter(n == 1), aes(x = date, y = count_wavelet), col = "blue", alpha = 0.5) +
   scale_y_continuous(
     trans = scales::log_trans(),
@@ -198,6 +197,18 @@ ggplot() +
 
 ## visualization for each method
 df_fill_smooth_offset <- read_rds(str_c(.path$dat_process, "2023-04-25/fill_smooth_offset.rds"))
+pacman::p_load(WaveletComp)
+i = 1
+df_test <- df_fill_smooth_offset %>% 
+  filter(n == i) %>% 
+  dplyr::select(date, count)
+wavelet_output <- analyze.wavelet(df_test, "count")
+
+#Plot the wavelet power spectrum
+plot(wavelet_output, "spectrum")
+
+
+
 
 df_plot <- tibble(
   n = 1:60,

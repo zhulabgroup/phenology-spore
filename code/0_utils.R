@@ -49,16 +49,19 @@ pacman::p_load(glue)
 pacman::p_load(ggpattern)
 pacman::p_load(sp)
 pacman::p_load(rgdal)
+pacman::p_load(imputeTS)
+pacman::p_load(rwavelet)
+pacman::p_load(glmnet)
 
 
 # ln -s /nfs/turbo/seas-zhukai/phenology/phenology_fungal_spore/ data
 # ln -s /nfs/turbo/seas-zhukai/phenology/nab/ data/nab
 
 .path <- list( # hidden variable won't be removed
-  nab_raw = "data/nab/raw/",
-  nab_clean = "data/nab/clean/",
-  dat_process = "data/processed/",
-  out_simple_model = "data/pheno_model/simple/",
-  out_bayes_model = "data/pheno_model/bayes/",
+  nab_raw = "~/Github/spore_phenology/data/nab/raw/",
+  nab_clean = "~/Github/spore_phenology/data/nab/clean/",
+  dat_process = "~/Github/spore_phenology/data/processed/",
+  out_simple_model = "~/Github/spore_phenology/data/pheno_model/simple/",
+  out_bayes_model = "~/Github/spore_phenology/data/pheno_model/bayes/",
   out_fig = "output/figures/"
 )
