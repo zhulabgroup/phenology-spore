@@ -1,5 +1,5 @@
 ---
-title: "analysis"
+title: "pre-process"
 author: "Ruoyu Wu"
 date: "2023-09-29"
 output: html_document
@@ -16,58 +16,60 @@ df_spore <- read_rds(str_c(.path$dat_process, "2023-04-25/spore_dat.rds"))
 ```
 
 # filter the stations
-```{r filter}
+```{r filter, message=FALSE, warning=FALSE}
 source("filt_taxa_station_raw_data.R")
 df_siteyear <- filt_taxa_station_raw_data(df_spore, "Total", 10, 3)
 ```
 
 # rename stations and tag number for each station
-```{r}
+```{r message=FALSE, warning=FALSE}
 source("tidy_rename_number_station.R")
 df_site <- tidy_rename_number_station(df_siteyear)
 ```
 
-# check the proportion of missing data in each station-year
-```{r missing}
-source("calc_miss_stationyear_raw_data.R")
-df_miss <- calc_miss_stationyear_raw_data(df_site)
-summary(df_miss$miss_ppt)
+# generate and save site meta data
+```{r meta}
+df_meta <- df_site %>% 
+  distinct(n, .keep_all = T) %>% 
+  dplyr::select(-year, -date, -count)
+write_rds(df_meta, str_c(.path$dat_process, "2023-04-25/meta.rds"))
 ```
 
-# pre-process data: pad the date to full year round
+# pre-process spore raw data: pad the date to full year round
 ```{r full}
 source("tidy_fulldate_station.R")
 df_full <- tidy_fulldate_station(df_site)
 ```
 
-# natural log transform the raw data before interpolation
+# natural log transform the spore raw data before interpolation
 ```{r naural }
 df_full <- df_full %>% 
   mutate(count_ln = log(count + 1))
 ```
 
-<!-- # pre-process raw data: smoothing - three methods -->
-<!-- ```{r whittaker smoothing, message=FALSE, warning=FALSE} -->
-<!-- source("tidy_smoothfillwhit_station.R") -->
-<!-- source("tidy_smoothweiwhit_station.R") -->
-<!-- source("tidy_smoothwavelet_station.R") -->
-<!-- df_smooth <- df_full %>%  -->
-<!--   tidy_smoothfillwhit_station(n_gap = 14, lambda = 1800,column_name = count, new_column_name = count_fillwhit) %>%  -->
-<!--   tidy_smoothweiwhit_station(n_gap = 14, lambda = 1800, column_name = count, new_column_name = count_weiwhit) %>%  -->
-<!--   tidy_smoothwavelet_station(column_name = count, new_column_name = count_wavelet) -->
-<!-- ``` -->
+# pre-process spore raw data: smoothing - three methods
+```{r whittaker smoothing, message=FALSE, warning=FALSE}
+source("tidy_smoothfillwhit_station.R")
+source("tidy_smoothweiwhit_station.R")
+source("tidy_smoothwavelet_station.R")
+df_smooth <- df_full %>%
+  tidy_smoothfillwhit_station(n_gap = 14, lambda = 1800,column_name = count, new_column_name = count_fillwhit) %>%
+  tidy_smoothweiwhit_station(n_gap = 14, lambda = 1800, column_name = count, new_column_name = count_weiwhit) %>%
+  tidy_smoothwavelet_station(column_name = count, new_column_name = count_wavelet)
+```
 
-<!-- # pre-process ln data: smoothing - three methods -->
-<!-- ```{r whittaker smoothing, message=FALSE, warning=FALSE} -->
-<!-- source("tidy_smoothfillwhit_station.R") -->
-<!-- source("tidy_smoothweiwhit_station.R") -->
-<!-- source("tidy_smoothwavelet_station.R") -->
-<!-- df_ln_smooth <- df_full %>%  -->
-<!--   tidy_smoothfillwhit_station(n_gap = 14, lambda = 1800,column_name = count_ln, new_column_name = count_fillwhit) %>%  -->
-<!--   tidy_smoothweiwhit_station(n_gap = 14, lambda = 1800, column_name = count_ln, new_column_name = count_weiwhit) %>%  -->
-<!--   tidy_smoothwavelet_station(column_name = count_ln, new_column_name = count_wavelet) -->
-<!-- ``` -->
+# pre-process ln data: smoothing - three methods
+```{r whittaker smoothing, message=FALSE, warning=FALSE}
+source("tidy_smoothfillwhit_station.R")
+source("tidy_smoothweiwhit_station.R")
+source("tidy_smoothwavelet_station.R")
+df_ln_smooth <- df_full %>%
+  tidy_smoothfillwhit_station(n_gap = 14, lambda = 1800,column_name = count_ln, new_column_name = count_fillwhit) %>%
+  tidy_smoothweiwhit_station(n_gap = 14, lambda = 1800, column_name = count_ln, new_column_name = count_weiwhit) %>%
+  tidy_smoothwavelet_station(column_name = count_ln, new_column_name = count_wavelet)
+```
 
+# read the offset and insert into the smoothed dataset
 ```{r read offset and merge with smooth data}
 source("read_offset_station.R")
 df_smooth <- df_smooth %>% 
@@ -76,7 +78,35 @@ df_ln_smooth <- df_ln_smooth %>%
   left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id"))
 ```
 
-```{r }
-
+# save the smoothed dataset, because smoothing takes much time
+```{r save df_smooth}
+write_rds(df_smooth, str_c(.path$dat_process, "2023-04-25/smooth_compare.rds"))
+write_rds(df_ln_smooth, str_c(.path$dat_process, "2023-04-25/ln_smooth_compare.rds"))
 ```
 
+# read the smoothed dataset
+```{r read df_smooth}
+df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/smooth_compare.rds"))
+df_ln_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/ln_smooth_compare.rds"))
+```
+
+# plot to compare results of three smoothing methods
+```{r plot smoothing compare}
+source("plot_smooth_compare.R")
+pdf(
+  "~/Github/spore_phenology/output/figures/p_compare_smoothing.pdf",
+  width = 8,
+  height = 8*.618
+)
+for (i in c(1:55)) {
+  p <- plot_smooth_site(df_smooth, i)
+  print(p)
+}
+dev.off()
+```
+
+# download the climate data
+```{r download daymet}
+source("down_daymet_station_date.R")
+df_daymet_allday <- down_daymet_station_date(df_meta)
+```

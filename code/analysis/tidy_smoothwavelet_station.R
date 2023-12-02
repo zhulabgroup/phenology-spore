@@ -16,7 +16,7 @@ get_basis = function(qmf, n) {
 # parameter, e.g. wf=0.5 uses a smoothing parameter
 # that is half as large as that selected by cross
 # validation.
-denoise = function(y, qmf, wf=1) {
+denoise = function(y, qmf, wf=0.5) {
   
   # Generate a basis on the appropriate domain.
   n = length(y)

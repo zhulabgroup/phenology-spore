@@ -1,0 +1,33 @@
+---
+title: "summary"
+author: "Ruoyu Wu"
+date: "2023-10-13"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache=FALSE, warning = FALSE, message = FALSE)
+source("~/Github/spore_phenology/code/0_utils.R")
+```
+
+# read dataset
+```{r read}
+df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/smooth_compare.rds"))
+df_meta <- read_rds(str_c(.path$dat_process, "2023-04-25/meta.rds"))
+```
+
+# summary the proportion of missing data in each station-year raw data
+```{r missing}
+source("summ_miss_stationyear_raw_data.R")
+df_miss <- summ_miss_stationyear_raw_data(df_smooth, count)
+summary(df_miss$miss_ppt)
+```
+
+# summary the ecoregion of each station
+```{r ecoregion, message=FALSE, warning=FALSE}
+source("summ_ecoregion_station.R")
+df_ecoregion <- summ_ecoregion_station(df_meta)
+view(df_ecoregion)
+```
+
+# summary the climate range
