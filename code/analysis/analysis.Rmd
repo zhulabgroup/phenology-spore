@@ -90,7 +90,7 @@ df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/smooth_compare.rds"))
 df_ln_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/ln_smooth_compare.rds"))
 ```
 
-# plot to compare results of three smoothing methods
+# plot to compare results of three smoothing methods for each station
 ```{r plot smoothing compare}
 source("plot_smooth_compare.R")
 pdf(
@@ -99,10 +99,24 @@ pdf(
   height = 8*.618
 )
 for (i in c(1:55)) {
-  p <- plot_smooth_site(df_smooth, i)
+  p <- plot_smooth_compare_station(df_smooth, i)
   print(p)
 }
 dev.off()
+```
+
+#plot to compare results of three smoothing methods for all stations
+```{r}
+source("plot_smooth_compare.R")
+gg_smooth_compare_all <- plot_smooth_compare_all(df_smooth, 8)
+pdf(
+  "~/Github/spore_phenology/output/figures/smooth_compare/p_compare_1800.pdf",
+  width = 8*8,
+  height = 8*.618*7
+)
+print(gg_smooth_compare_all)
+dev.off()
+
 ```
 
 # download the climate data
