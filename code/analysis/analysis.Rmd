@@ -27,13 +27,13 @@ source("tidy_rename_number_station.R")
 df_site <- tidy_rename_number_station(df_siteyear)
 ```
 
-# generate and save site meta data
-```{r meta}
-df_meta <- df_site %>% 
-  distinct(n, .keep_all = T) %>% 
-  dplyr::select(-year, -date, -count)
-write_rds(df_meta, str_c(.path$dat_process, "2023-04-25/meta.rds"))
-```
+<!-- # generate and save site meta data -->
+<!-- ```{r meta} -->
+<!-- df_meta <- df_site %>%  -->
+<!--   distinct(n, .keep_all = T) %>%  -->
+<!--   dplyr::select(-year, -date, -count) -->
+<!-- write_rds(df_meta, str_c(.path$dat_process, "2023-04-25/meta.rds")) -->
+<!-- ``` -->
 
 # pre-process spore raw data: pad the date to full year round
 ```{r full}
@@ -47,84 +47,57 @@ df_full <- df_full %>%
   mutate(count_ln = log(count + 1))
 ```
 
-# pre-process spore raw data: smoothing - three methods
-```{r whittaker smoothing, message=FALSE, warning=FALSE}
-source("tidy_smoothfillwhit_station.R")
-source("tidy_smoothweiwhit_station.R")
-source("tidy_smoothwavelet_station.R")
-df_smooth <- df_full %>%
-  tidy_smoothfillwhit_station(n_gap = 14, lambda = 1800,column_name = count, new_column_name = count_fillwhit) %>%
-  tidy_smoothweiwhit_station(n_gap = 14, lambda = 1800, column_name = count, new_column_name = count_weiwhit) %>%
-  tidy_smoothwavelet_station(column_name = count, new_column_name = count_wavelet)
-```
+<!-- # pre-process spore raw data: smoothing - three methods -->
+<!-- ```{r whittaker smoothing, message=FALSE, warning=FALSE} -->
+<!-- source("tidy_smoothfillwhit_station.R") -->
+<!-- source("tidy_smoothweiwhit_station.R") -->
+<!-- source("tidy_smoothwavelet_station.R") -->
+<!-- df_smooth <- df_full %>% -->
+<!--   tidy_smoothfillwhit_station(n_gap = 14, lambda = 1800,column_name = count, new_column_name = count_fillwhit) %>% -->
+<!--   tidy_smoothweiwhit_station(n_gap = 14, lambda = 1800, column_name = count, new_column_name = count_weiwhit) %>% -->
+<!--   tidy_smoothwavelet_station(column_name = count, new_column_name = count_wavelet) -->
+<!-- ``` -->
 
-# pre-process ln data: smoothing - three methods
-```{r whittaker smoothing, message=FALSE, warning=FALSE}
-source("tidy_smoothfillwhit_station.R")
-source("tidy_smoothweiwhit_station.R")
-source("tidy_smoothwavelet_station.R")
-df_ln_smooth <- df_full %>%
-  tidy_smoothfillwhit_station(n_gap = 14, lambda = 1800,column_name = count_ln, new_column_name = count_fillwhit) %>%
-  tidy_smoothweiwhit_station(n_gap = 14, lambda = 1800, column_name = count_ln, new_column_name = count_weiwhit) %>%
-  tidy_smoothwavelet_station(column_name = count_ln, new_column_name = count_wavelet)
-```
+<!-- # pre-process ln data: smoothing - three methods -->
+<!-- ```{r whittaker smoothing, message=FALSE, warning=FALSE} -->
+<!-- source("tidy_smoothfillwhit_station.R") -->
+<!-- source("tidy_smoothweiwhit_station.R") -->
+<!-- source("tidy_smoothwavelet_station.R") -->
+<!-- df_ln_smooth <- df_full %>% -->
+<!--   tidy_smoothfillwhit_station(n_gap = 14, lambda = 1800,column_name = count_ln, new_column_name = count_fillwhit) %>% -->
+<!--   tidy_smoothweiwhit_station(n_gap = 14, lambda = 1800, column_name = count_ln, new_column_name = count_weiwhit) %>% -->
+<!--   tidy_smoothwavelet_station(column_name = count_ln, new_column_name = count_wavelet) -->
+<!-- ``` -->
 
 # read the offset and insert into the smoothed dataset
 ```{r read offset and merge with smooth data}
 source("read_offset_station.R")
-df_smooth <- df_smooth %>% 
-  left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id"))
-df_ln_smooth <- df_ln_smooth %>% 
-  left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id"))
+# df_smooth <- df_smooth %>% 
+#   left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id"))
+# df_ln_smooth <- df_ln_smooth %>% 
+#   left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id"))
 ```
 
-# save the smoothed dataset, because smoothing takes much time
-```{r save df_smooth}
-write_rds(df_smooth, str_c(.path$dat_process, "2023-04-25/smooth_compare.rds"))
-write_rds(df_ln_smooth, str_c(.path$dat_process, "2023-04-25/ln_smooth_compare.rds"))
-```
+<!-- # save the smoothed dataset, because smoothing takes much time -->
+<!-- ```{r save df_smooth} -->
+<!-- write_rds(df_smooth, str_c(.path$dat_process, "2023-04-25/smooth_compare.rds")) -->
+<!-- write_rds(df_ln_smooth, str_c(.path$dat_process, "2023-04-25/ln_smooth_compare.rds")) -->
+<!-- ``` -->
 
 # read the smoothed dataset
 ```{r read df_smooth}
 df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/smooth_compare.rds"))
-df_ln_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/ln_smooth_compare.rds"))
+# df_ln_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/ln_smooth_compare.rds"))
 ```
 
-# plot to compare results of three smoothing methods for each station
-```{r plot smoothing compare station}
-source("plot_smooth_compare.R")
-pdf(
-  "~/Github/spore_phenology/output/figures/p_compare_smoothing.pdf",
-  width = 8,
-  height = 8*.618
-)
-for (i in c(1:55)) {
-  p <- plot_smooth_compare_station(df_smooth, i)
-  print(p)
-}
-dev.off()
-```
-
-# plot to compare results of three smoothing methods for all stations
-```{r plot smoothing compare all}
-source("plot_smooth_compare.R")
-gg_smooth_compare_all <- plot_smooth_compare_all(df_smooth, 8)
-pdf(
-  "~/Github/spore_phenology/output/figures/smooth_compare/p_compare_1800.pdf",
-  width = 8*8,
-  height = 8*.618*7
-)
-print(gg_smooth_compare_all)
-dev.off()
-```
-
-# manipulate lambda
+# manipulate lambda for all stations
 ```{r}
 source("tidy_smoothfillwhit_station.R")
 source("tidy_smoothweiwhit_station.R")
 source("plot_smooth_compare.R")
-df_wavelet <- df_smooth %>%
-  dplyr::select(-count_fillwhit, -count_weiwhit)
+df_wavelet <- df_smooth %>% 
+  dplyr::select(lat, lon, station, state, country, id, date, count_wavelet) %>% 
+  right_join(df_full, by = c("lat", "lon", "station", "state", "country", "id", "date"))
 df_plot <- tibble(
   n = 1:30,
   a = vector("list", 30)
@@ -133,8 +106,9 @@ for (i in c(1:30)) {
   lmd = i * 100
   df_smooth_lmd <- df_wavelet %>%
     tidy_smoothfillwhit_station(n_gap = 14, lambda = lmd,column_name = count, new_column_name = count_fillwhit) %>%
-    tidy_smoothweiwhit_station(n_gap = 14, lambda = lmd, column_name = count, new_column_name = count_weiwhit)
-  gg_smooth_compare_all <- plot_smooth_compare_all(df_smooth_lmd, 8)
+    tidy_smoothweiwhit_station(n_gap = 14, lambda = lmd, column_name = count, new_column_name = count_weiwhit) %>% 
+    left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id")) # combine offset for visualization
+  gg_smooth_compare_all <- plot_smooth_compare_all(df_smooth_lmd, 8, wavelet = F)
   df_plot$a[[i]] <- gg_smooth_compare_all
 }
 pdf(
@@ -146,6 +120,37 @@ for (i in c(1:30)) {
   print(df_plot$a[[i]])
 }
 dev.off()
+```
+# manipulate lambda for all stations
+```{r plot smoothing compare station}
+for (i in 1:55) {
+  
+  df_plot <- tibble(
+    n = 1:30,
+    a = vector("list", 30))
+  
+  for (l in 1:30) {
+    lmd = l * 100
+    df_smooth_lmd <- df_wavelet %>%
+      filter(n == i) %>% 
+      tidy_smoothfillwhit_station(n_gap = 14, lambda = lmd,column_name = count, new_column_name = count_fillwhit) %>%
+      tidy_smoothweiwhit_station(n_gap = 14, lambda = lmd, column_name = count, new_column_name = count_weiwhit) %>% 
+      left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id")) # combine offset for visualization
+    gg_smooth_compare_station <- plot_smooth_compare_all(df_smooth_lmd, 1, wavelet = F)
+    df_plot$a[[l]] <- gg_smooth_compare_station
+  }
+  
+  pdf(
+    str_c("~/Github/spore_phenology/output/figures/smooth_compare/p_compare_smoothing_station", i, ".pdf"),
+    width = 8,
+    height = 8*.618
+    )
+  for (l in c(1:30)) {
+    print(df_plot$a[[l]])
+    }
+  dev.off()
+  
+}
 ```
 
 # download the climate data
