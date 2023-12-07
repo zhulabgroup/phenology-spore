@@ -169,10 +169,9 @@ p_antt <- ggplot() +
     vjust = 1,
     col = "black"
   ) +
-  scale_y_continuous(
-    trans = scales::log_trans(),
-    breaks = scales::trans_breaks("log", function(x) exp(x)),
-    labels = scales::trans_format("log", scales::math_format(e^.x))
+  scale_y_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
   ) +
   scale_x_datetime(
     breaks = c(as_datetime("2009-02-10"), as_datetime("2009-04-29"), as_datetime("2009-06-27"), as_datetime("2009-10-04"), as_datetime("2009-11-19"), as_datetime("2010-02-10")), 
