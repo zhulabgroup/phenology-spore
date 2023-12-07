@@ -29,7 +29,7 @@ plot_smooth_compare_all <- function(df_raw, n_col) {
     geom_line(aes(x = date, y = count), col = "gray") +
     geom_line(aes(x = date, y = count_fillwhit), col = "black", alpha = 0.5) +
     geom_line(aes(x = date, y = count_weiwhit), col = "red", alpha = 0.5) +
-    geom_line(aes(x = date, y = count_wavelet), col = "blue", alpha = 0.5) +
+    # geom_line(aes(x = date, y = count_wavelet), col = "blue", alpha = 0.5) +
     geom_vline(
       aes(xintercept = date),
       data = df_raw %>% group_by(n) %>% filter(doy == offset) %>% ungroup(),
