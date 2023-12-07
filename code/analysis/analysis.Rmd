@@ -123,21 +123,24 @@ dev.off()
 source("tidy_smoothfillwhit_station.R")
 source("tidy_smoothweiwhit_station.R")
 source("plot_smooth_compare.R")
+df_wavelet <- df_smooth %>% 
+  dplyr::select(lat, lon, station, state, country, id, date, count_wavelet) %>% 
+  right_join(df_full, by = c("lat", "lon", "station", "state", "country", "id", "date"))
 df_plot <- tibble(
   n = 1:30,
   a = vector("list", 30)
 )
 for (i in c(1:30)) {
   lmd = i * 100
-  df_smooth_lmd <- df_full %>%
+  df_smooth_lmd <- df_wavelet %>%
     tidy_smoothfillwhit_station(n_gap = 14, lambda = lmd,column_name = count, new_column_name = count_fillwhit) %>%
     tidy_smoothweiwhit_station(n_gap = 14, lambda = lmd, column_name = count, new_column_name = count_weiwhit) %>% 
     left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id")) # combine offset for visualization
-  gg_smooth_compare_all <- plot_smooth_compare_all(df_smooth_lmd, 8)
+  gg_smooth_compare_all <- plot_smooth_compare_all(df_smooth_lmd, 8, wavelet = T)
   df_plot$a[[i]] <- gg_smooth_compare_all
 }
 pdf(
-  "~/Github/spore_phenology/output/figures/smooth_compare/p_compare_smooth.pdf",
+  "~/Github/spore_phenology/output/figures/smooth_compare/p_compare_smooth_three.pdf",
   width = 8*8,
   height = 8*.618*7
   )

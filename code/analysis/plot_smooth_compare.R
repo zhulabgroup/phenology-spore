@@ -24,12 +24,11 @@ plot_smooth_compare_station <- function(df_raw, i) {
 }
 
 # plot 55 stations on one page
-plot_smooth_compare_all <- function(df_raw, n_col) {
+plot_smooth_compare_all <- function(df_raw, n_col, wavelet) {
   out_gg <- ggplot(data = df_raw) +
     geom_line(aes(x = date, y = count), col = "gray") +
     geom_line(aes(x = date, y = count_fillwhit), col = "black", alpha = 0.5) +
     geom_line(aes(x = date, y = count_weiwhit), col = "red", alpha = 0.5) +
-    # geom_line(aes(x = date, y = count_wavelet), col = "blue", alpha = 0.5) +
     geom_vline(
       aes(xintercept = date),
       data = df_raw %>% group_by(n) %>% filter(doy == offset) %>% ungroup(),
@@ -45,6 +44,11 @@ plot_smooth_compare_all <- function(df_raw, n_col) {
     scale_x_datetime(limits = as.POSIXct(c("2003-01-01", "2022-12-31")), breaks = "1 year", date_labels = "%Y") +
     xlab("Date") +
     facet_wrap(. ~ interaction(city, state, n, sep = ", "), ncol = n_col, scales = "free")
+  
+  if (wavelet == T) {
+    out_gg = out_gg +
+      geom_line(aes(x = date, y = count_wavelet), col = "blue", alpha = 0.5)
+  }
   
   return(out_gg)
 }
