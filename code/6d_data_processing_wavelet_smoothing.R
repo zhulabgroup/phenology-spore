@@ -258,7 +258,7 @@ pdf(
   "output/figures/p_compare_smoothing.pdf",
   width = 8,
   height = 8*.618
-)
+  )
 for (i in c(1:60)) {
   print(df_plot$a[[i]])
 }

@@ -30,7 +30,11 @@ plot_smooth_compare_all <- function(df_raw, n_col) {
     geom_line(aes(x = date, y = count_fillwhit), col = "black", alpha = 0.5) +
     geom_line(aes(x = date, y = count_weiwhit), col = "red", alpha = 0.5) +
     geom_line(aes(x = date, y = count_wavelet), col = "blue", alpha = 0.5) +
-    # geom_vline(xintercept = (df_raw %>% filter(doy == offset))$date, col = "dark green", alpha = 0.5) +
+    geom_vline(
+      aes(xintercept = date),
+      data = df_raw %>% group_by(n) %>% filter(doy == offset) %>% ungroup(),
+      col = "dark green", alpha = 0.5
+      ) +
     scale_y_log10(
       breaks = scales::trans_breaks("log10", function(x) 10^x),
       labels = scales::trans_format("log10", scales::math_format(10^.x))
@@ -40,7 +44,7 @@ plot_smooth_compare_all <- function(df_raw, n_col) {
     ylab(expression("Daily spore concentration (grains m"^-3*")")) +
     scale_x_datetime(limits = as.POSIXct(c("2003-01-01", "2022-12-31")), breaks = "1 year", date_labels = "%Y") +
     xlab("Date") +
-    facet_wrap(. ~ interaction(n, city, state, sep = ", "), ncol = n_col, scales = "free")
+    facet_wrap(. ~ interaction(city, state, n, sep = ", "), ncol = n_col, scales = "free")
   
   return(out_gg)
 }

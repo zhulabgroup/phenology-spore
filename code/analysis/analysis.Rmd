@@ -91,7 +91,7 @@ df_ln_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/ln_smooth_compare.
 ```
 
 # plot to compare results of three smoothing methods for each station
-```{r plot smoothing compare}
+```{r plot smoothing compare station}
 source("plot_smooth_compare.R")
 pdf(
   "~/Github/spore_phenology/output/figures/p_compare_smoothing.pdf",
@@ -105,8 +105,8 @@ for (i in c(1:55)) {
 dev.off()
 ```
 
-#plot to compare results of three smoothing methods for all stations
-```{r}
+# plot to compare results of three smoothing methods for all stations
+```{r plot smoothing compare all}
 source("plot_smooth_compare.R")
 gg_smooth_compare_all <- plot_smooth_compare_all(df_smooth, 8)
 pdf(
@@ -116,7 +116,36 @@ pdf(
 )
 print(gg_smooth_compare_all)
 dev.off()
+```
 
+# manipulate lambda
+```{r}
+source("tidy_smoothfillwhit_station.R")
+source("tidy_smoothweiwhit_station.R")
+source("plot_smooth_compare.R")
+df_wavelet <- df_smooth %>%
+  dplyr::select(-count_fillwhit, -count_weiwhit)
+df_plot <- tibble(
+  n = 1:30,
+  a = vector("list", 30)
+)
+for (i in c(1:30)) {
+  lmd = i * 100
+  df_smooth_lmd <- df_wavelet %>%
+    tidy_smoothfillwhit_station(n_gap = 14, lambda = lmd,column_name = count, new_column_name = count_fillwhit) %>%
+    tidy_smoothweiwhit_station(n_gap = 14, lambda = lmd, column_name = count, new_column_name = count_weiwhit)
+  gg_smooth_compare_all <- plot_smooth_compare_all(df_smooth_lmd, 8)
+  df_plot$a[[i]] <- gg_smooth_compare_all
+}
+pdf(
+  "~/Github/spore_phenology/output/figures/smooth_compare/p_compare_smooth.pdf",
+  width = 8*8,
+  height = 8*.618*7
+  )
+for (i in c(1:30)) {
+  print(df_plot$a[[i]])
+}
+dev.off()
 ```
 
 # download the climate data
