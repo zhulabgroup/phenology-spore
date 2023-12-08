@@ -11,7 +11,7 @@ df_antt <- df_smooth %>%
 p_antt <- ggplot() +
   geom_ribbon_pattern(
     data = df_antt %>% filter(year_new == 2009 & doy_new %in% 137:236),
-    aes(x = date, ymin = 0, ymax = count_whit, pattern_colour = "allergy season integral (ASIn)"),
+    aes(x = date, ymin = 0, ymax = count_whit, pattern_colour = "allergy season integral\n(ASIn)"),
     pattern = "stripe",
     pattern_fill = "dark red",
     fill = NA,
@@ -45,7 +45,7 @@ p_antt <- ggplot() +
   ) +
   geom_ribbon(
     data = df_antt %>% filter(year_new == 2009 & doy_new %in% 1:365),
-    aes(x = date, ymin = 0, ymax = count_whit, fill = "annual integral (AIn)"),
+    aes(x = date, ymin = 0, ymax = count_whit, fill = "annual integral\n(AIn)"),
     alpha = 0.4
   ) +
   scale_fill_manual(
