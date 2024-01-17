@@ -1,7 +1,7 @@
 # download climate data from daymet dataset
 
-down_daymet_station_date <- function(meta) {
-  write.table(df_meta %>% 
+down_daymet_station_date <- function(df_raw) {
+  write.table(df_raw %>% 
                 filter(n != 54) %>% # b/c the coordinates of 54 is out of scope of daymet_batch function
                 dplyr::select(city, lat, lon),
               str_c(.path$dat_process, "2023-04-25/meta_for_daymet.csv"),
@@ -10,7 +10,7 @@ down_daymet_station_date <- function(meta) {
               row.names = F,
               quote = F)
   
-  df_daymet_alldate <- daymetr::download_daymet_batch(file_location = str_c(.path$dat_process, "2023-04-25/meta_for_daymet.csv"),
+  df_55 <- daymetr::download_daymet_batch(file_location = str_c(.path$dat_process, "2023-04-25/meta_for_daymet.csv"),
                                               start = 2003,
                                               end = 2022,
                                               internal = TRUE,
@@ -26,7 +26,9 @@ down_daymet_station_date <- function(meta) {
     internal = TRUE,
     simplify = TRUE)
   
+  df_daymet_all <- rbind(df_54, df_55)
   
+  return(df_daymet_all)
 }
 
 # function to tidy the daymet data
