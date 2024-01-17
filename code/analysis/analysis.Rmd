@@ -195,41 +195,27 @@ source("calc_metrics_stationspyr.R")
 df_metrics <- calc_metrics_stationspyr(df_completeness = df_spore_cpltness, df_raw = df_sporeyr)
 ```
 
-# calculate trends
-```{r}
-source("calc_trend.R")
-m_Cp <- calc_trend_metric(df_raw = df_tag, metric = "ln_Cp", pct = 0.8)
-m_AIn <- calc_trend_metric(df_raw = df_tag, metric = "ln_AIn", pct = 0.8)
-m_ASIn <- calc_trend_metric(df_raw = df_tag, metric = "ln_ASIn", pct = 0.8)
-m_SOS <- calc_trend_metric(df_raw = df_tag, metric = "SOS", pct = 0.8)
-m_EOS <- calc_trend_metric(df_raw = df_tag, metric = "EOS", pct = 0.8)
-m_LOS <- calc_trend_metric(df_raw = df_tag, metric = "LOS", pct = 0.8)
-m_SAS <- calc_trend_metric(df_raw = df_tag, metric = "SAS", pct = 0.8)
-m_EAS <- calc_trend_metric(df_raw = df_tag, metric = "EAS", pct = 0.8)
-m_LAS <- calc_trend_metric(df_raw = df_tag, metric = "LAS", pct = 0.8)
-m_A <- calc_trend_metric(df_raw = df_tag, metric = "ln_A", pct = 0.8)
-df_1800 <- rbind(m_SOS, m_EOS, m_LOS, m_SAS, m_EAS, m_LAS, m_Cp, m_A, m_AIn, m_ASIn) %>% 
-  as.data.frame() %>% 
-  rename(
-    metric = V1,
-    beta = V2,
-    p = V3
-  )
-```
-
-# sensitivity analysis for lambda
-```{r}
-source("tidy_smoothfillwhit_station.R")
-source("tidy_sporeyr_station.R")
-source("calc_completeness_stationspyr.R")
-source("calc_metrics_stationspyr.R")
-source("calc_trend.R")
-source("ana_sensitivity_lambda.R")
-
-l = 800
-df_700 <- sen(df_wavelet, lmd = l)
-df_700
-```
+<!-- # calculate trends -->
+<!-- ```{r} -->
+<!-- source("calc_trend.R") -->
+<!-- m_Cp <- calc_trend_metric(df_raw = df_tag, metric = "ln_Cp", pct = 0.8) -->
+<!-- m_AIn <- calc_trend_metric(df_raw = df_tag, metric = "ln_AIn", pct = 0.8) -->
+<!-- m_ASIn <- calc_trend_metric(df_raw = df_tag, metric = "ln_ASIn", pct = 0.8) -->
+<!-- m_SOS <- calc_trend_metric(df_raw = df_tag, metric = "SOS", pct = 0.8) -->
+<!-- m_EOS <- calc_trend_metric(df_raw = df_tag, metric = "EOS", pct = 0.8) -->
+<!-- m_LOS <- calc_trend_metric(df_raw = df_tag, metric = "LOS", pct = 0.8) -->
+<!-- m_SAS <- calc_trend_metric(df_raw = df_tag, metric = "SAS", pct = 0.8) -->
+<!-- m_EAS <- calc_trend_metric(df_raw = df_tag, metric = "EAS", pct = 0.8) -->
+<!-- m_LAS <- calc_trend_metric(df_raw = df_tag, metric = "LAS", pct = 0.8) -->
+<!-- m_A <- calc_trend_metric(df_raw = df_tag, metric = "ln_A", pct = 0.8) -->
+<!-- df_1800 <- rbind(m_SOS, m_EOS, m_LOS, m_SAS, m_EAS, m_LAS, m_Cp, m_A, m_AIn, m_ASIn) %>%  -->
+<!--   as.data.frame() %>%  -->
+<!--   rename( -->
+<!--     metric = V1, -->
+<!--     beta = V2, -->
+<!--     p = V3 -->
+<!--   ) -->
+<!-- ``` -->
 
 <!-- # download the climate data -->
 <!-- ```{r download daymet} -->
@@ -256,3 +242,11 @@ df_700
 df_daymet_annual <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_daymet_annual.rds"))
 df_analysis <- right_join(df_daymet_annual, df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
 ```
+
+# fit mlr on anomalies
+```{r}
+source("calc_anom.R")
+df_test <- calc_anom(df_raw = df_tag, metric = "LAS", pct = 0.8)
+df_test
+```
+

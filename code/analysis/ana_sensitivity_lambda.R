@@ -1,3 +1,9 @@
+source("tidy_smoothfillwhit_station.R")
+source("tidy_sporeyr_station.R")
+source("calc_completeness_stationspyr.R")
+source("calc_metrics_stationspyr.R")
+source("calc_trend.R")
+source("ana_sensitivity_lambda.R")
 
 sen <- function(df_in, lmd) {
   df_smooth_lmd <- df_in %>%
