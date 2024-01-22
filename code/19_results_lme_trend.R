@@ -111,8 +111,8 @@ p_trend_peak <- ggplot() +
       x = 2003,
       y = 11,
       label = paste0(
-        "\nSlope: ", slope_peak,
-        "\nP-value: ", p_peak
+        "\nbeta = : ", slope_peak,
+        "\np = : ", p_peak
       )
     ),
     hjust = 0,
@@ -227,8 +227,8 @@ p_trend_integral <- ggplot() +
       x = 2003,
       y = 16.5,
       label = paste0(
-        "\nSlope: ", slope_integral,
-        "\nP-value: ", p_integral
+        "\nbeta = : ", slope_integral,
+        "\np = : ", p_integral
       )
     ),
     hjust = 0,
@@ -345,8 +345,8 @@ p_trend_integral_as <- ggplot() +
       x = 2003,
       y = 16.5,
       label = paste0(
-        "\nSlope: ", slope_integral_as,
-        "\nP-value: ", p_integral_as
+        "\nbeta = : ", slope_integral_as,
+        "\np = : ", p_integral_as
       )
     ),
     hjust = 0,
@@ -462,8 +462,8 @@ p_trend_sos <- ggplot() +
       x = 2003,
       y = 120,
       label = paste0(
-        "\nSlope: ", slope_sos,
-        "\nP-value: ", p_sos
+        "\nbeta = : ", slope_sos,
+        "\np = : ", p_sos
       )
     ),
     hjust = 0,
@@ -577,8 +577,8 @@ p_trend_eos <- ggplot() +
       x = 2003,
       y = 350,
       label = paste0(
-        "\nSlope: ", slope_eos,
-        "\nP-value: ", p_eos
+        "\nbeta = : ", slope_eos,
+        "\np = : ", p_eos
       )
     ),
     hjust = 0,
@@ -693,8 +693,8 @@ p_trend_los <- ggplot() +
       x = 2003,
       y = 290,
       label = paste0(
-        "\nSlope: ", slope_los,
-        "\nP-value: ", p_los
+        "\nbeta = : ", slope_los,
+        "\np = : ", p_los
       )
     ),
     hjust = 0,
@@ -807,8 +807,8 @@ p_trend_sas <- ggplot() +
       x = 2003,
       y = 320,
       label = paste0(
-        "\nSlope: ", slope_sas,
-        "\nP-value: ", p_sas
+        "\nbeta = : ", slope_sas,
+        "\np = : ", p_sas
       )
     ),
     hjust = 0,
@@ -921,8 +921,8 @@ p_trend_eas <- ggplot() +
       x = 2003,
       y = 370,
       label = paste0(
-        "\nSlope: ", slope_eas,
-        "\nP-value: ", p_eas
+        "\nbeta = : ", slope_eas,
+        "\np = : ", p_eas
       )
     ),
     hjust = 0,
@@ -1034,8 +1034,8 @@ p_trend_las <- ggplot() +
       x = 2003,
       y = 365,
       label = paste0(
-        "\nSlope: ", slope_las,
-        "\nP-value: ", p_las
+        "\nbeta = : ", slope_las,
+        "\np = : ", p_las
       )
     ),
     hjust = 0,
@@ -1148,8 +1148,8 @@ p_trend_amplitude <- ggplot() +
       x = 2003,
       y = 11,
       label = paste0(
-        "\nSlope: ", slope_amplitude,
-        "\nP-value: ", p_amplitude
+        "\nbeta = : ", slope_amplitude,
+        "\np = : ", p_amplitude
       )
     ),
     hjust = 0,

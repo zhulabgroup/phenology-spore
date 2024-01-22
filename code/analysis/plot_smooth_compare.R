@@ -57,9 +57,3 @@ plot_smooth_compare_all <- function(df_raw, n_col, wavelet) {
   
   return(out_gg)
 }
-
-df_test <- df_smooth_lmd %>% 
-  filter(n %in% 1:4)
-gg_test <- plot_smooth_compare_all(df_test, n_col = 2, wavelet = T)
-print(gg_test) 
- 

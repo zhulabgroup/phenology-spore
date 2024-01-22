@@ -65,7 +65,7 @@ df_fill_whit <- df_fill %>%
 
 
 
-## weighter whittaker
+## weighted whittaker
 pacman::p_load(imputeTS)
 
 util_whit <- function(x, lambda, w, minseg = 2) {
