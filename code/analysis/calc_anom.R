@@ -10,9 +10,5 @@ calc_anom <- function(df_raw, metric, pct) {
     mutate(tap_anom = tap - mean(tap)) %>% 
     ungroup()
   
-  m <- lm(
-    value_anom ~ 1 + mat_anom + tap_anom + mat_anom * tap_anom,
-    data = df)
-  
-  return(summary(m))
+  return(df)
 }

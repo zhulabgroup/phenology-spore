@@ -52,7 +52,7 @@ pacman::p_load(rgdal)
 pacman::p_load(imputeTS)
 pacman::p_load(rwavelet)
 pacman::p_load(glmnet)
-
+pacman::p_load(rcartocolor)
 
 # ln -s /nfs/turbo/seas-zhukai/phenology/phenology_fungal_spore/ data
 # ln -s /nfs/turbo/seas-zhukai/phenology/nab/ data/nab

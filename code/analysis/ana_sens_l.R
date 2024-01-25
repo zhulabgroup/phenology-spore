@@ -6,8 +6,7 @@ source("code/analysis/tidy_gathermetrics.R")
 source("code/analysis/calc_trend.R")
 
 ana_sens_l <- function(df_in, lmd) {
-  df_smooth_lmd <- df_in %>%
-    tidy_smoothfillwhit_station(n_gap = 14, lambda = lmd,column_name = count, new_column_name = count_fillwhit)
+  df_smooth_lmd <- tidy_smoothfillwhit_station(df_raw = df_in, n_gap = 14, lambda = lmd,column_name = count, new_column_name = count_fillwhit)
   
   df_sporeyr = df_smooth_lmd %>% 
     tidy_sporeyr_station()
@@ -45,7 +44,7 @@ ana_sens_l <- function(df_in, lmd) {
 }
 
 df_sens_l <- data.frame()
-for (l in c(seq(10, 100, by = 10), seq(200, 2000, by = 100))) {
+for (l in c(10, seq(50, 500, by = 50))) {
   df <- ana_sens_l(df_wavelet, lmd = l)
   df_sens_l <- df_sens_l %>% rbind(df)
 }
@@ -67,10 +66,10 @@ plot_sens_l <- function(m, df_in) {
   
   p <- ggplot(data = df,aes(x = l, y = beta, group = metric, col = metric)) +
     geom_hline(aes(yintercept = 0), col = "gray") +
-    geom_smooth(method = "lm", se = T, col = "dark blue", linetype = ifelse(signif, "solid", "dashed")) +
+    #geom_smooth(method = "lm", se = T, col = "dark blue", linetype = ifelse(signif, "solid", "dashed")) +
     geom_point(col = "dark red") +
     geom_errorbar(aes(ymin = ci1, ymax = ci2), col = "dark red") +
-    scale_x_continuous(breaks = c(10, 100, 500, 1000, 1500, 2000)) +
+    scale_x_continuous(breaks = c(10, seq(50, 500, by = 50))) +
     xlab("lambda") +
     ylab("beta") +
     labs(title = paste0(m, "   slope = ", slope)) +
