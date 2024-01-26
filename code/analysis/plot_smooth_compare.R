@@ -4,8 +4,8 @@ plot_smooth_compare_station <- function(df_raw, i, wavelet) {
     filter(n == i)
   
   out_gg <- ggplot(data = df_site) +
-    geom_line(aes(x = date, y = count), col = "gray") +
-    geom_line(aes(x = date, y = count_weiwhit), col = "red", alpha = 0.5) +
+    geom_point(aes(x = date, y = count), col = "gray") +
+    #geom_line(aes(x = date, y = count_weiwhit), col = "red", alpha = 0.5) +
     geom_line(aes(x = date, y = count_fillwhit), col = "blue", alpha = 0.5) +
     geom_vline(xintercept = (df_site %>% filter(doy == offset))$date, col = "dark green", alpha = 0.5) +
     scale_y_log10(
@@ -30,8 +30,8 @@ plot_smooth_compare_station <- function(df_raw, i, wavelet) {
 # plot 55 stations on one page
 plot_smooth_compare_all <- function(df_raw, n_col, wavelet) {
   out_gg <- ggplot(data = df_raw) +
-    geom_line(aes(x = date, y = count), col = "gray") +
-    geom_line(aes(x = date, y = count_weiwhit), col = "red", alpha = 0.5) +
+    geom_point(aes(x = date, y = count), col = "gray") +
+    #geom_line(aes(x = date, y = count_weiwhit), col = "red", alpha = 0.5) +
     geom_line(aes(x = date, y = count_fillwhit), col = "blue", alpha = 0.5) +
     geom_vline(
       aes(xintercept = date),
