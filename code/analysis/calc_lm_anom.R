@@ -1,14 +1,12 @@
 calc_lm_anom <- function(df_in, metric, pct, x_lab) {
   
-  df_anom <- calc_anom(df_raw = df_in, metric = metric, pct = pct)
-  
   if (x_lab == "MAT_anom") {
-    df_anom <- rename(df_anom, climate_anom = mat_anom)
+    df <- rename(df_in, climate_anom = mat_anom)
   } else {
-    df_anom <- rename(df_anom, climate_anom = tap_anom)
+    df <- rename(df_in, climate_anom = tap_anom)
   }
   
-  df_lm <- df_anom %>%
+  df_lm <- df %>%
     group_by(lat, lon, station, city, state, country, id, n, offset) %>%
     do({
       result <- lm(value_anom ~ climate_anom, .)
@@ -32,7 +30,7 @@ calc_lm_anom <- function(df_in, metric, pct, x_lab) {
     }) %>%
     rename("slope" = "climate_anom", "intercept" = "(Intercept)") %>%
     ungroup() %>%
-    right_join(df_anom, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset"))
+    right_join(df, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset"))
   
   return(df_lm)
 }

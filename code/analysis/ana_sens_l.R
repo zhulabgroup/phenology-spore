@@ -61,18 +61,18 @@ plot_sens_l <- function(m, df_in) {
     filter(metric == m)
   
   lm <- lm(beta ~ l, data = df)
-  signif <- summary(lm)$coef[2, "Pr(>|t|)"] < 0.05
+  signif <- summary(lm)$coef[2, "Pr(>|t|)"] %>% as.numeric() %>% round(5)
   slope <- coef(lm)[2] %>% as.numeric() %>% round(5)
   
-  p <- ggplot(data = df,aes(x = l, y = beta, group = metric, col = metric)) +
+  plot <- ggplot(data = df,aes(x = l, y = beta, group = metric, col = metric)) +
     geom_hline(aes(yintercept = 0), col = "gray") +
-    #geom_smooth(method = "lm", se = T, col = "dark blue", linetype = ifelse(signif, "solid", "dashed")) +
+    #geom_smooth(method = "lm", se = T, col = "dark blue", linetype = ifelse(signif < 0.05, "solid", "dashed")) +
     geom_point(col = "dark red") +
     geom_errorbar(aes(ymin = ci1, ymax = ci2), col = "dark red") +
     scale_x_continuous(breaks = c(10, seq(50, 500, by = 50))) +
     xlab("lambda") +
     ylab("beta") +
-    labs(title = paste0(m, "   slope = ", slope)) +
+    labs(title = paste0(m, "   slope = ", slope, "   p = ", signif)) +
     theme_classic() +
     theme(
       axis.text.x = element_text(color = "black"),
@@ -80,7 +80,7 @@ plot_sens_l <- function(m, df_in) {
       axis.ticks.y = element_line(color = "black"),
       axis.text.y = element_text(color = "black"))
     
-  return(p)
+  return(plot)
 }
 
 plot_list <- list()
