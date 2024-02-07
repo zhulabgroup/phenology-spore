@@ -1,15 +1,18 @@
-calc_lm_anom <- function(df_in, metric, pct, x_lab) {
+calc_trend_station <- function(df_in, metric, pct) {
   
-  if (x_lab == "Anomaly of MAT") {
-    df <- rename(df_in, climate_anom = mat_anom)
-  } else {
-    df <- rename(df_in, climate_anom = tap_anom)
-  }
+  df <- df_in %>%
+    filter(Metric == metric) %>%
+    filter(cpltness >= pct) %>%
+    drop_na(Value) %>%
+    group_by(lat, lon, station, city, state, country, id, n, offset) %>%
+    filter(n() >= 5) %>%
+    mutate(Nyear = max(year_new) - min(year_new) + 1) %>% 
+    ungroup()
   
   df_lm <- df %>%
     group_by(lat, lon, station, city, state, country, id, n, offset) %>%
     do({
-      result <- lm(value_anom ~ climate_anom, .)
+      result <- lm(Value ~ year_new, .)
       data_frame(
         r_squared =
           result %>%
@@ -28,7 +31,7 @@ calc_lm_anom <- function(df_in, metric, pct, x_lab) {
             as_data_frame()
         )
     }) %>%
-    rename("slope" = "climate_anom", "intercept" = "(Intercept)") %>%
+    rename("slope" = "year_new", "intercept" = "(Intercept)") %>%
     ungroup() %>%
     right_join(df, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset"))
   

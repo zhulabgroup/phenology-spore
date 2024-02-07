@@ -32,7 +32,8 @@ ana_sens_l_climate <- function(df_in, lmd, df_climate, metric, pct, x_lab, y_lab
   color_palette <- colorRampPalette(colors = rainbow(55))
   df_ana = df_ana %>%
     mutate(col = color_palette(55)[n])
-  df_lm <- calc_lm_anom(df_in = df_ana, metric = metric, pct = pct, x = x_lab)
+  df_anom <- calc_anom(df_raw = df_ana, metric = metric, pct = pct)
+  df_lm <- calc_lm_anom(df_in = df_anom, metric = metric, pct = pct, x = x_lab)
   m_lme <- calc_lme_anom(df_in = df_lm)
   p <- plot_lme_anom(df_in = df_lm, m = m_lme, x_lab = x_lab, y_lab = y_lab, lmd = lmd)
   return(p)

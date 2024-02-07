@@ -103,11 +103,6 @@ source("~/Github/spore_phenology/code/0_utils.R")
 df_wavelet <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_wavelet.rds"))
 ```
 
-# plot spore calendar
-```{r}
-
-```
-
 <!-- # manipulate lambda for all stations -->
 <!-- ```{r} -->
 <!-- source("tidy_smoothfillwhit_station.R") -->
@@ -138,29 +133,28 @@ df_wavelet <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_wavelet.rds"))
 
 <!-- # manipulate lambda for all stations -->
 <!-- ```{r plot smoothing compare station} -->
-<!-- for (i in 1:55) { -->
+<!-- source("tidy_smoothfillwhit_station.R") -->
+<!-- source("plot_smooth_compare.R") -->
+<!-- for (i in c(1:55)) { -->
 
-<!--   df_plot <- tibble( -->
-<!--     n = 1:30, -->
-<!--     a = vector("list", 30)) -->
+<!--   df_plot <- list() -->
 
-<!--   for (l in 1:30) { -->
-<!--     lmd = l * 100 -->
+<!--   for (l in c(10, seq(50, 500, by = 50))) { -->
+<!--     lmd = l -->
 <!--     df_smooth_lmd <- df_wavelet %>% -->
-<!--       filter(n == i) %>%  -->
-<!--       tidy_smoothfillwhit_station(n_gap = 14, lambda = lmd,column_name = count, new_column_name = count_fillwhit) %>% -->
-<!--       tidy_smoothweiwhit_station(n_gap = 14, lambda = lmd, column_name = count, new_column_name = count_weiwhit) -->
+<!--       filter(n == i) %>% -->
+<!--       tidy_smoothfillwhit_station(n_gap = 14, lambda = lmd,column_name = count, new_column_name = count_fillwhit) -->
 <!--     gg_smooth_compare_station <- plot_smooth_compare_all(df_smooth_lmd, 1, wavelet = F) -->
-<!--     df_plot$a[[l]] <- gg_smooth_compare_station -->
+<!--     df_plot <- c(df_plot, list(gg_smooth_compare_station + labs(title = paste0("lambda = ", lmd)))) -->
 <!--   } -->
 
 <!--   pdf( -->
-<!--     str_c("~/Github/spore_phenology/output/figures/smooth_compare/p_compare_smoothing_station", i, ".pdf"), -->
+<!--     str_c("~/Github/spore_phenology/output/figures/smooth_compare/p_sens_l_station", i, ".pdf"), -->
 <!--     width = 8, -->
 <!--     height = 8*.618 -->
 <!--     ) -->
-<!--   for (l in c(1:30)) { -->
-<!--     print(df_plot$a[[l]]) -->
+<!--   for (j in c(1:11)) { -->
+<!--     print(df_plot[[j]]) -->
 <!--     } -->
 <!--   dev.off() -->
 
@@ -200,6 +194,12 @@ source("tidy_gathermetrics.R")
 df_metrics_long <- tidy_gathermetrics(df_metrics)
 ```
 
+# assign color palette for 55 stations
+```{r color palette}
+color_palette <- colorRampPalette(colors = rainbow(55))
+df_metrics_long = df_metrics_long %>% mutate(col = color_palette(55)[n])
+```
+
 <!-- # download the climate data -->
 <!-- ```{r download daymet} -->
 <!-- df_meta = read_rds(str_c(.path$dat_process, "2023-04-25/meta.rds")) -->
@@ -223,12 +223,33 @@ df_metrics_long <- tidy_gathermetrics(df_metrics)
 # read MAT, TAP and join with metrics data
 ```{r data}
 df_daymet_annual <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_daymet_annual.rds"))
-df_analysis <- right_join(df_daymet_annual, df_metrics_long, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
+df_ana <- right_join(df_daymet_annual, df_metrics_long, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
 ```
 
-# fit mlr on anomalies
-```{r}
-source("calc_anom.R")
-df_test <- calc_anom(df_raw = df_analysis, metric = "SOS", pct = 0.8)
-df_test
+# plot antt
+```{r metrics-fig, fig.cap="Definition and numerical summary of ten fungal spore metrics. The annotation of ten fungal spore metrics (A). Orange indicates metrics defined in the ecological approach, while dark red indicates metrics defined in the public health approach. Each box represents each metric's interquartile range (IQR), with the median value indicated by the line inside. Whiskers extend to the minimum and maximum values within 1.5 times the IQR, while points beyond the whiskers are considered as outliers. Phenology metrics are in the unit of Day of Year (DOY) (C), while intensity metrics are in the unit of grains m^-3 or grains m^-3 days, displayed on a natural logarithm-transformed scale (B) (D).", fig.height=11, fig.width=11}
+source("plot_boxplot_metric.R")
+p_metrics
 ```
+
+# fig_trend
+```{r trend-fig, fig.width=11, fig.height=11*0.8, fig.cap="Temporal trends of ten fungal spore metrics across all the stations. The predicted slope from linear mixed effects models across stations of year against the start of season (SOS, A), start of allergy season (SAS, B), end of season (EOS, C), end of allergy season (EAS, D), length of season (LOS, E), length of allergy season (LAS, F), amplitude (A, G), peak concentration (Cp, H), annual integral (AIn, I), and allergy season integral (ASIn, J). Solid lines indicate significant (p < 0.05, t-test) slopes, while dashed lines indicate non-significant slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Point/line colors are stations. Colorful lines are station-level trends. The top row presents metrics defined in the ecological method, while the bottom row shows metrics defined in the public health method. Concentration metrics are transformed using the natural logarithm."}
+df_ana <- right_join(df_daymet_annual, df_metrics_long, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
+source("calc_trend_station.R")
+source("calc_trend_ctnt.R")
+source("plot_lme_trend.R")
+p_trend
+```
+
+# fig climate
+```{r climate-fig, fig.height=12, fig.width=12}
+df_ana <- right_join(df_daymet_annual, df_metrics_long, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
+source("calc_anom.R")
+source("calc_lm_anom.R")
+source("calc_lme_anom.R")
+source("plot_lme_anom.R")
+source("calc_trend_station.R")
+source("plot_anom.R")
+p_climate
+```
+
