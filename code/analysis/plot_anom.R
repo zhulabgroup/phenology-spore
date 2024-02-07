@@ -14,9 +14,9 @@ plot_lme_climate <- function(metric, x_lab) {
 }
 
 p_a <- plot_lme_climate(metric = "SOS", x_lab = "Anomaly of MAT") + labs(title = expression(paste(bold("A      "), italic("warmer, earlier SOS"))))
-p_b <- plot_lme_climate(metric = "SAS", x_lab = "Anomaly of MAT") + labs(title = expression(paste(bold("B      "), italic("warmer, earlier SOS"))))
+p_b <- plot_lme_climate(metric = "SAS", x_lab = "Anomaly of MAT") + labs(title = expression(paste(bold("B      "), italic("warmer, earlier SAS"))))
 p_c <- plot_lme_climate(metric = "SOS", x_lab = "Anomaly of TAP") + labs(title = expression(paste(bold("C      "), italic("wetter, later SOS"))))
-p_d <- plot_lme_climate(metric = "SAS", x_lab = "Anomaly of TAP") + labs(title = expression(paste(bold("D      "), italic("wetter, earlier SOS"))))
+p_d <- plot_lme_climate(metric = "SAS", x_lab = "Anomaly of TAP") + labs(title = expression(paste(bold("D      "), italic("wetter, earlier SAS"))))
 p_e <- plot_lme_climate(metric = "LOS", x_lab = "Anomaly of TAP") + labs(title = expression(paste(bold("E      "), italic("wetter, shorter LOS"))))
 p_f <- plot_lme_climate(metric = "LAS", x_lab = "Anomaly of TAP") + labs(title = expression(paste(bold("F      "), italic("wetter, longer LAS"))))
 p_h <- plot_lme_climate(metric = "ln_AIn", x_lab = "Anomaly of TAP") + labs(title = expression(paste(bold("H      "), italic("wetter, larger AIn"))))
