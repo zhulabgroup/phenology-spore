@@ -197,8 +197,6 @@ plot_antt <- function(df_in, sample_city, spyr) {
 
 p_antt <- plot_antt(df_in = df_sporeyr, sample_city = "Sarasota", spyr = 2008)
 
-
-
 # summary of metrics
 df_ana$Metric <- factor(df_ana$Metric, levels = c("Cp", "A", "AIn", "ASIn", "LAS", "EAS", "SAS", "LOS", "EOS", "SOS"))
 

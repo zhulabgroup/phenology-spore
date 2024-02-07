@@ -26,15 +26,7 @@ plot_lme_anom <- function(df_in, m, x_lab, y_lab, lmd) {
       size = 0.5) +
     geom_hline(aes(yintercept = 0), col = "gray") +
     geom_smooth(
-      data = df_lme %>% filter(p_value >= 0.05),
-      method = "lm",
-      se = FALSE,
-      aes(x = climate_anom, y = value_anom, group = n, col = col),
-      alpha = 0.5,
-      linewidth = 0.5,
-      linetype = "dashed") +
-    geom_smooth(
-      data = df_lme %>% filter(p_value < 0.05),
+      data = df_lme,
       method = "lm",
       se = FALSE,
       aes(x = climate_anom, y = value_anom, group = n, col = col),
@@ -50,8 +42,10 @@ plot_lme_anom <- function(df_in, m, x_lab, y_lab, lmd) {
       linetype = ifelse(p < 0.05, "solid", "dashed")) +
     theme_classic() +
     xlab(x_lab) +
-    ylab(y_lab) +
-    labs(title = paste0(y_lab, " ~ ", x_lab, "   lambda = ", lmd, "\nbeta = ", beta, "   p = ", p)) +
+    ylab(paste0("Anomaly of ", y_lab)) +
+    theme(
+      plot.title.position = "plot",
+      plot.margin = margin(10, 10, 10, 10)) +
     theme(
       legend.position = "none",
       axis.text.x = element_text(color = "black"),
