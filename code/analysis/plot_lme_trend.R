@@ -129,7 +129,7 @@ plot_lme_trend <- function(df_in, m, metric) {
   if (metric == "ln_ASIn") {
     p <- p + 
       ylab(expression("Allergy season integral (grains m"^-3*" days)")) +
-      labs(title = expression(paste(bold("J      "), italic("Increased ASIn"))))
+      labs(title = expression(paste(bold("J      "), italic("Decreased ASIn"))))
   }
   
   return(p)
