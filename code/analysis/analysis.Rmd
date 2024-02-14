@@ -1,183 +1,84 @@
 ---
-title: "pre-process"
+title: "analysis"
 author: "Ruoyu Wu"
 date: "2023-09-29"
-output: html_document
+output:
+  html_document: default
 ---
 
 ```{r setup, include=FALSE, message=FALSE}
-knitr::opts_chunk$set(echo = FALSE, cache=FALSE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = FALSE)
 source("~/Github/spore_phenology/code/0_utils.R")
 ```
 
-<!-- # read spore data -->
-<!-- ```{r read} -->
-<!-- df_spore <- read_rds(str_c(.path$dat_process, "2023-04-25/spore_dat.rds")) -->
-<!-- ``` -->
+# read spore data
+```{r read, message=FALSE, warning=FALSE}
+df_spore <- read_rds(str_c(.path$dat_process, "2023-04-25/spore_dat.rds"))
+```
 
-<!-- # filter the stations -->
-<!-- ```{r filter, message=FALSE, warning=FALSE} -->
-<!-- source("filt_taxa_station_raw_data.R") -->
-<!-- df_siteyear <- filt_taxa_station_raw_data(df_spore, "Total", 10, 3) -->
-<!-- ``` -->
+# filter the stations
+```{r filter, message=FALSE, warning=FALSE}
+source("filt_taxa_station_raw_data.R")
+df_siteyear <- filt_taxa_station_raw_data(df_spore, "Total", 10, 3)
+```
 
-<!-- # rename stations and tag number for each station -->
-<!-- ```{r message=FALSE, warning=FALSE} -->
-<!-- source("tidy_rename_number_station.R") -->
-<!-- df_site <- tidy_rename_number_station(df_siteyear) -->
-<!-- ``` -->
+# rename stations and tag number for each station
+```{r message=FALSE, warning=FALSE}
+source("tidy_rename_number_station.R")
+df_site <- tidy_rename_number_station(df_siteyear)
+```
 
-<!-- # generate and save site meta data -->
-<!-- ```{r meta} -->
-<!-- df_meta <- df_site %>%  -->
-<!--   distinct(n, .keep_all = T) %>%  -->
+<!-- # generate and save site meta data for future downloading of daymet data -->
+<!-- ```{r meta, message=FALSE, warning=FALSE} -->
+<!-- df_meta <- df_site %>% -->
+<!--   distinct(n, .keep_all = T) %>% -->
 <!--   dplyr::select(-year, -date, -count) -->
 <!-- write_rds(df_meta, str_c(.path$dat_process, "2023-04-25/meta.rds")) -->
 <!-- ``` -->
 
-<!-- # pre-process spore raw data: pad the date to full year round -->
-<!-- ```{r full} -->
-<!-- source("tidy_fulldate_station.R") -->
-<!-- df_full <- tidy_fulldate_station(df_site) -->
-<!-- ``` -->
-
-<!-- # natural log transform the spore raw data before interpolation -->
-<!-- ```{r naural } -->
-<!-- df_full <- df_full %>%  -->
-<!--   mutate(count_ln = log(count + 1)) -->
-<!-- ``` -->
-
-<!-- # pre-process spore raw data: smoothing - three methods -->
-<!-- ```{r whittaker smoothing, message=FALSE, warning=FALSE} -->
-<!-- source("tidy_smoothfillwhit_station.R") -->
-<!-- source("tidy_smoothweiwhit_station.R") -->
-<!-- source("tidy_smoothwavelet_station.R") -->
-<!-- df_smooth <- df_full %>% -->
-<!--   tidy_smoothfillwhit_station(n_gap = 14, lambda = 1800,column_name = count, new_column_name = count_fillwhit) %>% -->
-<!--   tidy_smoothweiwhit_station(n_gap = 14, lambda = 1800, column_name = count, new_column_name = count_weiwhit) %>% -->
-<!--   tidy_smoothwavelet_station(column_name = count, new_column_name = count_wavelet) -->
-<!-- ``` -->
-
-<!-- # pre-process ln data: smoothing - three methods -->
-<!-- ```{r whittaker smoothing, message=FALSE, warning=FALSE} -->
-<!-- source("tidy_smoothfillwhit_station.R") -->
-<!-- source("tidy_smoothweiwhit_station.R") -->
-<!-- source("tidy_smoothwavelet_station.R") -->
-<!-- df_ln_smooth <- df_full %>% -->
-<!--   tidy_smoothfillwhit_station(n_gap = 14, lambda = 1800,column_name = count_ln, new_column_name = count_fillwhit) %>% -->
-<!--   tidy_smoothweiwhit_station(n_gap = 14, lambda = 1800, column_name = count_ln, new_column_name = count_weiwhit) %>% -->
-<!--   tidy_smoothwavelet_station(column_name = count_ln, new_column_name = count_wavelet) -->
-<!-- ``` -->
-
-<!-- # read the offset and insert into the smoothed dataset -->
-<!-- ```{r read offset and merge with smooth data} -->
-<!-- source("read_offset_station.R") -->
-<!-- df_smooth <- df_smooth %>% -->
-<!--   left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id")) -->
-<!-- df_ln_smooth <- df_ln_smooth %>% -->
-<!--   left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id")) -->
-<!-- ``` -->
-
-<!-- # save the smoothed dataset, because smoothing takes much time -->
-<!-- ```{r save df_smooth} -->
-<!-- write_rds(df_smooth, str_c(.path$dat_process, "2023-04-25/smooth_compare.rds")) -->
-<!-- write_rds(df_ln_smooth, str_c(.path$dat_process, "2023-04-25/ln_smooth_compare.rds")) -->
-<!-- ``` -->
-
-<!-- # read the smoothed dataset -->
-<!-- ```{r read df_smooth} -->
-<!-- df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/smooth_compare.rds")) -->
-<!-- df_ln_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/ln_smooth_compare.rds")) -->
-<!-- ``` -->
-
-<!-- # only keep wavelet data -->
-<!-- ```{r} -->
-<!-- df_wavelet <- df_smooth %>% -->
-<!--   dplyr::select(-count_fillwhit, -count_weiwhit) %>%  -->
-<!--   rename(lmd_offset = lambda) -->
-<!-- write_rds(df_wavelet, str_c(.path$dat_process, "2023-04-25/dat_wavelet.rds")) -->
-<!-- ``` -->
-
-# read wavelet smoothed data
-```{r read wavelet}
-df_wavelet <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_wavelet.rds"))
+# summarize the ecoregion of each station
+```{r ecoregion, message=FALSE, warning=FALSE}
+source("summ_ecoregion_station.R")
+df_ecoregion <- summ_ecoregion_station(df_meta)
 ```
 
-<!-- # manipulate lambda for all stations -->
-<!-- ```{r} -->
-<!-- source("tidy_smoothfillwhit_station.R") -->
-<!-- source("tidy_smoothweiwhit_station.R") -->
-<!-- source("plot_smooth_compare.R") -->
-<!-- df_plot <- tibble( -->
-<!--   n = 1:30, -->
-<!--   a = vector("list", 30) -->
-<!-- ) -->
-<!-- for (l in c(1:30)) { -->
-<!--   lmd = l * 100 -->
-<!--   df_smooth_lmd <- df_wavelet %>% -->
-<!--     tidy_smoothfillwhit_station(n_gap = 14, lambda = lmd,column_name = count, new_column_name = count_fillwhit) %>% -->
-<!--     tidy_smoothweiwhit_station(n_gap = 14, lambda = lmd, column_name = count, new_column_name = count_weiwhit) -->
-<!--   gg_smooth_compare_all <- plot_smooth_compare_all(df_smooth_lmd, 8, wavelet = F) -->
-<!--   df_plot$a[[l]] <- gg_smooth_compare_all -->
-<!-- } -->
-<!-- pdf( -->
-<!--   "~/Github/spore_phenology/output/figures/smooth_compare/p_compare_smooth.pdf", -->
-<!--   width = 8*8, -->
-<!--   height = 8*.618*7 -->
-<!--   ) -->
-<!-- for (i in c(1:30)) { -->
-<!--   print(df_plot$a[[i]]) -->
-<!-- } -->
-<!-- dev.off() -->
-<!-- ``` -->
+# plot ecoregion
+```{r plot-ecoregion, message=FALSE, warning=FALSE}
+source("~/Github/spore_phenology/code/analysis/plot_ecoregion_stations.R")
+df_meta <- read_rds(str_c(.path$dat_process, "2023-04-25/meta.rds"))
+p_ecoregion <- plot_ecoregion_staton(df_in = df_meta)
+p_ecoregion
+```
 
-<!-- # manipulate lambda for all stations -->
-<!-- ```{r plot smoothing compare station} -->
-<!-- source("tidy_smoothfillwhit_station.R") -->
-<!-- source("plot_smooth_compare.R") -->
-<!-- for (i in c(1:55)) { -->
+# pre-process spore raw data: pad the date to full year round
+```{r full, message=FALSE, warning=FALSE}
+source("tidy_fulldate_station.R")
+df_full <- tidy_fulldate_station(df_site)
+```
 
-<!--   df_plot <- list() -->
-
-<!--   for (l in c(10, seq(50, 500, by = 50))) { -->
-<!--     lmd = l -->
-<!--     df_smooth_lmd <- df_wavelet %>% -->
-<!--       filter(n == i) %>% -->
-<!--       tidy_smoothfillwhit_station(n_gap = 14, lambda = lmd,column_name = count, new_column_name = count_fillwhit) -->
-<!--     gg_smooth_compare_station <- plot_smooth_compare_all(df_smooth_lmd, 1, wavelet = F) -->
-<!--     df_plot <- c(df_plot, list(gg_smooth_compare_station + labs(title = paste0("lambda = ", lmd)))) -->
-<!--   } -->
-
-<!--   pdf( -->
-<!--     str_c("~/Github/spore_phenology/output/figures/smooth_compare/p_sens_l_station", i, ".pdf"), -->
-<!--     width = 8, -->
-<!--     height = 8*.618 -->
-<!--     ) -->
-<!--   for (j in c(1:11)) { -->
-<!--     print(df_plot[[j]]) -->
-<!--     } -->
-<!--   dev.off() -->
-
-<!-- } -->
-<!-- ``` -->
+# read the offset and insert into the smoothed dataset
+```{r read offset and merge with smooth data, message=FALSE, warning=FALSE}
+source("read_offset_station.R")
+df_full <- df_full %>%
+  left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id")) %>% 
+  rename(lmd_offset = lambda)
+```
 
 # linear interpolation and whittaker smoothing
-```{r smooth, warning=FALSE}
+```{r smooth, message=FALSE, warning=FALSE}
 source("tidy_smoothfillwhit_station.R")
-lmd = 100
-df_smooth_lmd <- df_wavelet %>%
-  tidy_smoothfillwhit_station(n_gap = 14, lambda = lmd,column_name = count, new_column_name = count_fillwhit)
+df_smooth_100 <- df_full %>%
+  tidy_smoothfillwhit_station(n_gap = 14, lambda = 100,column_name = count, new_column_name = count_fillwhit)
 ```
 
 # define spore year
-```{r spore year, warning=FALSE}
+```{r spore year, message=FALSE, warning=FALSE}
 source("tidy_sporeyr_station.R")
-df_sporeyr = df_smooth_lmd %>% 
-  tidy_sporeyr_station()
+df_sporeyr = df_smooth_100 %>% tidy_sporeyr_station()
 ```
 
 # tag data completeness in each station-sporeyear
-```{r, warning=FALSE}
+```{r message=FALSE, warning=FALSE}
 source("calc_completeness_stationspyr.R")
 df_spore_cpltness <- calc_completeness_stationspyr(df_sporeyr, column_name = count_fillwhit)
 ```
@@ -224,11 +125,12 @@ df_metrics_long = df_metrics_long %>% mutate(col = color_palette(55)[n])
 ```{r data}
 df_daymet_annual <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_daymet_annual.rds"))
 df_ana <- right_join(df_daymet_annual, df_metrics_long, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
+#write_rds(df_ana, str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
 ```
 
 # plot antt
 ```{r metrics-fig, fig.cap="Definition and numerical summary of ten fungal spore metrics. The annotation of ten fungal spore metrics (A). Orange indicates metrics defined in the ecological approach, while dark red indicates metrics defined in the public health approach. Each box represents each metric's interquartile range (IQR), with the median value indicated by the line inside. Whiskers extend to the minimum and maximum values within 1.5 times the IQR, while points beyond the whiskers are considered as outliers. Phenology metrics are in the unit of Day of Year (DOY) (C), while intensity metrics are in the unit of grains m^-3 or grains m^-3 days, displayed on a natural logarithm-transformed scale (B) (D).", fig.height=11, fig.width=11}
-source("plot_boxplot_metric.R")
+source("plot_metrics.R")
 p_metrics
 ```
 
@@ -252,4 +154,3 @@ source("calc_trend_station.R")
 source("plot_anom.R")
 p_climate
 ```
-
