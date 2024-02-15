@@ -1,0 +1,33 @@
+---
+title: "SI"
+author: "Ruoyu Wu"
+date: "2023-10-13"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = FALSE, progress = FALSE)
+source("~/Github/spore_phenology/code/0_utils.R")
+```
+
+<!-- # read dataset -->
+<!-- ```{r read} -->
+<!-- df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/smooth_compare.rds")) -->
+<!-- ``` -->
+
+<!-- # summary the proportion of missing data in each station-year raw data -->
+<!-- ```{r missing} -->
+<!-- source("summ_miss_stationyear_raw_data.R") -->
+<!-- df_miss <- summ_miss_stationyear_raw_data(df_smooth, count) -->
+<!-- summary(df_miss$miss_ppt) -->
+<!-- ``` -->
+
+# plot ecoregion
+```{r plot-ecoregion, message=FALSE, warning=FALSE}
+source("~/Github/spore_phenology/code/analysis/plot_ecoregion_stations.R")
+df_meta <- read_rds(str_c(.path$dat_process, "2023-04-25/meta.rds"))
+df_ecoregions <- st_read(paste0(.path$dat_process, "2023-04-25/na_cec_eco_l1/NA_CEC_Eco_Level1.shp"))
+p_ecoregion <- plot_ecoregion_staton(df_in = df_meta, df_base = df_ecoregions)
+p_ecoregion
+```

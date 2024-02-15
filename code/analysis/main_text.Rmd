@@ -1,0 +1,19 @@
+---
+title: "main text"
+author: "Ruoyu Wu"
+date: "2024-02-07"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache=FALSE, warning = FALSE, message = FALSE)
+source("~/Github/spore_phenology/code/0_utils.R")
+df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
+```
+
+# Fig. 1
+```{r fig-metrics, fig.height=11, fig.width=11, fig.cap="Definition and numerical summary of ten fungal spore metrics. The annotation of ten fungal spore metrics (A). Orange indicates metrics defined in the ecological approach, while dark red indicates metrics defined in the public health approach. Each box represents each metric's interquartile range (IQR), with the median value indicated by the line inside. Whiskers extend to the minimum and maximum values within 1.5 times the IQR, while points beyond the whiskers are considered as outliers. Phenology metrics are in the unit of Day of Year (DOY) (C), while intensity metrics are in the unit of grains m^-3 or grains m^-3 days, displayed on a natural logarithm-transformed scale (B) (D).", message=FALSE, warning=FALSE}
+source("~/Github/spore_phenology/code/analysis/plot_metrics.R")
+p_metrics
+```
