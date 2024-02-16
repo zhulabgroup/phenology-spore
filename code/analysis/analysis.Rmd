@@ -136,7 +136,6 @@ p_metrics
 
 # fig_trend
 ```{r trend-fig, fig.width=11, fig.height=11*0.8, fig.cap="Temporal trends of ten fungal spore metrics across all the stations. The predicted slope from linear mixed effects models across stations of year against the start of season (SOS, A), start of allergy season (SAS, B), end of season (EOS, C), end of allergy season (EAS, D), length of season (LOS, E), length of allergy season (LAS, F), amplitude (A, G), peak concentration (Cp, H), annual integral (AIn, I), and allergy season integral (ASIn, J). Solid lines indicate significant (p < 0.05, t-test) slopes, while dashed lines indicate non-significant slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Point/line colors are stations. Colorful lines are station-level trends. The top row presents metrics defined in the ecological method, while the bottom row shows metrics defined in the public health method. Concentration metrics are transformed using the natural logarithm."}
-df_ana <- right_join(df_daymet_annual, df_metrics_long, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
 source("calc_trend_station.R")
 source("calc_trend_ctnt.R")
 source("plot_lme_trend.R")
