@@ -33,7 +33,8 @@ calc_lm_trend <- function(df_in, metric, pct) {
     }) %>%
     rename("slope" = "year_new", "intercept" = "(Intercept)") %>%
     ungroup() %>%
-    right_join(df, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset"))
+    right_join(df, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>% 
+    mutate(rescaled_slope = sign(slope) * abs(slope)^(1/3))
   
   return(df_lm)
 }
