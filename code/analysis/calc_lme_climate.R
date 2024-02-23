@@ -1,4 +1,4 @@
-calc_trend_ctnt <- function(df_in, metric, pct) {
+calc_lme_climate <- function(df_in, metric, x_lab, pct) {
   df <- df_in %>%
     filter(Metric == metric) %>%
     filter(cpltness >= pct) %>%
@@ -8,20 +8,28 @@ calc_trend_ctnt <- function(df_in, metric, pct) {
     mutate(Nyear = max(year_new) - min(year_new) + 1) %>% 
     ungroup()
   
+  if (x_lab == "MAT") {
+    df <- df %>% 
+      rename(climate = mat)
+  } else {
+    df <- df %>% 
+      rename(climate = tap)
+  }
+  
   tryCatch({
-    m_ctnt <- lme(
-      Value ~ year_new,
+    m_lme <- lme(
+      Value ~ climate,
       data = df,
-      random = ~ year_new | n)
-    return(m_ctnt)
+      random = ~ climate | n)
+    return(m_lme)
   }, error = function(e) {
     cat("Error in lme formula:", conditionMessage(e), "\n")
     # Retry with the control parameter
-    m_ctnt <- lme(
-      Value ~ year_new,
+    m_lme <- lme(
+      Value ~ climate,
       data = df,
-      random = ~ year_new | n,
+      random = ~ climate | n,
       control = lmeControl(opt = "optim"))
-    return(m_ctnt)
+    return(m_lme)
   })
 }
