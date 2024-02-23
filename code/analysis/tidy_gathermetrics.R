@@ -12,11 +12,11 @@ tidy_gathermetrics <- function(df_in) {
     mutate(Metric = ifelse(Metric == "eas", "EAS", Metric)) %>%
     mutate(Metric = ifelse(Metric == "las", "LAS", Metric)) %>%
     mutate(Metric = ifelse(Metric == "peak", "Cp", Metric)) %>%
-    mutate(Metric = ifelse(Metric == "amplitude", "A", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "amplitude", "Ca", Metric)) %>%
     mutate(Metric = ifelse(Metric == "integral", "AIn", Metric)) %>%
     mutate(Metric = ifelse(Metric == "integral_as", "ASIn", Metric)) %>%
     mutate(Metric = ifelse(Metric == "ln_peak", "ln_Cp", Metric)) %>%
-    mutate(Metric = ifelse(Metric == "ln_amplitude", "ln_A", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "ln_amplitude", "ln_Ca", Metric)) %>%
     mutate(Metric = ifelse(Metric == "ln_integral", "ln_AIn", Metric)) %>%
     mutate(Metric = ifelse(Metric == "ln_integral_as", "ln_ASIn", Metric))
   

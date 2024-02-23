@@ -145,7 +145,7 @@ title2 <- ggdraw() + draw_label("Public Health Perspective", hjust = 0.5, vjust 
 plot_list <- list()
 for (m in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_A", "ln_Cp", "ln_AIn", "ln_ASIn")) {
   df_trend_station <- calc_trend_station(df_in = df_ana, metric = m, pct = p)
-  m_trend <- calc_trend_ctnt(df_trend_station)
+  m_trend <- calc_trend_ctnt(df_in = df_trend_station, metric = m, pct = p)
   p_lme_trend <- plot_lme_trend(df_in = df_trend_station, m = m_trend, metric = m)
   plot_list <- c(plot_list, list(p_lme_trend))
 }

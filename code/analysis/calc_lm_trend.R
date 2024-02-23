@@ -1,5 +1,5 @@
-calc_trend_station <- function(df_in, metric, pct) {
-  
+calc_lm_trend <- function(df_in, metric, pct) {
+  #filter station-year
   df <- df_in %>%
     filter(Metric == metric) %>%
     filter(cpltness >= pct) %>%
@@ -8,7 +8,7 @@ calc_trend_station <- function(df_in, metric, pct) {
     filter(n() >= 5) %>%
     mutate(Nyear = max(year_new) - min(year_new) + 1) %>% 
     ungroup()
-  
+  # fit lm for each station
   df_lm <- df %>%
     group_by(lat, lon, station, city, state, country, id, n, offset) %>%
     do({

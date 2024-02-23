@@ -10,7 +10,7 @@ df_antt <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_antt.rds"))
 p_antt <- ggplot() +
   geom_ribbon_pattern(
     data = df_antt %>% filter(year_new == 2009 & doy_new %in% 137:236),
-    aes(x = date, ymin = 0, ymax = count_whit, pattern_colour = "allergy season integral\n(ASIn)"),
+    aes(x = date, ymin = 0, ymax = count_whit, pattern_colour = "allergy season\nintegral (ASIn)"),
     pattern = "stripe",
     pattern_fill = "dark red",
     fill = NA,
@@ -21,7 +21,7 @@ p_antt <- ggplot() +
     guide = guide_legend(alpha = 0.4)) +
   geom_ribbon_pattern(
     data = df_antt %>% filter(year_new == 2009 & doy_new %in% 1:78),
-    aes(x = date, ymin = 0, ymax = count_whit, pattern_fill = "10% of the annual integral"),
+    aes(x = date, ymin = 0, ymax = count_whit, pattern_fill = "10% of the\nannual integral"),
     pattern = "stripe",
     pattern_colour = "orange",
     fill = NA) +
@@ -70,7 +70,7 @@ p_antt <- ggplot() +
     aes(x = as_datetime("2009-02-11"), xend = as_datetime("2009-02-11"), y = 1333.443, yend = 7955.968),
     col = "orange") +
   geom_text(
-    aes(x = as_datetime("2009-02-11"), y = exp((log(1333.443) + log(7955.968)) / 2), label = "amplitude (A)"),
+    aes(x = as_datetime("2009-02-11"), y = exp((log(1333.443) + log(7955.968)) / 2), label = "amplitude (Ca)"),
     hjust = 0,
     vjust = -0.5,
     col = "orange") +
@@ -93,27 +93,27 @@ p_antt <- ggplot() +
     col = "dark red") +
   geom_segment(
     data = df_antt %>% filter(doy_new == sas | doy_new == eas),
-    aes(x = date, xend = date, y = count_whit, yend = exp(9.25)),
+    aes(x = date, xend = date, y = count_whit, yend = 9000),
     linetype = "dashed",
     col = "dark red") +
   geom_segment(
-    aes(x = as_datetime("2009-06-27"), xend = as_datetime("2009-10-04"), y = exp(9.25), yend = exp(9.25)),
+    aes(x = as_datetime("2009-06-27"), xend = as_datetime("2009-10-04"), y = 9000, yend = 9000),
     col = "dark red") +
   geom_text(
-    aes(x = as_datetime("2009-08-16"), y = exp(9.25), label = "length of allergy season (LAS)"),
+    aes(x = as_datetime("2009-08-16"), y = 9000, label = "length of allergy season (LAS)"),
     hjust = 0.5,
     vjust = -0.3,
     col = "dark red") +
   geom_segment(
     data = df_antt %>% filter(doy_new == sos | doy_new == eos),
-    aes(x = date, xend = date, y = count_whit, yend = exp(9.5)),
+    aes(x = date, xend = date, y = count_whit, yend = 10500),
     linetype = "dashed",
     col = "orange") +
   geom_segment(
-    aes(x = as_datetime("2009-04-29"), xend = as_datetime("2009-11-19"), y = exp(9.5), yend = exp(9.5)),
+    aes(x = as_datetime("2009-04-29"), xend = as_datetime("2009-11-19"), y = 10500, yend = 10500),
     col = "orange") +
   geom_text(
-    aes(x = as_datetime("2009-08-09"), y = exp(9.5), label = "length of spore season (LOS)"),
+    aes(x = as_datetime("2009-08-09"), y = 10500, label = "length of spore season (LOS)"),
     hjust = 0.5,
     vjust = -0.3,
     col = "orange") +
@@ -135,20 +135,21 @@ p_antt <- ggplot() +
     aes(x = as_datetime("2009-08-12"), y = 7955.968),
     col = "dark red") +
   geom_text(
-    aes(x = as_datetime("2009-01-01"), y = exp(7), label = "offset"),
+    aes(x = as_datetime("2009-01-01"), y = 1000, label = "offset"),
     hjust = 0,
     vjust = 1,
     col = "black") +
-  scale_y_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
+  scale_y_continuous(
+    limits = c(10^3, 20000),
+    trans = "log10",
+    breaks = c(10^3, 10^3.5, 10^4),
     labels = scales::trans_format("log10", scales::math_format(10^.x))) +
-  annotation_logticks(sides = "l") +
+  # annotation_logticks(sides = "l") +
   scale_x_datetime(
     breaks = c(as_datetime("2009-02-10"), as_datetime("2009-04-29"), as_datetime("2009-06-27"), as_datetime("2009-10-04"), as_datetime("2009-11-19"), as_datetime("2010-02-10")), 
     date_labels = c("1", "start of spore season (SOS)", "start of allergy season (SAS)", "end of allergy season (EAS)", "end of spore season (EOS)", "365")) +
   coord_cartesian(
-    xlim = c(as_datetime("2009-01-21"), max(df_antt$date)),
-    ylim = c(exp(7), exp(10))) +
+    xlim = c(as_datetime("2009-01-21"), max(df_antt$date))) +
   ylab(expression("Spore concentration (grains m"^-3*")")) +
   xlab("Day of spore year") +
   theme_classic() +
@@ -157,14 +158,9 @@ p_antt <- ggplot() +
     legend.justification = c("right", "top"),
     legend.box.just = "left") +
   theme(
-    axis.text.x = element_text(
-      color = "black",
-      angle = 15,
-      hjust = 1),
+    axis.text.x = element_text(color = "black", angle = 15, hjust = 1),
     axis.ticks.x = element_line(color = "black"),
     axis.ticks.y = element_line(color = "black"),
-    axis.text.y = element_text(color = "black")) +
-  labs(title = expression(paste(bold("A")))) +
-  theme(
-    plot.title.position = "plot",
-    plot.margin = margin(10, 10, 10, 10))
+    axis.text.y = element_text(color = "black"),
+    axis.text = element_text(size = 11),
+    legend.text = element_text(size = 11))

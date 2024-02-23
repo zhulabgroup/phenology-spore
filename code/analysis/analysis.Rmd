@@ -18,13 +18,13 @@ df_spore <- read_rds(str_c(.path$dat_process, "2023-04-25/spore_dat.rds"))
 
 # filter the stations
 ```{r filter, message=FALSE, warning=FALSE}
-source("filt_taxa_station_raw_data.R")
+source("~/Github/spore_phenology/code/analysis/filt_taxa_station_raw_data.R")
 df_siteyear <- filt_taxa_station_raw_data(df_spore, "Total", 10, 3)
 ```
 
 # rename stations and tag number for each station
 ```{r message=FALSE, warning=FALSE}
-source("tidy_rename_number_station.R")
+source("~/Github/spore_phenology/code/analysis/tidy_rename_number_station.R")
 df_site <- tidy_rename_number_station(df_siteyear)
 ```
 
@@ -36,62 +36,68 @@ df_site <- tidy_rename_number_station(df_siteyear)
 <!-- write_rds(df_meta, str_c(.path$dat_process, "2023-04-25/meta.rds")) -->
 <!-- ``` -->
 
-# summarize the ecoregion of each station
-```{r ecoregion, message=FALSE, warning=FALSE}
-source("summ_ecoregion_station.R")
-df_ecoregion <- summ_ecoregion_station(df_meta)
-```
+<!-- # summarize the ecoregion of each station -->
+<!-- ```{r ecoregion, message=FALSE, warning=FALSE} -->
+<!-- source("~/Github/spore_phenology/code/analysis/summ_ecoregion_station.R") -->
+<!-- df_ecoregion <- summ_ecoregion_station(df_meta) -->
+<!-- ``` -->
 
-# plot ecoregion
-```{r plot-ecoregion, message=FALSE, warning=FALSE}
-source("~/Github/spore_phenology/code/analysis/plot_ecoregion_stations.R")
-df_meta <- read_rds(str_c(.path$dat_process, "2023-04-25/meta.rds"))
-p_ecoregion <- plot_ecoregion_staton(df_in = df_meta)
-p_ecoregion
-```
+<!-- # plot ecoregion -->
+<!-- ```{r plot-ecoregion, message=FALSE, warning=FALSE} -->
+<!-- source("~/Github/spore_phenology/code/analysis/plot_ecoregion_stations.R") -->
+<!-- df_meta <- read_rds(str_c(.path$dat_process, "2023-04-25/meta.rds")) -->
+<!-- p_ecoregion <- plot_ecoregion_staton(df_in = df_meta) -->
+<!-- p_ecoregion -->
+<!-- ``` -->
 
 # pre-process spore raw data: pad the date to full year round
 ```{r full, message=FALSE, warning=FALSE}
-source("tidy_fulldate_station.R")
+source("~/Github/spore_phenology/code/analysis/tidy_fulldate_station.R")
 df_full <- tidy_fulldate_station(df_site)
 ```
 
 # read the offset and insert into the smoothed dataset
 ```{r read offset and merge with smooth data, message=FALSE, warning=FALSE}
-source("read_offset_station.R")
+source("~/Github/spore_phenology/code/analysis/read_offset_station.R")
 df_full <- df_full %>%
   left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id")) %>% 
   rename(lmd_offset = lambda)
 ```
 
+# summarize missing data percentage
+```{r}
+source("~/Github/spore_phenology/code/analysis/summ_miss_stationyear_raw_data.R")
+df_miss <- df_full %>% summ_miss_stationyear_raw_data(column_name = count)
+```
+
 # linear interpolation and whittaker smoothing
 ```{r smooth, message=FALSE, warning=FALSE}
-source("tidy_smoothfillwhit_station.R")
+source("~/Github/spore_phenology/code/analysis/tidy_smoothfillwhit_station.R")
 df_smooth_100 <- df_full %>%
   tidy_smoothfillwhit_station(n_gap = 14, lambda = 100,column_name = count, new_column_name = count_fillwhit)
 ```
 
 # define spore year
 ```{r spore year, message=FALSE, warning=FALSE}
-source("tidy_sporeyr_station.R")
+source("~/Github/spore_phenology/code/analysis/tidy_sporeyr_station.R")
 df_sporeyr = df_smooth_100 %>% tidy_sporeyr_station()
 ```
 
 # tag data completeness in each station-sporeyear
 ```{r message=FALSE, warning=FALSE}
-source("calc_completeness_stationspyr.R")
+source("~/Github/spore_phenology/code/analysis/calc_completeness_stationspyr.R")
 df_spore_cpltness <- calc_completeness_stationspyr(df_sporeyr, column_name = count_fillwhit)
 ```
 
 # extract spore metrics
 ```{r, warning=FALSE, message=FALSE}
-source("calc_metrics_stationspyr.R")
+source("~/Github/spore_phenology/code/analysis/calc_metrics_stationspyr.R")
 df_metrics <- calc_metrics_stationspyr(df_completeness = df_spore_cpltness, df_raw = df_sporeyr)
 ```
 
 # gather df_metrics into a long df
 ```{r}
-source("tidy_gathermetrics.R")
+source("~/Github/spore_phenology/code/analysis/tidy_gathermetrics.R")
 df_metrics_long <- tidy_gathermetrics(df_metrics)
 ```
 
@@ -104,7 +110,7 @@ df_metrics_long = df_metrics_long %>% mutate(col = color_palette(55)[n])
 <!-- # download the climate data -->
 <!-- ```{r download daymet} -->
 <!-- df_meta = read_rds(str_c(.path$dat_process, "2023-04-25/meta.rds")) -->
-<!-- source("down_daymet_station_date.R") -->
+<!-- source("~/Github/spore_phenology/code/analysis/down_daymet_station_date.R") -->
 <!-- df_daymet_allday <- down_daymet_station_date(df_meta) -->
 <!-- write_rds(df_daymet_allday, str_c(.path$dat_process, "2023-04-25/dat_daymet_raw.rds")) -->
 <!-- ``` -->
@@ -116,7 +122,7 @@ df_metrics_long = df_metrics_long %>% mutate(col = color_palette(55)[n])
 
 <!-- # calculate MAT, TAP in each spore year -->
 <!-- ```{r} -->
-<!-- source("calc_climate_stationspyr.R") -->
+<!-- source("~/Github/spore_phenology/code/analysis/calc_climate_stationspyr.R") -->
 <!-- df_daymet_annual <- calc_climate_stationspyr(df_daymet_raw, df_sporeyear = df_sporeyr) -->
 <!-- write_rds(df_daymet_annual, str_c(.path$dat_process, "2023-04-25/dat_daymet_annual.rds")) -->
 <!-- ``` -->
@@ -125,31 +131,15 @@ df_metrics_long = df_metrics_long %>% mutate(col = color_palette(55)[n])
 ```{r data}
 df_daymet_annual <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_daymet_annual.rds"))
 df_ana <- right_join(df_daymet_annual, df_metrics_long, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
-#write_rds(df_ana, str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
-```
-
-# plot antt
-```{r metrics-fig, fig.cap="Definition and numerical summary of ten fungal spore metrics. The annotation of ten fungal spore metrics (A). Orange indicates metrics defined in the ecological approach, while dark red indicates metrics defined in the public health approach. Each box represents each metric's interquartile range (IQR), with the median value indicated by the line inside. Whiskers extend to the minimum and maximum values within 1.5 times the IQR, while points beyond the whiskers are considered as outliers. Phenology metrics are in the unit of Day of Year (DOY) (C), while intensity metrics are in the unit of grains m^-3 or grains m^-3 days, displayed on a natural logarithm-transformed scale (B) (D).", fig.height=11, fig.width=11}
-source("plot_metrics.R")
-p_metrics
+# write_rds(df_ana, str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
+# df_ana_short <- right_join(df_daymet_annual, df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
+# write_rds(df_ana_short, str_c(.path$dat_process, "2023-04-25/dat_ana_short.rds"))
 ```
 
 # fig_trend
 ```{r trend-fig, fig.width=11, fig.height=11*0.8, fig.cap="Temporal trends of ten fungal spore metrics across all the stations. The predicted slope from linear mixed effects models across stations of year against the start of season (SOS, A), start of allergy season (SAS, B), end of season (EOS, C), end of allergy season (EAS, D), length of season (LOS, E), length of allergy season (LAS, F), amplitude (A, G), peak concentration (Cp, H), annual integral (AIn, I), and allergy season integral (ASIn, J). Solid lines indicate significant (p < 0.05, t-test) slopes, while dashed lines indicate non-significant slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Point/line colors are stations. Colorful lines are station-level trends. The top row presents metrics defined in the ecological method, while the bottom row shows metrics defined in the public health method. Concentration metrics are transformed using the natural logarithm."}
-source("calc_trend_station.R")
-source("calc_trend_ctnt.R")
-source("plot_lme_trend.R")
+source("~/Github/spore_phenology/code/analysis/calc_lm_trend.R")
+source("~/Github/spore_phenology/code/analysis/calc_trend_ctnt.R")
+source("~/Github/spore_phenology/code/analysis/plot_lme_trend.R")
 p_trend
-```
-
-# fig climate
-```{r climate-fig, fig.height=12, fig.width=12}
-df_ana <- right_join(df_daymet_annual, df_metrics_long, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
-source("calc_anom.R")
-source("calc_lm_anom.R")
-source("calc_lme_anom.R")
-source("plot_lme_anom.R")
-source("calc_trend_station.R")
-source("plot_anom.R")
-p_climate
 ```
