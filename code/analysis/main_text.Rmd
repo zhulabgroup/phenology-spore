@@ -36,13 +36,8 @@ source("~/Github/spore_phenology/code/analysis/plot_trend_ctnt_pred_composite.R"
 p_trend_ctnt_pred_composite
 ```
 
-<!-- # Fig. climate -->
-<!-- ```{r climate-fig, fig.height=12, fig.width=12} -->
-<!-- source("~/Github/spore_phenology/code/analysis/calc_anom.R") -->
-<!-- source("~/Github/spore_phenology/code/analysis/calc_lm_anom.R") -->
-<!-- source("~/Github/spore_phenology/code/analysis/calc_lme_anom.R") -->
-<!-- source("~/Github/spore_phenology/code/analysis/plot_lme_anom.R") -->
-<!-- source("~/Github/spore_phenology/code/analysis/calc_trend_station.R") -->
-<!-- source("~/Github/spore_phenology/code/analysis/plot_anom.R") -->
-<!-- p_climate -->
-<!-- ``` -->
+# Fig. climate
+```{r fig-climate-atrribution, fig.height=4, fig.width=8}
+source("~/Github/spore_phenology/code/analysis/plot_atrr_ctnt_pred_composite.R")
+p_atrr_ctnt_pred_composite
+```

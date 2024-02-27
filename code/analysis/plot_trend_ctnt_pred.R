@@ -90,13 +90,13 @@ plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
   
   if (metric == "LOS") {
     out_gg <- out_gg + 
-      ylab("Length of season (day of spore year)") +
+      ylab("Length of season (days)") +
       labs(title = expression(paste("Extended LOS")))
   }
   
   if (metric == "LAS") {
     out_gg <- out_gg + 
-      ylab("Length of allergy season (day of spore year)") +
+      ylab("Length of allergy season (days)") +
       labs(title = expression(paste("Extended LAS")))
   }
   
