@@ -1,4 +1,4 @@
-calc_lme_climate <- function(df_in, metric, x_lab, pct) {
+calc_atrr_ctnt <- function(df_in, metric, cli_vrb, pct) {
   df <- df_in %>%
     filter(Metric == metric) %>%
     filter(cpltness >= pct) %>%
@@ -8,7 +8,7 @@ calc_lme_climate <- function(df_in, metric, x_lab, pct) {
     mutate(Nyear = max(year_new) - min(year_new) + 1) %>% 
     ungroup()
   
-  if (x_lab == "MAT") {
+  if (cli_vrb == "MAT") {
     df <- df %>% 
       rename(climate = mat)
   } else {

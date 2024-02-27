@@ -1,4 +1,4 @@
-calc_lm_climate <- function(df_in, metric, x_lab, pct) {
+calc_atrr_station <- function(df_in, metric, cli_vrb, pct) {
   df <- df_in %>%
     filter(Metric == metric) %>%
     filter(cpltness >= pct) %>%
@@ -7,7 +7,7 @@ calc_lm_climate <- function(df_in, metric, x_lab, pct) {
     filter(n() >= 5) %>%
     mutate(Nyear = max(year_new) - min(year_new) + 1) %>% 
     ungroup()
-  if (x_lab == "MAT") {
+  if (cli_vrb == "MAT") {
     df <- df %>% 
       rename(climate = mat)
   } else {
@@ -44,4 +44,4 @@ calc_lm_climate <- function(df_in, metric, x_lab, pct) {
   return(df_lm)
 }
 
-# df_lm_climate <- calc_lm_climate(df_in = df_ana, metric = "SOS", x_lab = "MAT", pct = 0.8)
+# df_atrr_station <- calc_atrr_station(df_in = df_ana, metric = "SOS", cli_vrb = "MAT", pct = 0.8)

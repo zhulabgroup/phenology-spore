@@ -26,21 +26,11 @@ for (i in df_trend_station_sample$n) {
   p_trend_station_list <- c(p_trend_station_list, list(p_trend_station))
 }
 
-p_trend_station_composite_c1 <- plot_grid(
-  p_trend_station_list[[1]], 
-  p_trend_station_list[[2]], 
-  ncol = 1,
-  rel_heights = c(1, 1))
-p_trend_station_composite_r12 <- plot_grid(
-  p_trend_station_composite_c1, p_trend_map_station,
-  nrow = 1,
-  rel_widths = c(1, 3))
-p_trend_station_composite_r3 <- plot_grid(
-  p_trend_station_list[[3]], p_trend_station_list[[4]], p_trend_station_list[[5]], p_trend_station_list[[6]],
-  nrow = 1,
-  rel_widths = c(1, 1, 1, 1))
-p_trend_station_composite <- plot_grid(
-  p_trend_station_composite_r12,
-  p_trend_station_composite_r3,
-  ncol = 1,
-  rel_heights = c(2, 1))
+layout <- "
+BAAA
+CAAA
+DEFG
+"
+p_trend_station_composite <- p_trend_map_station + p_trend_station_list[[1]] + p_trend_station_list[[2]] + 
+  p_trend_station_list[[3]] + p_trend_station_list[[4]] + p_trend_station_list[[5]] + p_trend_station_list[[6]] +
+  plot_layout(design = layout)
