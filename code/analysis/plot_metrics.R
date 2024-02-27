@@ -6,6 +6,12 @@
 
 source("~/Github/spore_phenology/code/analysis/plot_antt.R")
 source("~/Github/spore_phenology/code/analysis/plot_boxplot_metric.R")
-p_metrics <- plot_grid(p_antt, p_metrics_con, p_metrics_pheno, p_metrics_in,
-          ncol = 2, labels = c("A", "B", "C", "D"),
-          rel_heights = c(1, 1), rel_widths = c(2, 1))
+# p_metrics <- plot_grid(p_antt, p_metrics_con, p_metrics_pheno, p_metrics_in,
+#           ncol = 2, labels = c("A", "B", "C", "D"),
+#           rel_heights = c(1, 1), rel_widths = c(2, 1))
+
+p_metrics <- p_antt + p_metrics_con + p_metrics_pheno + p_metrics_in +
+  plot_layout(ncol = 2, widths = c(2.1, 0.9)) +
+  plot_annotation(
+    tag_levels = 'A',
+    theme = theme(plot.title = element_text(size = 12)))

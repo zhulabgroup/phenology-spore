@@ -23,11 +23,15 @@ p_trend_ctnt_pred_composite_r1 <- plot_grid(
   p_trend_ctnt_pred_list[[1]], p_trend_ctnt_pred_list[[3]], p_trend_ctnt_pred_list[[5]], p_trend_ctnt_pred_list[[7]], p_trend_ctnt_pred_list[[9]],
   nrow = 1,
   labels = c("A", "B", "C", "D", "E"),
+  label_fontface = "plain",
+  label_size = 12,
   rel_widths = c(1, 1, 1, 1, 1))
 p_trend_ctnt_pred_composite_r2 <- plot_grid(
   p_trend_ctnt_pred_list[[2]], p_trend_ctnt_pred_list[[4]], p_trend_ctnt_pred_list[[6]], p_trend_ctnt_pred_list[[8]], p_trend_ctnt_pred_list[[10]],
   nrow = 1,
   labels = c("F", "G", "H", "I", "J"),
+  label_fontface = "plain",
+  label_size = 12,
   rel_widths = c(1, 1, 1, 1, 1))
 p_trend_ctnt_pred_composite <- plot_grid(
   title1,

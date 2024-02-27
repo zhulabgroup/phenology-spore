@@ -56,7 +56,8 @@ p_antt <- ggplot() +
     aes(x = as_datetime("2009-01-01"), y = 7955.968, label = "peak concentration (Cp)"),
     hjust = 0,
     vjust = -0.5,
-    col = "dark red") +
+    col = "dark red",
+    size = 4) +
   geom_segment(
     aes(x = as_datetime("2009-01-01"), xend = as_datetime("2009-02-11"), y = 1333.443, yend = 1333.443),
     col = "orange",
@@ -65,7 +66,8 @@ p_antt <- ggplot() +
     aes(x = as_datetime("2009-01-01"), y = 1333.443, label = "trough"),
     hjust = 0,
     vjust = -0.5,
-    col = "orange") +
+    col = "orange",
+    size = 4) +
   geom_segment(
     aes(x = as_datetime("2009-02-11"), xend = as_datetime("2009-02-11"), y = 1333.443, yend = 7955.968),
     col = "orange") +
@@ -73,7 +75,8 @@ p_antt <- ggplot() +
     aes(x = as_datetime("2009-02-11"), y = exp((log(1333.443) + log(7955.968)) / 2), label = "amplitude (Ca)"),
     hjust = 0,
     vjust = -0.5,
-    col = "orange") +
+    col = "orange",
+    size = 4) +
   geom_segment(
     data = df_antt %>% filter(doy_new == sos | doy_new == eos),
     aes(x = date, xend = date, y = 0, yend = count_whit),
@@ -90,7 +93,8 @@ p_antt <- ggplot() +
     aes(x = as_datetime("2009-01-01"), y = 6500, label = "NAB allergy shreshold"),
     hjust = 0,
     vjust = 1.3,
-    col = "dark red") +
+    col = "dark red",
+    size = 4) +
   geom_segment(
     data = df_antt %>% filter(doy_new == sas | doy_new == eas),
     aes(x = date, xend = date, y = count_whit, yend = 9000),
@@ -103,7 +107,8 @@ p_antt <- ggplot() +
     aes(x = as_datetime("2009-08-16"), y = 9000, label = "length of allergy season (LAS)"),
     hjust = 0.5,
     vjust = -0.3,
-    col = "dark red") +
+    col = "dark red",
+    size = 4) +
   geom_segment(
     data = df_antt %>% filter(doy_new == sos | doy_new == eos),
     aes(x = date, xend = date, y = count_whit, yend = 10500),
@@ -116,7 +121,8 @@ p_antt <- ggplot() +
     aes(x = as_datetime("2009-08-09"), y = 10500, label = "length of spore season (LOS)"),
     hjust = 0.5,
     vjust = -0.3,
-    col = "orange") +
+    col = "orange",
+    size = 4) +
   geom_path(
     data = df_antt %>% filter(year_new == 2009),
     aes(x = date, y = count_whit),
@@ -138,7 +144,8 @@ p_antt <- ggplot() +
     aes(x = as_datetime("2009-01-01"), y = 1000, label = "offset"),
     hjust = 0,
     vjust = 1,
-    col = "black") +
+    col = "black",
+    size = 4) +
   scale_y_continuous(
     limits = c(10^3, 20000),
     trans = "log10",
@@ -152,15 +159,13 @@ p_antt <- ggplot() +
     xlim = c(as_datetime("2009-01-21"), max(df_antt$date))) +
   ylab(expression("Spore concentration (grains m"^-3*")")) +
   xlab("Day of spore year") +
-  theme_classic() +
+  theme_bw() +
   theme(
-    legend.position = c(1, 1),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = c(0.98, 0.98),
     legend.justification = c("right", "top"),
-    legend.box.just = "left") +
+    legend.box.just = "top") +
   theme(
-    axis.text.x = element_text(color = "black", angle = 15, hjust = 1),
-    axis.ticks.x = element_line(color = "black"),
-    axis.ticks.y = element_line(color = "black"),
-    axis.text.y = element_text(color = "black"),
-    axis.text = element_text(size = 11),
-    legend.text = element_text(size = 11))
+    axis.text.x = element_text(color = "black", angle = 15, hjust = 1, size = 12),
+    legend.text = element_text(size = 12))
