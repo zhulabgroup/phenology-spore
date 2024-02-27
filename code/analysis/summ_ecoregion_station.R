@@ -7,8 +7,7 @@ summ_ecoregion_station <- function(df) {
   df <- spTransform(df, crs(regions))
   df$region <- over(df, regions)$NA_L1NAME
   df <- as.data.frame(df) %>% 
-    rename(ecoregion = region) %>% 
-    dplyr::select(lon, lat, station, city, state, country, id, n, ecoregion)
+    rename(ecoregion = region)
   
   return(df)
 }
