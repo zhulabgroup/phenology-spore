@@ -1,4 +1,4 @@
-calc_lm_trend <- function(df_in, metric, pct) {
+calc_trend_station <- function(df_in, metric, pct) {
   #filter station-year
   df <- df_in %>%
     filter(Metric == metric) %>%
