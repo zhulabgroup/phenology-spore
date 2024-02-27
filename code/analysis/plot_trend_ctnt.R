@@ -11,19 +11,19 @@ p = 0.8
 # result
 # 19*result
 
-plot_lme_trend <- function(df_in, m, metric) {
-  beta <- fixef(m)[["year_new"]] %>% as.numeric() %>% round(3)
-  p <- summary(m)$tTable[["year_new", "p-value"]] %>% as.numeric() %>% round(3)
+plot_trend_ctnt <- function(df_in, model, metric) {
+  beta <- fixef(model)[["year_new"]] %>% as.numeric() %>% round(3)
+  p <- summary(model)$tTable[["year_new", "p-value"]] %>% as.numeric() %>% round(3)
   
   df_lme <- df_in %>% 
     mutate(
-      lme_fixed = m$fitted[, 1],
-      lme_random = m$fitted[, 2]
+      lme_fixed = model$fitted[, 1],
+      lme_random = model$fitted[, 2]
     ) %>%
     mutate(n = as.character(n)) %>%
     as_tibble()
   
-  df_ci <- ggpredict(m, terms = c("year_new", "n"), type = "re") %>%
+  df_ci <- ggpredict(model, terms = c("year_new", "n"), type = "re") %>%
     as_tibble()
   
   p <- ggplot() +
@@ -143,11 +143,11 @@ plot_lme_trend <- function(df_in, m, metric) {
 title1 <- ggdraw() + draw_label("Ecology Perspective", hjust = 0.5, vjust = 0.5, fontface = "bold")
 title2 <- ggdraw() + draw_label("Public Health Perspective", hjust = 0.5, vjust = 0.5, fontface = "bold")
 plot_list <- list()
-for (m in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_A", "ln_Cp", "ln_AIn", "ln_ASIn")) {
-  df_trend_station <- calc_trend_station(df_in = df_ana, metric = m, pct = p)
-  m_trend <- calc_trend_ctnt(df_in = df_trend_station, metric = m, pct = p)
-  p_lme_trend <- plot_lme_trend(df_in = df_trend_station, m = m_trend, metric = m)
-  plot_list <- c(plot_list, list(p_lme_trend))
+for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_A", "ln_Cp", "ln_AIn", "ln_ASIn")) {
+  df_trend_station <- calc_trend_station(df_in = df_ana, metric = m_metric, pct = p)
+  m_trend <- calc_trend_ctnt(df_in = df_trend_station, metric = m_metric, pct = p)
+  p_trend_ctnt <- plot_trend_ctnt(df_in = df_trend_station, model = m_trend, metric = m_metric)
+  plot_list <- c(plot_list, list(p_trend_ctnt))
 }
 p_trend_r1 <- plot_grid(plot_list[[1]], plot_list[[3]], plot_list[[5]], plot_list[[7]], plot_list[[9]],
                         nrow = 1,
