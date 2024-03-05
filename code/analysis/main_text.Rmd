@@ -36,8 +36,8 @@ source("~/Github/spore_phenology/code/analysis/plot_trend_ctnt_pred_composite.R"
 p_trend_ctnt_pred_composite
 ```
 
-# Fig. climate
-```{r fig-climate-atrribution, fig.height=4, fig.width=8}
-source("~/Github/spore_phenology/code/analysis/plot_atrr_ctnt_pred_composite.R")
-p_atrr_ctnt_pred_composite
+# Fig. coefplot
+```{r fig-coefplot, fig.height=5, fig.width=10}
+source("~/Github/spore_phenology/code/analysis/plot_coefplot.R")
+p_coef
 ```
