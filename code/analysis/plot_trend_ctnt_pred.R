@@ -22,7 +22,7 @@ plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
     left_join(station_slope, by = "n")
   df_ci <- ggpredict(model, terms = c("year_new", "n"), type = "re") %>%
     as_tibble()
-  
+   
   out_gg <- ggplot() +
     geom_ribbon(
       data = df_ci,
@@ -46,12 +46,6 @@ plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
       linewidth = 1,
       linetype = ifelse(p_value < 0.05, "solid", "dashed")) +
     xlab("Year") +
-    annotate(
-      "text",
-      x = min(df_lme$year_new), y = max(df_lme$Value),
-      label = bquote(
-        atop(italic(beta) == .(beta_value), italic(p) == .(p_value))),
-      hjust = 0, vjust = 1, col = "black", fontface = "plain") +
     theme_bw() +
     theme(
       text = element_text(size = 10),
@@ -59,6 +53,22 @@ plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
       legend.position = "none",
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank())
+  
+  if (p_value < 0.001) {
+    out_gg <- out_gg +
+      annotate(
+        "text",
+        x = min(df_lme$year_new), y = max(df_lme$Value),
+        label = bquote(atop(italic(beta) == .(beta_value), italic(p) < 0.001)),
+        hjust = 0, vjust = 1, col = "black", fontface = "plain")
+  } else {
+    out_gg <- out_gg +
+      annotate(
+        "text",
+        x = min(df_lme$year_new), y = max(df_lme$Value),
+        label = bquote(atop(italic(beta) == .(beta_value), italic(p) == .(p_value))),
+        hjust = 0, vjust = 1, col = "black", fontface = "plain")
+  }
   
   if (metric %in% c("ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn")) {
     out_gg <- out_gg + scale_y_continuous(labels = scales::math_format(e^.x))

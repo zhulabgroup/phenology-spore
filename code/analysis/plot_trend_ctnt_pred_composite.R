@@ -1,6 +1,6 @@
 source("~/Github/spore_phenology/code/analysis/calc_trend_ctnt.R")
-source("~/Github/spore_phenology/code/analysis/calc_trend_station.R")
-source("~/Github/spore_phenology/code/analysis/plot_trend_map.R")
+source("~/Github/spore_phenology/code/analysis/calc_trend_station_TS.R")
+source("~/Github/spore_phenology/code/analysis/plot_trend_map_TS.R")
 source("~/Github/spore_phenology/code/analysis/extr_color_map.R")
 source("~/Github/spore_phenology/code/analysis/plot_trend_ctnt_pred.R")
 
@@ -9,8 +9,8 @@ for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "
   #fit lme model
   m_trend <- calc_trend_ctnt(df_in = df_ana, metric = m_metric, pct = 0.8)
   #acquire col for each station
-  df_trend_station <- calc_trend_station(df_in = df_ana, metric = m_metric, pct = 0.8)
-  p_trend_map <- plot_trend_map(df_in = df_trend_station, metric = m_metric)
+  df_trend_station <- calc_trend_station_TS(df_in = df_ana, metric = m_metric, pct = 0.8)
+  p_trend_map <- plot_trend_map_TS(df_in = df_trend_station, metric = m_metric)
   df_trend_station_col <- extr_color_map(df_in = df_trend_station, p_map = p_trend_map)
   # plot
   p_trend_ctnt_pred <- plot_trend_ctnt_pred(df_in = df_trend_station_col, model = m_trend, metric = m_metric, pct = 0.8)

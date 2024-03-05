@@ -25,9 +25,9 @@ p_metrics
 <!-- ``` -->
 
 # Fig. station level trend
-```{r fig-trend-station, fig.height=10/4*3, fig.width=10, message=FALSE, warning=FALSE, process=FALSE}
-source("~/Github/spore_phenology/code/analysis/plot_trend_station_composite.R")
-p_trend_station_composite
+```{r fig-trend-station, fig.height=8*0.618, fig.width=8, message=FALSE, warning=FALSE, process=FALSE}
+source("~/Github/spore_phenology/code/analysis/plot_trend_station_map_TS.R")
+p_trend_map_TS
 ```
 
 # Fig. continent level trend
