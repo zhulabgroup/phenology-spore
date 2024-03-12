@@ -4,7 +4,6 @@ source("~/Github/spore_phenology/code/analysis/calc_completeness_stationspyr.R")
 source("~/Github/spore_phenology/code/analysis/calc_metrics_stationspyr.R")
 source("~/Github/spore_phenology/code/analysis/tidy_gathermetrics.R")
 source("~/Github/spore_phenology/code/analysis/calc_lme.R")
-df_full <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_spore_fulldate.rds"))
 
 ana_sens_l <- function(df_in, lmd) {
   df_smooth_lmd <- tidy_smoothfillwhit_station(df_raw = df_in, n_gap = 14, lambda = lmd,column_name = count, new_column_name = count_fillwhit)
@@ -23,8 +22,11 @@ ana_sens_l <- function(df_in, lmd) {
       m_rslt <- calc_lme(df_in = df_metrics_long, metric = m_metric, x_vrb = "year_new", pct = 0.8)
       df_m <-rbind(df_m, m_rslt)
   }
-  colnames(df_m) <- c("metric", "x_variable", "beta", "ci1", "ci2", "p")
+  colnames(df_m) <- c("metric", "cpltness", "n_obsv", "change", "x_variable", "beta", "ci1", "ci2", "p")
   df_m <- df_m %>% 
+    mutate(cpltness = as.numeric(cpltness)) %>% 
+    mutate(n_obsv = as.numeric(n_obsv)) %>% 
+    mutate(change = as.numeric(change)) %>% 
     mutate(beta = as.numeric(beta)) %>% 
     mutate(ci1 = as.numeric(ci1)) %>% 
     mutate(ci2 = as.numeric(ci2)) %>% 

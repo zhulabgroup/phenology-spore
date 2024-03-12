@@ -33,9 +33,16 @@ p_ecoregion
 ```
 
 # Fig. S2
-```{r plot-sensitivity-lambda, message=FALSE, warning=FALSE, progress=FALSE, fig.height=8, fig.width=6}
+```{r plot-sensitivity-lambda, message=FALSE, warning=FALSE, progress=FALSE, fig.height=8, fig.width=8}
+df_full <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_spore_fulldate.rds"))
 source("~/Github/spore_phenology/code/analysis/ana_sens_l.R")
 p_sens_l
 ```
 
 # Table S1
+```{r}
+df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
+source("~/Github/spore_phenology/code/analysis/ana_sens_cpltness.R")
+df_sens_cpltness
+```
+
