@@ -33,8 +33,9 @@ p_ecoregion
 ```
 
 # Fig. S2
-```{r}
-
+```{r plot-sensitivity-lambda, message=FALSE, warning=FALSE, progress=FALSE, fig.height=8, fig.width=6}
+source("~/Github/spore_phenology/code/analysis/ana_sens_l.R")
+p_sens_l
 ```
 
 # Table S1
