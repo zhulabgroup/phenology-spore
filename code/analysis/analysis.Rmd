@@ -62,13 +62,14 @@ source("~/Github/spore_phenology/code/analysis/read_offset_station.R")
 df_full <- df_full %>%
   left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id")) %>% 
   rename(lmd_offset = lambda)
+# write_rds(df_full, str_c(.path$dat_process, "2023-04-25/dat_spore_fulldate.rds"))
 ```
 
-# summarize missing data percentage
-```{r}
-source("~/Github/spore_phenology/code/analysis/summ_miss_stationyear_raw_data.R")
-df_miss <- df_full %>% summ_miss_stationyear_raw_data(column_name = count)
-```
+<!-- # summarize missing data percentage -->
+<!-- ```{r} -->
+<!-- source("~/Github/spore_phenology/code/analysis/summ_miss_stationyear_raw_data.R") -->
+<!-- df_miss <- df_full %>% summ_miss_stationyear_raw_data(column_name = count) -->
+<!-- ``` -->
 
 # linear interpolation and whittaker smoothing
 ```{r smooth, message=FALSE, warning=FALSE}

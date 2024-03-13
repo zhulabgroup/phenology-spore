@@ -24,7 +24,7 @@ source("~/Github/spore_phenology/code/0_utils.R")
 <!-- ``` -->
 
 # Fig. S1
-```{r plot-ecoregion, message=FALSE, warning=FALSE, progress=FALSE, fig.height=8*0.618, fig.width=8, fig.cap="Map of fungal spore counting stations associated with the National Allergy Bureau (NAB) distributed in different ecoregions within the continental United States that were included in the analysis of this study."}
+```{r fig-ecoregion, fig.height=8*0.618, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Map of fungal spore counting stations associated with the National Allergy Bureau (NAB) distributed in different ecoregions within the continental United States that were included in the analysis of this study."}
 source("~/Github/spore_phenology/code/analysis/plot_ecoregion_stations.R")
 df_meta <- read_rds(str_c(.path$dat_process, "2023-04-25/meta.rds"))
 df_ecoregions <- st_read(paste0(.path$dat_process, "2023-04-25/na_cec_eco_l1/NA_CEC_Eco_Level1.shp"))
@@ -33,8 +33,34 @@ p_ecoregion
 ```
 
 # Fig. S2
-```{r}
+```{r fig-sensitivity-lambda, fig.height=8, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE}
+df_full <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_spore_fulldate.rds"))
+source("~/Github/spore_phenology/code/analysis/ana_sens_l.R")
+p_sens_l
+```
 
+# Fig. S3
+```{r fig-calendars, fig.width=8, fig.height=8*1.618, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap = "Fungal spore calendar for all the 55 stations meeting our criteria. Displayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. Stations are ranked by longitude."}
+source("~/Github/spore_phenology/code/analysis/plot_calendar_si.R")
+p_calendar_suppl
+```
+
+# Fig. S4
+```{r fig-trend-station, fig.height=4*0.618*5, fig.width=4*2, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Station-level temporal trends of the start of spore season metrics. The trends were estimated by Theil-Sen linear regression. Warm colors indicate earlier DOY, longer days, or higher concentration, and circle sizes are proportional to the years of data at each station."}
+source("~/Github/spore_phenology/code/analysis/plot_trend_map_TS_si.R")
+p_trend_map_TS_si
+```
+
+# Fig. S5
+```{r fig-atrr-ctnt, fig.width=2*5, fig.height=2*2*2.2, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Temporal trends of ten fungal spore metrics across all the stations. The estimated trends from linear mixed effects models across stations of year against the start of season (SOS, A), start of allergy season (SAS, F), end of season (EOS, B), end of allergy season (EAS, G), length of season (LOS, C), length of allergy season (LAS, H), amplitude (Ca, D), peak concentration (Cp, I), annual integral (AIn, E), and allergy season integral (ASIn, J). Solid black lines indicate significant (p < 0.05, t-test) slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Colors are station-level Theil-Sen linear regression slopes, with warmer colors indicating earlier day of year, longer days, or higher intensity. The slope of colorful lines are model predicted station-level trends. The top row presents metrics defined in the ecological method, while the bottom row shows metrics defined in the public health method. Intensity metrics are transformed using the natural logarithm."}
+source("~/Github/spore_phenology/code/analysis/plot_atrr_ctnt_pred_composite.R")
+p_atrr_ctnt_pred_composite
 ```
 
 # Table S1
+```{r tbl-sensitivity-completeness, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE}
+df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
+source("~/Github/spore_phenology/code/analysis/ana_sens_cpltness.R")
+df_sens_cpltness %>%
+  knitr::kable(caption = "Sensitivity test on data completeness for four fungal spore season intensity metrics. Displayed is the slope of spore metrics with ln-transformation for concentrations, change over 2003-2022 in % for concentrations (back-transformed) and days for start date and season length metrics, and the p-value of the mixed effexts model.")
+```

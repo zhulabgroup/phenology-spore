@@ -7,7 +7,7 @@ for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "
     df_m <-rbind(df_m, m_rslt)
   }
 }
-colnames(df_m) <- c("metric", "x_variable", "beta", "ci1", "ci2", "p")
+colnames(df_m) <- c("metric", "cpltness", "n_obsv", "change", "x_variable", "beta", "ci1", "ci2", "p")
 df_m <- df_m %>% 
   mutate(beta = as.numeric(beta)) %>% 
   mutate(ci1 = as.numeric(ci1)) %>% 
@@ -31,7 +31,10 @@ df_m$x_variable <- factor(df_m$x_variable, levels = c("TAP", "MAT", "year"))
 p_coef1 <- ggplot(subset(df_m, pspct == "Ecology Perspective")) +
   geom_vline(aes(xintercept = 0), col = "grey") +
   geom_point(aes(x = beta, y = interaction(metric, x_variable), col = x_variable), show.legend = TRUE) +
-  geom_errorbar(aes(xmin = ci1, xmax = ci2, y = interaction(metric, x_variable), col = x_variable), show.legend = FALSE) +
+  geom_errorbar(
+    aes(xmin = ci1, xmax = ci2, y = interaction(metric, x_variable), col = x_variable),
+    show.legend = FALSE,
+    width = 0) +
   geom_text(
     aes(
       x = max(df_m$ci2) + 4, y = interaction(metric, x_variable),
@@ -67,7 +70,10 @@ p_coef1 <- ggplot(subset(df_m, pspct == "Ecology Perspective")) +
 p_coef2 <- ggplot(subset(df_m, pspct == "Public Health Perspective")) +
   geom_vline(aes(xintercept = 0), col = "grey") +
   geom_point(aes(x = beta, y = interaction(metric, x_variable), col = x_variable), show.legend = TRUE) +
-  geom_errorbar(aes(xmin = ci1, xmax = ci2, y = interaction(metric, x_variable), col = x_variable), show.legend = FALSE) +
+  geom_errorbar(
+    aes(xmin = ci1, xmax = ci2, y = interaction(metric, x_variable), col = x_variable),
+    show.legend = FALSE,
+    width = 0) +
   geom_text(
     aes(
       x = max(df_m$ci2) + 4, y = interaction(metric, x_variable),

@@ -1,5 +1,5 @@
-source("~/Github/spore_phenology/code/analysis/calc_trend_station.R")
-source("~/Github/spore_phenology/code/analysis/plot_trend_map.R")
+source("~/Github/spore_phenology/code/analysis/calc_trend_station_TS.R")
+source("~/Github/spore_phenology/code/analysis/plot_trend_map_TS.R")
 source("~/Github/spore_phenology/code/analysis/extr_color_map.R")
 
 source("~/Github/spore_phenology/code/analysis/calc_atrr_ctnt.R")
@@ -8,8 +8,8 @@ source("~/Github/spore_phenology/code/analysis/plot_atrr_ctnt_pred.R")
 p_atrr_ctnt_pred_list <- list()
 for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn")) {
   #acquire col for each station
-  df_trend_station <- calc_trend_station(df_in = df_ana, metric = m_metric, pct = 0.8)
-  p_trend_map <- plot_trend_map(df_in = df_trend_station, metric = m_metric)
+  df_trend_station <- calc_trend_station_TS(df_in = df_ana, metric = m_metric, pct = 0.8)
+  p_trend_map <- plot_trend_map_TS(df_in = df_trend_station, metric = m_metric)
   df_trend_station_col <- extr_color_map(df_in = df_trend_station, p_map = p_trend_map)
   for (cli in c("MAT", "TAP")) {
     # fit lme model using climate data
@@ -19,9 +19,34 @@ for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "
   }
 }
 
-p_atrr_ctnt_pred_composite <- p_atrr_ctnt_pred_list[[1]] + p_atrr_ctnt_pred_list[[2]] + p_atrr_ctnt_pred_list[[4]] + p_atrr_ctnt_pred_list[[18]] +
-  p_atrr_ctnt_pred_list[[9]] + p_atrr_ctnt_pred_list[[10]] + p_atrr_ctnt_pred_list[[12]] + p_atrr_ctnt_pred_list[[20]] +
-  plot_layout(nrow = 2) +
-  plot_annotation(
-    tag_levels = 'A',
-    theme = theme(plot.title = element_text(size = 12)))
+p_atrr_ctnt_pred_composite_list <- list()
+for (am in c(1:10)) {
+  out_gg <- plot_grid(
+    p_atrr_ctnt_pred_list[[2 * am - 1]], p_atrr_ctnt_pred_list[[2 * am]],
+    ncol = 1)
+  p_atrr_ctnt_pred_composite_list <- c(p_atrr_ctnt_pred_composite_list, list(out_gg))
+}
+
+title1 <- ggdraw() + draw_label("Ecology Perspective", hjust = 0.5, vjust = 0.5, fontface = "bold")
+title2 <- ggdraw() + draw_label("Public Health Perspective", hjust = 0.5, vjust = 0.5, fontface = "bold")
+p_atrr_ctnt_pred_composite_r1 <- plot_grid(
+  p_atrr_ctnt_pred_composite_list[[1]], p_atrr_ctnt_pred_composite_list[[3]], p_atrr_ctnt_pred_composite_list[[5]], p_atrr_ctnt_pred_composite_list[[7]], p_atrr_ctnt_pred_composite_list[[9]],
+  nrow = 1,
+  labels = c("A", "B", "C", "D", "E"),
+  label_fontface = "plain",
+  label_size = 12,
+  rel_widths = c(1, 1, 1, 1, 1))
+p_atrr_ctnt_pred_composite_r2 <- plot_grid(
+  p_atrr_ctnt_pred_composite_list[[2]], p_atrr_ctnt_pred_composite_list[[4]], p_atrr_ctnt_pred_composite_list[[6]], p_atrr_ctnt_pred_composite_list[[8]], p_atrr_ctnt_pred_composite_list[[10]],
+  nrow = 1,
+  labels = c("F", "G", "H", "I", "J"),
+  label_fontface = "plain",
+  label_size = 12,
+  rel_widths = c(1, 1, 1, 1, 1))
+p_atrr_ctnt_pred_composite <- plot_grid(
+  title1,
+  p_atrr_ctnt_pred_composite_r1,
+  title2,
+  p_atrr_ctnt_pred_composite_r2,
+  nrow = 4,
+  rel_heights = c(0.1, 1, 0.1, 1))

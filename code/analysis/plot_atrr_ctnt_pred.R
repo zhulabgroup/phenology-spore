@@ -75,22 +75,22 @@ plot_atrr_ctnt_pred <- function(model, df_in, metric, cli_vrb, pct) {
   
   if (metric == "SOS") {
     out_gg <- out_gg + 
-      ylab("SOS (day of spore year)")
+      ylab("SOS (DOY)")
   }
   
   if (metric == "SAS") {
     out_gg <- out_gg + 
-      ylab("SAS (day of spore year)")
+      ylab("SAS (DOY)")
   }
   
   if (metric == "EOS") {
     out_gg <- out_gg + 
-      ylab("EOS (day of spore year)")
+      ylab("EOS (DOY)")
   }
   
   if (metric == "EAS") {
     out_gg <- out_gg + 
-      ylab("EAS (day of spore year)")
+      ylab("EAS (DOY)")
   }
   
   if (metric == "LOS") {
