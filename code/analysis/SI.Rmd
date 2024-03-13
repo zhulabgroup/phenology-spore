@@ -24,7 +24,7 @@ source("~/Github/spore_phenology/code/0_utils.R")
 <!-- ``` -->
 
 # Fig. S1
-```{r fig-ecoregion, message=FALSE, warning=FALSE, progress=FALSE, fig.height=8*0.618, fig.width=8, fig.cap="Map of fungal spore counting stations associated with the National Allergy Bureau (NAB) distributed in different ecoregions within the continental United States that were included in the analysis of this study."}
+```{r fig-ecoregion, fig.height=8*0.618, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Map of fungal spore counting stations associated with the National Allergy Bureau (NAB) distributed in different ecoregions within the continental United States that were included in the analysis of this study."}
 source("~/Github/spore_phenology/code/analysis/plot_ecoregion_stations.R")
 df_meta <- read_rds(str_c(.path$dat_process, "2023-04-25/meta.rds"))
 df_ecoregions <- st_read(paste0(.path$dat_process, "2023-04-25/na_cec_eco_l1/NA_CEC_Eco_Level1.shp"))
@@ -33,20 +33,31 @@ p_ecoregion
 ```
 
 # Fig. S2
-```{r fig-sensitivity-lambda, message=FALSE, warning=FALSE, progress=FALSE, fig.height=8, fig.width=8}
+```{r fig-sensitivity-lambda, fig.height=8, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE}
 df_full <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_spore_fulldate.rds"))
 source("~/Github/spore_phenology/code/analysis/ana_sens_l.R")
 p_sens_l
 ```
 
 # Fig. S3
-```{r fig-calendars, fig.width=8, fig.height=8*1.618, fig.cap = "Fungal spore calendar for all the 55 stations meeting our criteria. Displayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. Stations are ranked by longitude."}
+```{r fig-calendars, fig.width=8, fig.height=8*1.618, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap = "Fungal spore calendar for all the 55 stations meeting our criteria. Displayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. Stations are ranked by longitude."}
 source("~/Github/spore_phenology/code/analysis/plot_calendar_si.R")
 p_calendar_suppl
 ```
 
+# Fig. S4
+```{r fig-trend-station, fig.height=4*0.618*5, fig.width=4*2, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Station-level temporal trends of the start of spore season metrics. The trends were estimated by Theil-Sen linear regression. Warm colors indicate earlier DOY, longer days, or higher concentration, and circle sizes are proportional to the years of data at each station."}
+source("~/Github/spore_phenology/code/analysis/p_trend_map_TS_si.R")
+p_trend_map_TS_si
+```
+
+# Fig. S5
+```{r}
+
+```
+
 # Table S1
-```{r tbl-sensitivity-completeness}
+```{r tbl-sensitivity-completeness, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE}
 df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
 source("~/Github/spore_phenology/code/analysis/ana_sens_cpltness.R")
 df_sens_cpltness %>%

@@ -13,31 +13,31 @@ df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
 ```
 
 # Fig. metrics
-```{r fig-metrics, fig.height=11, fig.width=11, fig.cap="Definition and numerical summary of ten fungal spore metrics. The annotation of ten fungal spore metrics (A). Orange indicates metrics defined in the ecological approach, while dark red indicates metrics defined in the public health approach. Each box represents each metric's interquartile range (IQR), with the median value indicated by the line inside. Whiskers extend to the minimum and maximum values within 1.5 times the IQR, while points beyond the whiskers are considered as outliers. Phenology metrics are in the unit of Day of Year (DOY) (C), while intensity metrics are in the unit of grains m^-3 or grains m^-3 days, displayed on a natural logarithm-transformed scale (B) (D).", message=FALSE, warning=FALSE, process=FALSE}
+```{r fig-metrics, fig.height=11, fig.width=11, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Definition and numerical summary of ten fungal spore metrics. The annotation of ten fungal spore metrics (A). Orange indicates metrics defined in the ecological approach, while dark red indicates metrics defined in the public health approach. Each box represents each metric's interquartile range (IQR), with the median value indicated by the line inside. Whiskers extend to the minimum and maximum values within 1.5 times the IQR, while points beyond the whiskers are considered outliers. Phenology metrics are in the unit of day of spore year (DOY) (C), while intensity metrics are in the unit of grains m^-3 or grains m^-3 days, displayed on a natural logarithm-transformed scale (B) (D)."}
 source("~/Github/spore_phenology/code/analysis/plot_metrics.R")
 p_metrics
 ```
 
 # Fig. calendar
-```{r fig-calendar, fig.width=10, fig.height=5*0.8, fig.cap = "Fungal spore calendar for 10 sampling stations. The daily long-term mean of fungal spore concentration is displayed, 2003-2022. Stations showing variability in seasonality are ranked by ecological region (A). Stations showing variability in intensity are ranked by long-term mean of annual precipitation (mm) (B). Darker colors indicate higher concentrations, while missing data are represented in white."}
+```{r fig-calendar, fig.width=10, fig.height=5*0.8, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Fungal spore calendar for ten sampling stations. The daily long-term mean of fungal spore concentration is displayed, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. Stations showing variability in seasonality are ranked by ecological region (A). Stations showing variability in intensity are ranked by long-term mean of annual precipitation (mm) (B)."}
 source("~/Github/spore_phenology/code/analysis/plot_calendar_samples.R")
 p_calendar
 ```
 
 # Fig. station level trend
-```{r fig-trend-station, fig.height=8*0.618, fig.width=8, message=FALSE, warning=FALSE, process=FALSE}
-source("~/Github/spore_phenology/code/analysis/plot_trend_station_map_TS.R")
-p_trend_map_TS
+```{r fig-trend-station, fig.height=8*0.618, fig.width=8, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Station-level temporal trends of the start of allergy season (SAS). The trends were estimated by Theil-Sen linear regression. Warm colors indicate earlier seasons, and circle sizes are proportional to the years of data at each station."}
+source("~/Github/spore_phenology/code/analysis/p_trend_map_TS_SAS.R")
+p_trend_map_TS_SAS
 ```
 
 # Fig. continent level trend
-```{r fig-trend-ctnt, fig.width=11, fig.height=11*0.8, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Temporal trends of ten fungal spore metrics across all the stations. The predicted slope from linear mixed effects models across stations of year against the start of season (SOS, A), start of allergy season (SAS, B), end of season (EOS, C), end of allergy season (EAS, D), length of season (LOS, E), length of allergy season (LAS, F), amplitude (A, G), peak concentration (Cp, H), annual integral (AIn, I), and allergy season integral (ASIn, J). Solid lines indicate significant (p < 0.05, t-test) slopes, while dashed lines indicate non-significant slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Point/line colors are stations. Colorful lines are station-level trends. The top row presents metrics defined in the ecological method, while the bottom row shows metrics defined in the public health method. Concentration metrics are transformed using the natural logarithm."}
+```{r fig-trend-ctnt, fig.width=11, fig.height=11*0.8, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Temporal trends of ten fungal spore metrics across all the stations. The estimated trends from linear mixed effects models across stations of year against the start of season (SOS, A), start of allergy season (SAS, F), end of season (EOS, B), end of allergy season (EAS, G), length of season (LOS, C), length of allergy season (LAS, H), amplitude (Ca, D), peak concentration (Cp, I), annual integral (AIn, E), and allergy season integral (ASIn, J). Solid black lines indicate significant (p < 0.05, t-test) slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Colors are station-level Theil-Sen linear regression slopes, with warmer colors indicating earlier day of year, longer days, or higher intensity. The slope of colorful lines are model predicted station-level trends. The top row presents metrics defined in the ecological method, while the bottom row shows metrics defined in the public health method. Intensity metrics are transformed using the natural logarithm."}
 source("~/Github/spore_phenology/code/analysis/plot_trend_ctnt_pred_composite.R")
 p_trend_ctnt_pred_composite
 ```
 
 # Fig. coefplot
-```{r fig-coefplot, fig.height=5, fig.width=10}
+```{r fig-coefplot, fig.height=5, fig.width=10, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Summary of coefficients beta1 in three mixed-effects models for each metric. Points are estimated values of beta1. Error bars indicate the 95% confidence intervals of the fixed slope. Specific values are annotated. Asterisks present significant coefficients (p < 0.05, t-test). Metrics defined in ecological approach are in the left panel, while metrics defined in the public health approach are in the right panel. Colors are different independent variables in the model."}
 source("~/Github/spore_phenology/code/analysis/plot_coefplot.R")
 p_coef
 ```
