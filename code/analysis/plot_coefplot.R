@@ -7,7 +7,7 @@ for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "
     df_m <-rbind(df_m, m_rslt)
   }
 }
-colnames(df_m) <- c("metric", "x_variable", "beta", "ci1", "ci2", "p")
+colnames(df_m) <- c("metric", "cpltness", "n_obsv", "change", "x_variable", "beta", "ci1", "ci2", "p")
 df_m <- df_m %>% 
   mutate(beta = as.numeric(beta)) %>% 
   mutate(ci1 = as.numeric(ci1)) %>% 

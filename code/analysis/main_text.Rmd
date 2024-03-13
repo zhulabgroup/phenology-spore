@@ -18,11 +18,11 @@ source("~/Github/spore_phenology/code/analysis/plot_metrics.R")
 p_metrics
 ```
 
-<!-- # Fig. calendar -->
-<!-- ```{r calendar-fig, fig.width=10, fig.height=5*0.8, fig.cap = "Fungal spore calendar for 10 sampling stations. The daily long-term mean of fungal spore concentration is displayed, 2003-2022. Stations showing variability in seasonality are ranked by ecological region (A). Stations showing variability in intensity are ranked by long-term mean of annual precipitation (mm) (B). Darker colors indicate higher concentrations, while missing data are represented in white."} -->
-<!-- source("code/18_results_temporal_calendar_spatial_variability.R") -->
-<!-- p_calendar -->
-<!-- ``` -->
+# Fig. calendar
+```{r fig-calendar, fig.width=10, fig.height=5*0.8, fig.cap = "Fungal spore calendar for 10 sampling stations. The daily long-term mean of fungal spore concentration is displayed, 2003-2022. Stations showing variability in seasonality are ranked by ecological region (A). Stations showing variability in intensity are ranked by long-term mean of annual precipitation (mm) (B). Darker colors indicate higher concentrations, while missing data are represented in white."}
+source("~/Github/spore_phenology/code/analysis/plot_calendar_samples.R")
+p_calendar
+```
 
 # Fig. station level trend
 ```{r fig-trend-station, fig.height=8*0.618, fig.width=8, message=FALSE, warning=FALSE, process=FALSE}
