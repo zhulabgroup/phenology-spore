@@ -63,5 +63,5 @@ df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
 source("~/Github/spore_phenology/code/analysis/ana_sens_cpltness.R")
 df_sens_cpltness %>%
   knitr::kable(caption = "Sensitivity test on data completeness for four fungal spore season intensity metrics. Displayed is the slope of spore metrics with ln-transformation for concentrations, change over 2003-2022 in % for concentrations (back-transformed) and days for start date and season length metrics, and the p-value of the mixed effects model.")
-write.csv(df_sens_cpltness, file = "~/Github/spore_phenology/output/tables/tbl_sens_cpltness")
+write.csv(df_sens_cpltness, file = "~/Github/spore_phenology/output/tables/tbl_sens_cpltness.csv")
 ```
