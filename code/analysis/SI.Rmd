@@ -47,13 +47,14 @@ p_calendar_suppl
 
 # Fig. S4
 ```{r fig-trend-station, fig.height=4*0.618*5, fig.width=4*2, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Station-level temporal trends of the start of spore season metrics. The trends were estimated by Theil-Sen linear regression. Warm colors indicate earlier DOY, longer days, or higher concentration, and circle sizes are proportional to the years of data at each station."}
-source("~/Github/spore_phenology/code/analysis/p_trend_map_TS_si.R")
+source("~/Github/spore_phenology/code/analysis/plot_trend_map_TS_si.R")
 p_trend_map_TS_si
 ```
 
 # Fig. S5
-```{r}
-
+```{r fig-atrr-ctnt, fig.width=2*5, fig.height=2*2*2.2, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Temporal trends of ten fungal spore metrics across all the stations. The estimated trends from linear mixed effects models across stations of year against the start of season (SOS, A), start of allergy season (SAS, F), end of season (EOS, B), end of allergy season (EAS, G), length of season (LOS, C), length of allergy season (LAS, H), amplitude (Ca, D), peak concentration (Cp, I), annual integral (AIn, E), and allergy season integral (ASIn, J). Solid black lines indicate significant (p < 0.05, t-test) slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Colors are station-level Theil-Sen linear regression slopes, with warmer colors indicating earlier day of year, longer days, or higher intensity. The slope of colorful lines are model predicted station-level trends. The top row presents metrics defined in the ecological method, while the bottom row shows metrics defined in the public health method. Intensity metrics are transformed using the natural logarithm."}
+source("~/Github/spore_phenology/code/analysis/plot_atrr_ctnt_pred_composite.R")
+p_atrr_ctnt_pred_composite
 ```
 
 # Table S1

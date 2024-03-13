@@ -10,11 +10,11 @@ for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "
 }
 
 p_trend_map_TS_si <- plot_grid(
-  p_trend_map_TS_list[[1]] + guides(size = "none"), p_trend_map_TS_list[[2]] + guides(size = "none"),
-  p_trend_map_TS_list[[3]] + guides(size = "none"), p_trend_map_TS_list[[4]] + guides(size = "none"),
-  p_trend_map_TS_list[[5]] + guides(size = "none"), p_trend_map_TS_list[[6]] + guides(size = "none"),
-  p_trend_map_TS_list[[7]] + guides(size = "none"), p_trend_map_TS_list[[8]] + guides(size = "none"),
-  p_trend_map_TS_list[[9]] + guides(size = "none"), p_trend_map_TS_list[[10]] + guides(size = "none"),
+  p_trend_map_TS_list[[1]] + guides(size = "none", color = "none"), p_trend_map_TS_list[[2]] + guides(size = "none", color = "none"),
+  p_trend_map_TS_list[[3]] + guides(size = "none", color = "none"), p_trend_map_TS_list[[4]] + guides(size = "none", color = "none"),
+  p_trend_map_TS_list[[5]] + guides(size = "none", color = "none"), p_trend_map_TS_list[[6]] + guides(size = "none", color = "none"),
+  p_trend_map_TS_list[[7]] + guides(size = "none", color = "none"), p_trend_map_TS_list[[8]] + guides(size = "none", color = "none"),
+  p_trend_map_TS_list[[9]] + guides(size = "none", color = "none"), p_trend_map_TS_list[[10]] + guides(size = "none", color = "none"),
   ncol = 2,
   labels = c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J"),
   label_fontface = "plain",

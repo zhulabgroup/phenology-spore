@@ -26,7 +26,7 @@ p_calendar
 
 # Fig. station level trend
 ```{r fig-trend-station, fig.height=8*0.618, fig.width=8, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Station-level temporal trends of the start of allergy season (SAS). The trends were estimated by Theil-Sen linear regression. Warm colors indicate earlier seasons, and circle sizes are proportional to the years of data at each station."}
-source("~/Github/spore_phenology/code/analysis/p_trend_map_TS_SAS.R")
+source("~/Github/spore_phenology/code/analysis/plot_trend_map_TS_SAS.R")
 p_trend_map_TS_SAS
 ```
 
