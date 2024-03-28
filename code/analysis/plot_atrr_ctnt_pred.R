@@ -105,22 +105,22 @@ plot_atrr_ctnt_pred <- function(model, df_in, metric, cli_vrb, pct) {
   
   if (metric == "ln_Ca") {
     out_gg <- out_gg + 
-      ylab(expression("Ca (grains m"^-3*")"))
+      ylab(expression("Ca (spores m"^-3*")"))
   }
   
   if (metric == "ln_Cp") {
     out_gg <- out_gg + 
-      ylab(expression("Cp (grains m"^-3*")"))
+      ylab(expression("Cp (spores m"^-3*")"))
   }
   
   if (metric == "ln_AIn") {
     out_gg <- out_gg + 
-      ylab(expression("AIn (grains m"^-3*" days)"))
+      ylab(expression("AIn (spores m"^-3*" days)"))
   }
   
   if (metric == "ln_ASIn") {
     out_gg <- out_gg + 
-      ylab(expression("ASIn (grains m"^-3*" days)"))
+      ylab(expression("ASIn (spores m"^-3*" days)"))
   }
   
   return(out_gg)

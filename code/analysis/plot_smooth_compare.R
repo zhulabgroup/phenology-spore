@@ -15,7 +15,7 @@ plot_smooth_compare_station <- function(df_raw, i, wavelet) {
     ) +
     annotation_logticks(sides = "l") +
     theme_bw() +
-    ylab(expression("Daily spore concentration (grains m"^-3*")")) +
+    ylab(expression("Daily spore concentration (spores m"^-3*")")) +
     scale_x_datetime(limits = as.POSIXct(c("2003-01-01", "2022-12-31")), breaks = "1 year", date_labels = "%Y") +
     xlab("Date") +
     facet_wrap(. ~ interaction(n, city, state, sep = ", "), ncol = 6, scales = "free_y")
@@ -45,7 +45,7 @@ plot_smooth_compare_all <- function(df_raw, n_col, wavelet) {
     ) +
     annotation_logticks(sides = "l") +
     theme_bw() +
-    ylab(expression("Daily spore concentration (grains m"^-3*")")) +
+    ylab(expression("Daily spore concentration (spores m"^-3*")")) +
     scale_x_datetime(limits = as.POSIXct(c("2003-01-01", "2022-12-31")), breaks = "1 year", date_labels = "%Y") +
     xlab("Date") +
     facet_wrap(. ~ interaction(city, state, n, sep = ", "), ncol = n_col, scales = "free")
