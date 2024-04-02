@@ -8,7 +8,7 @@ for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "
   }
 }
 colnames(df_m) <- c("metric", "cpltness", "n_obsv", "change", "x_variable", "beta", "ci1", "ci2", "p")
-df_m <- df_m %>% 
+df <- df_m %>% 
   mutate(beta = as.numeric(beta)) %>% 
   mutate(ci1 = as.numeric(ci1)) %>% 
   mutate(ci2 = as.numeric(ci2)) %>% 
@@ -23,89 +23,88 @@ df_m <- df_m %>%
     metric == "ln_AIn" ~ "ln(AIn)",
     metric == "ln_ASIn" ~ "ln(ASIn)",
     T ~ metric)) %>% 
-  mutate(x_variable = ifelse(x_variable == "year_new", "year", x_variable))
+  mutate(x_variable = ifelse(x_variable == "year_new", "year", x_variable)) %>% 
+  mutate(mtype = ifelse(
+    metric %in% c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS"),
+    "pheno",
+    "intst"))
+
 # set y axis order
-df_m$metric <- factor(df_m$metric, levels = c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln(Ca)", "ln(Cp)", "ln(AIn)", "ln(ASIn)"))
-df_m$x_variable <- factor(df_m$x_variable, levels = c("TAP", "MAT", "year"))
+df$metric <- factor(df$metric, levels = c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln(Ca)", "ln(Cp)", "ln(AIn)", "ln(ASIn)"))
+df$x_variable <- factor(df$x_variable, levels = c("year", "MAT", "TAP"))
 # plot
-p_coef1 <- ggplot(subset(df_m, pspct == "Ecology Perspective")) +
-  geom_vline(aes(xintercept = 0), col = "grey") +
-  geom_point(aes(x = beta, y = interaction(metric, x_variable), col = x_variable), show.legend = TRUE) +
-  geom_errorbar(
-    aes(xmin = ci1, xmax = ci2, y = interaction(metric, x_variable), col = x_variable),
-    show.legend = FALSE,
-    width = 0) +
-  geom_text(
-    aes(
-      x = max(df_m$ci2) + 4, y = interaction(metric, x_variable),
-      label = ifelse(p < 0.05, sprintf("* %0.2f (%0.2f, %0.2f)", beta, ci1, ci2), sprintf("%0.2f (%0.2f, %0.2f)", beta, ci1, ci2)),
-      col = x_variable),
-    vjust = 0.5, hjust = 1,
-    show.legend = FALSE) +
-  facet_wrap(~ metric, ncol = 1, scales = "free_y", strip.position = "left") +
-  theme_bw() +
-  labs(
-    x = expression(italic(beta)[1]),
-    y = NULL,
-    title = "Ecology Perspective") +
-  scale_x_continuous(limits = c(min(df_m$ci1), max(df_m$ci2) + 4)) +
-  scale_color_manual(
-    name = "x variable",
-    values = c("year" = "dark green", "MAT" = "dark orange", "TAP" = "dark blue"),
-    breaks = c("year", "MAT", "TAP")) +
-  theme(
-    axis.text.y = element_blank(),
-    axis.ticks.y = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.spacing = unit(0, "lines"),
-    panel.border = element_rect(color = "grey"),
-    strip.background = element_rect(fill = "white", color = "white"),
-    strip.text.y.left = element_text(angle = 0, color = "black"),
-    plot.title = element_text(face = "bold", hjust = 0.5),
-    legend.position = "bottom",
-    text = element_text(size = 12),
-    legend.text = element_text(size = 12))
 
-p_coef2 <- ggplot(subset(df_m, pspct == "Public Health Perspective")) +
-  geom_vline(aes(xintercept = 0), col = "grey") +
-  geom_point(aes(x = beta, y = interaction(metric, x_variable), col = x_variable), show.legend = TRUE) +
-  geom_errorbar(
-    aes(xmin = ci1, xmax = ci2, y = interaction(metric, x_variable), col = x_variable),
-    show.legend = FALSE,
-    width = 0) +
-  geom_text(
-    aes(
-      x = max(df_m$ci2) + 4, y = interaction(metric, x_variable),
-      label = ifelse(p < 0.05, sprintf("* %0.2f (%0.2f, %0.2f)", beta, ci1, ci2), sprintf("%0.2f (%0.2f, %0.2f)", beta, ci1, ci2)),
-      col = x_variable),
-    vjust = 0.5, hjust = 1,
-    show.legend = FALSE) +
-  facet_wrap(~ metric, ncol = 1, scales = "free_y", strip.position = "left") +
-  theme_bw() +
-  labs(
-    x = expression(italic(beta)[1]),
-    y = NULL,
-    title = "Public Health Perspective") +
-  scale_x_continuous(limits = c(min(df_m$ci1), max(df_m$ci2) + 4)) +
-  scale_color_manual(
-    name = "x variable",
-    values = c("year" = "dark green", "MAT" = "dark orange", "TAP" = "dark blue"),
-    breaks = c("year", "MAT", "TAP")) +
-  theme(
-    axis.text.y = element_blank(),
-    axis.ticks.y = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.spacing = unit(0, "lines"),
-    panel.border = element_rect(color = "grey"),
-    strip.background = element_rect(fill = "white", color = "white"),
-    strip.text.y.left = element_text(angle = 0, color = "black"),
-    plot.title = element_text(face = "bold", hjust = 0.5),
-    legend.position = "bottom",
-    text = element_text(size = 12),
-    legend.text = element_text(size = 12))
+p_coef_list <- list()
+for (x_var in c("year", "MAT", "TAP")) {
+  for (metric_type in c("pheno", "intst")) {
+    df_coef <- df %>% 
+      filter(x_variable == x_var) %>% 
+      filter(mtype == metric_type)
+    xlims <- max(max(abs(df_coef$ci1)), max(abs(df_coef$ci2)))
+    
+    out_gg <- ggplot(df_coef) +
+      geom_vline(aes(xintercept = 0), col = "grey") +
+      geom_point(aes(x = beta, y = interaction(metric, x_variable), col = x_variable), show.legend = TRUE) +
+      geom_errorbar(
+        aes(xmin = ci1, xmax = ci2, y = interaction(metric, x_variable), col = x_variable),
+        show.legend = FALSE,
+        width = 0) +
+      geom_text(
+        x = xlims,
+        aes(
+          y = interaction(metric, x_variable),
+          label = ifelse(p < 0.05, sprintf("* %0.2f (%0.2f, %0.2f)", beta, ci1, ci2), sprintf("%0.2f (%0.2f, %0.2f)", beta, ci1, ci2)),
+          col = x_variable),
+        vjust = -1, hjust = 1,
+        show.legend = FALSE) +
+      facet_wrap(~ metric, ncol = 1, scales = "free_y", strip.position = "left") +
+      theme_bw() +
+      scale_x_continuous(limits = c(-xlims, xlims)) +
+      scale_color_manual(
+        name = "x variable",
+        values = c("year" = "dark green", "MAT" = "dark orange", "TAP" = "dark blue"),
+        breaks = c("year", "MAT", "TAP")) +
+      labs(x = NULL, y = NULL) +
+      theme(
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.spacing = unit(0, "lines"),
+        panel.border = element_rect(color = "grey"),
+        strip.background = element_rect(fill = "white", color = "white"),
+        legend.position = "bottom",
+        text = element_text(size = 12),
+        legend.text = element_text(size = 12)) +
+      guides(color = "none")
+      
+    if (x_var == "year") {
+      out_gg <- out_gg +
+        theme(strip.text.y.left = element_text(angle = 0, color = "black"))
+    } else {
+      out_gg <- out_gg +
+        theme(strip.text = element_blank())
+    }
+    
+    p_coef_list <- c(p_coef_list, list(out_gg))
+  }
+}
 
-legend_grob <- get_legend(p_coef1)
-p_coef_r1 <- plot_grid(p_coef1 + theme(legend.position = 'none'), p_coef2 + theme(legend.position = 'none'), ncol = 2, align = "v", rel_widths = c(1, 1))
-p_coef <- plot_grid(p_coef_r1, legend_grob, ncol = 1, rel_heights = c(10, 1))
+
+
+p_coef_r1 <- p_coef_list[[1]] +
+  labs(title = "Independent variable: year") +
+  theme(plot.title = element_text(face = "plain", hjust = 0.5)) +
+p_coef_list[[3]] +
+  labs(title = "Independent variable: MAT") +
+  theme(plot.title = element_text(face = "plain", hjust = 0.5)) + 
+p_coef_list[[5]] +
+  labs(title = "Independent variable: TAP") +
+  theme(plot.title = element_text(face = "plain", hjust = 0.5))
+
+p_coef_r2 <- p_coef_list[[2]] +
+  p_coef_list[[4]] +
+  labs(x = expression(italic(beta)[1])) + 
+  p_coef_list[[6]]
+
+p_coef <- p_coef_r1 / p_coef_r2 + plot_layout(heights = c(3, 2))
