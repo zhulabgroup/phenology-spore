@@ -63,7 +63,7 @@ p_antt <- ggplot() +
     col = "orange",
     linetype = "dashed") +
   geom_text(
-    aes(x = as_datetime("2009-01-01"), y = 1333.443, label = "trough"),
+    aes(x = as_datetime("2009-01-01"), y = 1333.443, label = "trough concentration"),
     hjust = 0,
     vjust = -0.5,
     col = "orange",
@@ -72,7 +72,7 @@ p_antt <- ggplot() +
     aes(x = as_datetime("2009-02-11"), xend = as_datetime("2009-02-11"), y = 1333.443, yend = 7955.968),
     col = "orange") +
   geom_text(
-    aes(x = as_datetime("2009-02-11"), y = exp((log(1333.443) + log(7955.968)) / 2), label = "amplitude (Ca)"),
+    aes(x = as_datetime("2009-02-11"), y = exp((log(1333.443) + log(7955.968)) / 2), label = "amplitude concentration (Ca)"),
     hjust = 0,
     vjust = -0.5,
     col = "orange",
@@ -140,12 +140,6 @@ p_antt <- ggplot() +
   geom_point(
     aes(x = as_datetime("2009-08-12"), y = 7955.968),
     col = "dark red") +
-  geom_text(
-    aes(x = as_datetime("2009-01-01"), y = 1000, label = "offset"),
-    hjust = 0,
-    vjust = 1,
-    col = "black",
-    size = 4) +
   scale_y_continuous(
     limits = c(10^3, 20000),
     trans = "log10",
@@ -157,7 +151,7 @@ p_antt <- ggplot() +
     date_labels = c("1", "start of spore season (SOS)", "start of allergy season (SAS)", "end of allergy season (EAS)", "end of spore season (EOS)", "365")) +
   coord_cartesian(
     xlim = c(as_datetime("2009-01-21"), max(df_antt$date))) +
-  ylab(expression("Spore concentration (grains m"^-3*")")) +
+  ylab(expression("Spore concentration (spores m"^-3*")")) +
   xlab("Day of spore year") +
   theme_bw() +
   theme(

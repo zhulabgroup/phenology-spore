@@ -37,7 +37,7 @@ p_trend_ctnt_pred_composite
 ```
 
 # Fig. coefplot
-```{r fig-coefplot, fig.height=5, fig.width=10, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Summary of coefficients beta1 in three mixed-effects models for each metric. Points are estimated values of beta1. Error bars indicate the 95% confidence intervals of the fixed slope. Specific values are annotated. Asterisks present significant coefficients (p < 0.05, t-test). Metrics defined in ecological approach are in the left panel, while metrics defined in the public health approach are in the right panel. Colors are different independent variables in the model."}
+```{r fig-coefplot, fig.height=10*0.618, fig.width=10, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Summary of coefficients beta1 in three mixed-effects models for each metric. Points are estimated values of beta1. Error bars indicate the 95% confidence intervals of the fixed slope. Specific values are annotated. Asterisks present significant coefficients (p < 0.05, t-test). Metrics defined in ecological approach are in the left panel, while metrics defined in the public health approach are in the right panel. Colors are different independent variables in the model."}
 source("~/Github/spore_phenology/code/analysis/plot_coefplot.R")
 p_coef
 ```

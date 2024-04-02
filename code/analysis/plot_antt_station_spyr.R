@@ -79,7 +79,7 @@ plot_antt_station_spyr <- function(df_in, sample_city, spyr) {
       aes(x = sample_startdate_spyr, xend = sample_startdate_spyr, y = sample_trough, yend = sample_peak),
       col = "orange") +
     geom_text(
-      aes(x = sample_startdate_spyr, y = 10^((log10(sample_trough) + log10(sample_peak)) / 2), label = "amplitude (A)"),
+      aes(x = sample_startdate_spyr, y = 10^((log10(sample_trough) + log10(sample_peak)) / 2), label = "amplitude concentration (Ca)"),
       hjust = 0,
       vjust = -0.5,
       col = "orange") +
@@ -143,11 +143,6 @@ plot_antt_station_spyr <- function(df_in, sample_city, spyr) {
     geom_point(
       aes(x = sample_peak_date_old, y = sample_peak),
       col = "dark red") +
-    geom_text(
-      aes(x = sample_startdate_spyr, y = 10^3.3, label = "offset"),
-      hjust = 1,
-      vjust = 1,
-      col = "black") +
     scale_y_log10(
       breaks = scales::trans_breaks("log10", function(x) 10^x),
       labels = scales::trans_format("log10", scales::math_format(10^.x))) +
@@ -169,7 +164,7 @@ plot_antt_station_spyr <- function(df_in, sample_city, spyr) {
       xlim = c(sample_startdate_spyr, max(df_antt$date)),
       ylim = c(10^3.3, 10^4.3)
     ) +
-    ylab(expression("Spore concentration (grains m"^-3*")")) +
+    ylab(expression("Spore concentration (spores m"^-3*")")) +
     xlab("Day of spore year") +
     theme_classic() +
     theme(

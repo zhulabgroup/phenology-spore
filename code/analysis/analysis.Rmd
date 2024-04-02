@@ -131,8 +131,15 @@ df_metrics_long = df_metrics_long %>% mutate(col = color_palette(55)[n])
 # read MAT, TAP and join with metrics data
 ```{r data}
 df_daymet_annual <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_daymet_annual.rds"))
-df_ana <- right_join(df_daymet_annual, df_metrics_long, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
-# write_rds(df_ana, str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
+df_ana_full <- right_join(df_daymet_annual, df_metrics_long, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
+# write_rds(df_ana_full, str_c(.path$dat_process, "2023-04-25/dat_ana_full.rds"))
 # df_ana_short <- right_join(df_daymet_annual, df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
 # write_rds(df_ana_short, str_c(.path$dat_process, "2023-04-25/dat_ana_short.rds"))
+```
+
+# filter stations for each metric based on the number of years
+```{r}
+source("~/Github/spore_phenology/code/analysis/filt_station_NofYears_metric.R")
+df_ana <- filt_station_NofYears_metric(df_in = df_ana_full, pct = 0.8)
+# write_rds(df_ana, str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
 ```

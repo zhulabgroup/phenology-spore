@@ -110,25 +110,25 @@ plot_trend_ctnt <- function(df_in, model, metric) {
   
   if (metric == "ln_A") {
     p <- p + 
-      ylab(expression("Amplitude (grains m"^-3*")")) +
+      ylab(expression("Amplitude (spores m"^-3*")")) +
       labs(title = expression(paste(bold("G      "), italic("Decreased A"))))
   }
   
   if (metric == "ln_Cp") {
     p <- p + 
-      ylab(expression("Peak concentration (grains m"^-3*")")) +
+      ylab(expression("Peak concentration (spores m"^-3*")")) +
       labs(title = expression(paste(bold("H      "), italic("Decreased Cp"))))
   }
   
   if (metric == "ln_AIn") {
     p <- p + 
-      ylab(expression("Annual integral (grains m"^-3*" days)")) +
+      ylab(expression("Annual integral (spores m"^-3*" days)")) +
       labs(title = expression(paste(bold("I      "), italic("Decreased AIn"))))
   }
   
   if (metric == "ln_ASIn") {
     p <- p + 
-      ylab(expression("Allergy season integral (grains m"^-3*" days)")) +
+      ylab(expression("Allergy season integral (spores m"^-3*" days)")) +
       labs(title = expression(paste(bold("J      "), italic("Decreased ASIn"))))
   }
   

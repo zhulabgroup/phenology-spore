@@ -1,9 +1,9 @@
 source("~/Github/spore_phenology/code/analysis/calc_lme.R")
 
 df_m <- data.frame()
-for (m_metric in c("ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn")) {
+for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn")) {
   for (cplt in c(1, 0.9, 0.8, 0.7, 0.6)) {
-    m_rslt <- calc_lme(df_in = df_ana, metric = m_metric, x_vrb = "year_new", pct = cplt)
+    m_rslt <- calc_lme(df_in = df_ana_full, metric = m_metric, x_vrb = "year_new", pct = cplt)
     df_m <-rbind(df_m, m_rslt)
   }
 }
