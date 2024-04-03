@@ -3,7 +3,7 @@ labelfunc_x <- function(x) {
   format(origin + x, format = "%b")
 }
 
-plot_calendar <- function(df_in) {
+plot_calendar <- function(df_in, y_label) {
   out_gg <- ggplot(data = df_in) +
     geom_tile(aes(x = doy, y = reorder(ylab, order), fill = count_rescale %>% log(10)), alpha = 1) +
     scale_fill_gradient(
@@ -26,6 +26,11 @@ plot_calendar <- function(df_in) {
       legend.position = "bottom",
       legend.key.width = unit(1, "cm"),
       legend.margin = margin(t = -20, r = 0, b = 0, l = 0))
+  
+  if (y_label == "lon") {
+    out_gg <- out_gg +
+      geom_tile(data = df_in %>% filter(doy == offset), aes(x = doy, y = reorder(ylab, order)), fill = "black")
+  }
     
   return(out_gg)
 }

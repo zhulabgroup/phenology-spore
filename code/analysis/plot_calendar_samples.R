@@ -4,10 +4,10 @@ source("~/Github/spore_phenology/code/analysis/calc_calendar.R")
 source("~/Github/spore_phenology/code/analysis/plot_calendar.R")
 
 df_calendar_a <- calc_calendar(df_in = df_full, df_meta = df_ana_short, y_label = "ecoregion")
-p_calendar_a <- plot_calendar(df_calendar_a)
+p_calendar_a <- plot_calendar(df_calendar_a, y_label = "ecoregion")
 
 df_calendar_b <- calc_calendar(df_in = df_full, df_meta = df_ana_short, y_label = "mm")
-p_calendar_b <- plot_calendar(df_calendar_b)
+p_calendar_b <- plot_calendar(df_calendar_b, y_label = "mm")
 
 legend_grob <- get_legend(p_calendar_a)
 p_calendar_r1 <- plot_grid(
