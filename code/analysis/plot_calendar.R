@@ -12,7 +12,9 @@ plot_calendar <- function(df_in, y_label) {
       labels = c(1, 100, 1000, 10000, 1000000),
       limits = c(100, 50000) %>% log(10),
       name = expression(atop("Spore concentration (spores m"^-3*")"))) +
-    scale_x_continuous(labels = labelfunc_x) +
+    scale_x_continuous(
+      breaks = c(1, 91, 182, 274),
+      labels = labelfunc_x) +
     ylab("") +
     xlab("") +
     theme_classic() +

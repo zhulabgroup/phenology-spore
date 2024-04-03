@@ -40,7 +40,7 @@ p_sens_l
 ```
 
 # Fig. S3
-```{r fig-calendars, fig.width=8, fig.height=8*1.618, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap = "Fungal spore calendar for all the 55 stations meeting our criteria. Displayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. Stations are ranked by longitude."}
+```{r fig-calendars, fig.width=9, fig.height=8*1.618, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap = "Fungal spore calendar for all the 55 stations meeting our criteria. Displayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. Stations are ranked by longitude."}
 source("~/Github/spore_phenology/code/analysis/plot_calendar_si.R")
 p_calendar_suppl
 ```

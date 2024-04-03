@@ -56,7 +56,7 @@ source("~/Github/spore_phenology/code/analysis/tidy_fulldate_station.R")
 df_full <- tidy_fulldate_station(df_site)
 ```
 
-# read the offset and insert into the smoothed dataset
+# read the offset and insert into the dataset
 ```{r read offset and merge with smooth data, message=FALSE, warning=FALSE}
 source("~/Github/spore_phenology/code/analysis/read_offset_station.R")
 df_full <- df_full %>%
