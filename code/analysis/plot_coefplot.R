@@ -44,17 +44,39 @@ for (x_var in c("year", "MAT", "TAP")) {
     
     out_gg <- ggplot(df_coef) +
       geom_vline(aes(xintercept = 0), col = "grey") +
-      geom_point(aes(x = beta, y = interaction(metric, x_variable), col = x_variable), show.legend = TRUE) +
+      geom_point(
+        data = df_coef %>% filter(p < 0.05),
+        aes(x = beta, y = interaction(metric, x_variable), col = x_variable)) +
+      geom_point(
+        data = df_coef %>% filter(p >= 0.05),
+        aes(x = beta, y = interaction(metric, x_variable), col = x_variable), alpha = 0.7, shape = 1) +
       geom_errorbar(
+        data = df_coef %>% filter(p < 0.05),
         aes(xmin = ci1, xmax = ci2, y = interaction(metric, x_variable), col = x_variable),
         show.legend = FALSE,
         width = 0) +
+      geom_errorbar(
+        data = df_coef %>% filter(p >= 0.05),
+        aes(xmin = ci1, xmax = ci2, y = interaction(metric, x_variable), col = x_variable, alpha = 0.7),
+        show.legend = FALSE,
+        width = 0) +
       geom_text(
+        data = df_coef %>% filter(p < 0.05),
         x = xlims,
         aes(
           y = interaction(metric, x_variable),
-          label = ifelse(p < 0.05, sprintf("* %0.2f (%0.2f, %0.2f)", beta, ci1, ci2), sprintf("%0.2f (%0.2f, %0.2f)", beta, ci1, ci2)),
+          label = paste0(signif(beta, digits = 2), " (", signif(ci1, digits = 2), ", ", signif(ci2, digits = 2), ")"),
           col = x_variable),
+        vjust = -1, hjust = 1,
+        show.legend = FALSE) +
+      geom_text(
+        data = df_coef %>% filter(p >= 0.05),
+        x = xlims,
+        aes(
+          y = interaction(metric, x_variable),
+          label = paste0(signif(beta, digits = 2), " (", signif(ci1, digits = 2), ", ", signif(ci2, digits = 2), ")"),
+          col = x_variable),
+        alpha = 0.7,
         vjust = -1, hjust = 1,
         show.legend = FALSE) +
       facet_wrap(~ metric, ncol = 1, scales = "free_y", strip.position = "left") +
