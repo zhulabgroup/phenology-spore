@@ -11,18 +11,6 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = FA
 source("~/Github/spore_phenology/code/0_utils.R")
 ```
 
-<!-- # read dataset -->
-<!-- ```{r read} -->
-<!-- df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/smooth_compare.rds")) -->
-<!-- ``` -->
-
-<!-- # summary the proportion of missing data in each station-year raw data -->
-<!-- ```{r missing} -->
-<!-- source("summ_miss_stationyear_raw_data.R") -->
-<!-- df_miss <- summ_miss_stationyear_raw_data(df_smooth, count) -->
-<!-- summary(df_miss$miss_ppt) -->
-<!-- ``` -->
-
 # Table S1
 ```{r tbl-summary of the number of stations included in the analysis}
 df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
@@ -42,6 +30,16 @@ df_sens_cpltness %>%
 # write.csv(df_sens_cpltness, file = "~/Github/spore_phenology/data/output/tables/tbl_sens_cpltness.csv")
 ```
 
+# Table S3
+```{r}
+df_spore <- read_rds(str_c(.path$dat_process, "2023-04-25/spore_dat.rds"))
+df_full <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_spore_fulldate.rds"))
+source("~/Github/spore_phenology/code/analysis/summ_trend_composition.R")
+df_trend_taxa %>%
+  knitr::kable()
+# write.csv(df_trend_taxa, file = "~/Github/spore_phenology/data/output/tables/tbl_trend_taxa.csv")
+```
+
 # Fig. S1
 ```{r fig-ecoregion, fig.height=8*0.618, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Map of fungal spore counting stations associated with the National Allergy Bureau (NAB) distributed in different ecoregions within the continental United States that were included in the analysis of this study."}
 source("~/Github/spore_phenology/code/analysis/plot_ecoregion_stations.R")
@@ -52,7 +50,7 @@ p_ecoregion
 ```
 
 # Fig. S2 summary the family composition
-```{r, fig.height=6*0.618, fig.width=6, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE}
+```{r fig-composition, fig.height=6*0.618, fig.width=6, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE}
 source("~/Github/spore_phenology/code/analysis/calc_composition_station.R")
 p_comm_pie
 ```

@@ -7,9 +7,9 @@ df <- df_ana %>%
   mutate(Nyear = max(year_new) - min(year_new) + 1) %>% 
   ungroup()
 
-your_starting_value <- 0.1 
-m_ctnt <- lmerTest::lmer(
-  Value ~ year_new + (year_new|n),
+m_ctnt <- lme(
+  Value ~ year_new,
   data = df,
-  start = list(theta = c(1,100,0.5))
-)
+  random = ~ year_new | n)
+
+summary(m_ctnt)
