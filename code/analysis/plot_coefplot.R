@@ -27,12 +27,8 @@ df <- df_m %>%
   mutate(mtype = ifelse(
     metric %in% c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS"),
     "pheno",
-    "intst"))
-
-# set y axis order
-df$metric <- factor(df$metric, levels = c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln(Ca)", "ln(Cp)", "ln(AIn)", "ln(ASIn)"))
-df$x_variable <- factor(df$x_variable, levels = c("year", "MAT", "TAP"))
-# plot
+    "intst")) %>% 
+  mutate(transparency = ifelse(p < 0.05, 1, 0.5))
 
 p_coef_list <- list()
 for (x_var in c("year", "MAT", "TAP")) {
@@ -42,69 +38,66 @@ for (x_var in c("year", "MAT", "TAP")) {
       filter(mtype == metric_type)
     xlims <- max(max(abs(df_coef$ci1)), max(abs(df_coef$ci2)))
     
+    if (metric_type == "pheno") {
+      df_coef$metric <- factor(df_coef$metric, levels = c("LOS", "LAS", "EAS", "EOS", "SAS", "SOS"))
+    } else {
+      df_coef$metric <- factor(df_coef$metric, levels = c("ln(ASIn)", "ln(AIn)", "ln(Cp)", "ln(Ca)"))
+    }
+    
     out_gg <- ggplot(df_coef) +
       geom_vline(aes(xintercept = 0), col = "grey") +
-      geom_point(aes(x = beta, y = interaction(metric, x_variable), col = x_variable), show.legend = TRUE) +
       geom_errorbar(
-        aes(xmin = ci1, xmax = ci2, y = interaction(metric, x_variable), col = x_variable),
-        show.legend = FALSE,
+        aes(xmin = ci1, xmax = ci2, y = metric, col = x_variable, alpha = transparency),
         width = 0) +
+      geom_point(
+        aes(x = beta, y = metric, col = x_variable, alpha = transparency)) +
       geom_text(
+        # data = df_coef %>% filter(p < 0.05),
         x = xlims,
         aes(
-          y = interaction(metric, x_variable),
-          label = ifelse(p < 0.05, sprintf("* %0.2f (%0.2f, %0.2f)", beta, ci1, ci2), sprintf("%0.2f (%0.2f, %0.2f)", beta, ci1, ci2)),
-          col = x_variable),
-        vjust = -1, hjust = 1,
-        show.legend = FALSE) +
-      facet_wrap(~ metric, ncol = 1, scales = "free_y", strip.position = "left") +
-      theme_bw() +
+          y = metric,
+          label = paste0(signif(beta, digits = 2), " (", signif(ci1, digits = 2), ", ", signif(ci2, digits = 2), ")"),
+          col = x_variable, alpha = transparency),
+        vjust = -1, hjust = 1) +
+      # facet_wrap(~ metric, ncol = 1, scales = "free_y", strip.position = "left") +
       scale_x_continuous(limits = c(-xlims, xlims)) +
       scale_color_manual(
         name = "x variable",
         values = c("year" = "dark green", "MAT" = "dark orange", "TAP" = "dark blue"),
         breaks = c("year", "MAT", "TAP")) +
+      scale_alpha_identity() +
       labs(x = NULL, y = NULL) +
+      theme_bw() +
       theme(
-        axis.text.y = element_blank(),
+        # axis.text.y = element_blank(),
         axis.ticks.y = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        panel.spacing = unit(0, "lines"),
-        panel.border = element_rect(color = "grey"),
-        strip.background = element_rect(fill = "white", color = "white"),
-        legend.position = "bottom",
         text = element_text(size = 12),
         legend.text = element_text(size = 12)) +
       guides(color = "none")
       
-    if (x_var == "year") {
+    if (x_var != "year") {
       out_gg <- out_gg +
-        theme(strip.text.y.left = element_text(angle = 0, color = "black"))
-    } else {
-      out_gg <- out_gg +
-        theme(strip.text = element_blank())
+        theme(axis.text.y = element_blank())
     }
     
     p_coef_list <- c(p_coef_list, list(out_gg))
   }
 }
 
-
-
-p_coef_r1 <- p_coef_list[[1]] +
-  labs(title = "Independent variable: year") +
-  theme(plot.title = element_text(face = "plain", hjust = 0.5)) +
-p_coef_list[[3]] +
-  labs(title = "Independent variable: MAT") +
-  theme(plot.title = element_text(face = "plain", hjust = 0.5)) + 
-p_coef_list[[5]] +
-  labs(title = "Independent variable: TAP") +
-  theme(plot.title = element_text(face = "plain", hjust = 0.5))
-
-p_coef_r2 <- p_coef_list[[2]] +
-  p_coef_list[[4]] +
-  labs(x = expression(italic(beta)[1])) + 
-  p_coef_list[[6]]
-
-p_coef <- p_coef_r1 / p_coef_r2 + plot_layout(heights = c(3, 2))
+p_coef <- 
+  (p_coef_list[[1]] +
+             labs(title = "Independent variable: year") +
+             theme(plot.title = element_text(face = "plain", hjust = 0.5)) +
+             p_coef_list[[3]] +
+             labs(title = "Independent variable: MAT") +
+             theme(plot.title = element_text(face = "plain", hjust = 0.5)) + 
+             p_coef_list[[5]] +
+             labs(title = "Independent variable: TAP") +
+             theme(plot.title = element_text(face = "plain", hjust = 0.5))) / 
+  (p_coef_list[[2]] +
+     p_coef_list[[4]] +
+     labs(x = expression(italic(beta)[1])) + 
+     p_coef_list[[6]]) + 
+  plot_layout(heights = c(3, 2))

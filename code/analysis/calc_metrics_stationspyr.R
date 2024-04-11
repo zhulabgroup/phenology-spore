@@ -81,8 +81,8 @@ calc_metrics_stationspyr <- function(df_completeness, df_raw) {
     group_modify(~ find_sas(.)) %>% 
     ungroup() %>% 
     rename(
-      sas = you,
-      sas_date_old = you_date_old
+      sas = out_doy,
+      sas_date_old = out_date_old
     ) %>% 
     group_by(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness) %>% 
     arrange(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness, desc(doy_new)) %>% 
@@ -90,8 +90,8 @@ calc_metrics_stationspyr <- function(df_completeness, df_raw) {
     arrange(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness, doy_new) %>% 
     ungroup() %>% 
     rename(
-      eas = you,
-      eas_date_old = you_date_old
+      eas = out_doy,
+      eas_date_old = out_date_old
     ) %>% 
     mutate(las = eas - sas + 1) %>%
     drop_na(count_fillwhit) %>% 
@@ -144,14 +144,14 @@ find_sas <- function(x) {
   # if sas <= 10, all the values before sas should not be NA, otherwise return NA
   # reverse order for eas
   consecutive_count <- 0
-  you <- NA
-  you_date_old <- NA
+  out_doy <- NA
+  out_date_old <- NA
   for (i in 1:nrow(x)) {
-    if (!is.na(x$count_fillwhit[i]) && x$count_fillwhit[i] >= 6500) {
+    if (!is.na(x$count_fillwhit[i]) && x$count_fillwhit[i] >= 2000) {
       consecutive_count <- consecutive_count + 1
       if (consecutive_count == 1) {
-        you <- x$doy_new[i]
-        you_date_old <- x$date[i]
+        out_doy <- x$doy_new[i]
+        out_date_old <- x$date[i]
       }
       if (consecutive_count == 10) {
         break
@@ -160,14 +160,14 @@ find_sas <- function(x) {
       consecutive_count <- 0
     }
   }
-  if (!is.na(you) && i > 10 && any(is.na(x$count_fillwhit[(i - 10):i]))) {
-    you <- NA
-    you_date_old <- NA
-  } else if (!is.na(you) && i <= 10 && any(is.na(x$count_fillwhit[1:i]))) {
-    you <- NA
-    you_date_old <- NA
+  if (!is.na(out_doy) && i > 10 && any(is.na(x$count_fillwhit[(i - 10):i]))) {
+    out_doy <- NA
+    out_date_old <- NA
+  } else if (!is.na(out_doy) && i <= 10 && any(is.na(x$count_fillwhit[1:i]))) {
+    out_doy <- NA
+    out_date_old <- NA
   }
-  x$you <- you
-  x$you_date_old <- you_date_old
+  x$out_doy <- out_doy
+  x$out_date_old <- out_date_old
   return(x)
 }

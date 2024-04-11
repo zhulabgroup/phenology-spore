@@ -37,25 +37,3 @@ p_comm_pie <- df_station %>%
   coord_polar("y", start = 0) +
   theme_void() +
   theme(legend.position = "right")
-
-# fit trend
-df_comm <- df_station %>% 
-  filter(family != "Total" | is.na(family)) %>%
-  mutate(year = format(date, "%Y") %>% as.integer()) %>% 
-  group_by(lat, lon, station, city, state, country, id, n, year) %>% 
-  summarise(total = sum(count, na.rm = T)) %>% 
-  ungroup() %>% 
-  right_join(
-    df_station %>% mutate(year = format(date, "%Y") %>% as.integer()),
-    by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "year")) %>% 
-  mutate(family = ifelse(is.na(family), "Unidentified", family)) %>% 
-  group_by(lat, lon, station, city, state, country, id, n, year, total, family) %>% 
-  summarise(count = sum(count, na.rm = T)) %>% 
-  mutate(pctg = count / total) %>% 
-  arrange(desc(pctg)) %>% 
-  ungroup()
-# m <- lme(
-#   pctg ~ year,
-#   data = df_comm %>% filter(family == "Aspergillaceae") %>% filter(total != 0),
-#   random = ~ year | n, control = lmeControl(opt = "optim"))
-# summary(m)
