@@ -1,6 +1,6 @@
 rawnab_df <- readRDS("/nfs/turbo/seas-zhukai/phenology/nab/clean/2023-04-25/nab_renew.rds")
 station_df <- read.csv("/nfs/turbo/seas-zhukai/phenology/nab/clean/2023-04-25/renew_station_info.csv")
-taxa_df <- read.csv("/nfs/turbo/seas-zhukai/phenology/nab/clean/2023-04-25/renew_taxonomy.csv")
+taxa_df <- read.csv("2023-04-25/renew_taxonomy.csv")
 nab_df <- rawnab_df %>% 
   rename(id = stationid) %>% 
   left_join(station_df, by = "id")
