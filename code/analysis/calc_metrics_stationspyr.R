@@ -147,7 +147,7 @@ find_sas <- function(x) {
   out_doy <- NA
   out_date_old <- NA
   for (i in 1:nrow(x)) {
-    if (!is.na(x$count_fillwhit[i]) && x$count_fillwhit[i] >= 5000) {
+    if (!is.na(x$count_fillwhit[i]) && x$count_fillwhit[i] >= 2000) {
       consecutive_count <- consecutive_count + 1
       if (consecutive_count == 1) {
         out_doy <- x$doy_new[i]

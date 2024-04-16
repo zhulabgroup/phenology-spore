@@ -57,70 +57,70 @@ plot_trend_map_TS <- function(df_in, metric) {
     p_map <- p_map +
       scale_color_gradient2(
         low = "red", mid= "white", high = "blue", midpoint = 0,
-        labels = function(x) {ifelse(x == 0, "0", paste0(x, "\u00B3"))}) +
+        labels = function(x) {x^3}) +
       labs(color = expression("Theil-Sen trend of\nSOS (days per year)"))
   }
   if (metric == "SAS") {
     p_map <- p_map +
       scale_color_gradient2(
         low = "red", mid= "white", high = "blue", midpoint = 0,
-        labels = function(x) {ifelse(x == 0, "0", paste0(x, "\u00B3"))}) +
+        labels = function(x) {x^3}) +
       labs(color = expression("Theil-Sen trend of\nSAS (days per year)"))
   }
   if (metric == "EOS") {
     p_map <- p_map +
       scale_color_gradient2(
         low = "red", mid= "white", high = "blue", midpoint = 0,
-        labels = function(x) {ifelse(x == 0, "0", paste0(x, "\u00B3"))}) +
+        labels = function(x) {x^3}) +
       labs(color = expression("Theil-Sen trend of\nEOS (days per year)"))
   }
   if (metric == "EAS") {
     p_map <- p_map +
       scale_color_gradient2(
         low = "red", mid= "white", high = "blue", midpoint = 0,
-        labels = function(x) {ifelse(x == 0, "0", paste0(x, "\u00B3"))}) +
+        labels = function(x) {x^3}) +
       labs(color = expression("Theil-Sen trend of\nEAS (days per year)"))
   }
   if (metric == "LOS") {
     p_map <- p_map +
       scale_color_gradient2(
         low = "blue", mid= "white", high = "red", midpoint = 0,
-        labels = function(x) {ifelse(x == 0, "0", paste0(x, "\u00B3"))}) +
+        labels = function(x) {x^3}) +
       labs(color = expression("Theil-Sen trend of\nLOS (days per year)"))
   }
   if (metric == "LAS") {
     p_map <- p_map +
       scale_color_gradient2(
         low = "blue", mid= "white", high = "red", midpoint = 0,
-        labels = function(x) {ifelse(x == 0, "0", paste0(x, "\u00B3"))}) +
+        labels = function(x) {x^3}) +
       labs(color = expression("Theil-Sen trend of\nLAS (days per year)"))
   }
   if (metric == "ln_Ca") {
     p_map <- p_map +
       scale_color_gradient2(
         low = "blue", mid= "white", high = "red", midpoint = 0,
-        labels = function(x) {ifelse(x == 0, "0", paste0(x, "\u00B3"))}) +
+        labels = function(x) {x^3}) +
       labs(color = expression("Theil-Sen trend\nof ln(Ca)"))
   }
   if (metric == "ln_Cp") {
     p_map <- p_map +
       scale_color_gradient2(
         low = "blue", mid= "white", high = "red", midpoint = 0,
-        labels = function(x) {ifelse(x == 0, "0", paste0(x, "\u00B3"))}) +
+        labels = function(x) {x^3}) +
       labs(color = expression("Theil-Sen trend\nof ln(Cp)"))
   }
   if (metric == "ln_AIn") {
     p_map <- p_map +
       scale_color_gradient2(
         low = "blue", mid= "white", high = "red", midpoint = 0,
-        labels = function(x) {ifelse(x == 0, "0", paste0(x, "\u00B3"))}) +
+        labels = function(x) {x^3}) +
       labs(color = expression("Theil-Sen trend\nof ln(AIn)"))
   }
   if (metric == "ln_ASIn") {
     p_map <- p_map +
       scale_color_gradient2(
         low = "blue", mid= "white", high = "red", midpoint = 0,
-        labels = function(x) {ifelse(x == 0, "0", paste0(x, "\u00B3"))}) +
+        labels = function(x) {x^3}) +
       labs(color = expression("Theil-Sen trend\nof ln(ASIn)"))
   }
   
