@@ -139,7 +139,7 @@ calc_metrics_stationspyr <- function(df_completeness, df_raw) {
 
 
 find_sas <- function(x) {
-  # find the first day of 10 consecutive days with spore count >= 6500
+  # find the first day of 10 consecutive days with spore count >= 2000
   # 10 values before sas are not NA, otherwise, return NA
   # if sas <= 10, all the values before sas should not be NA, otherwise return NA
   # reverse order for eas
@@ -147,7 +147,7 @@ find_sas <- function(x) {
   out_doy <- NA
   out_date_old <- NA
   for (i in 1:nrow(x)) {
-    if (!is.na(x$count_fillwhit[i]) && x$count_fillwhit[i] >= 2000) {
+    if (!is.na(x$count_fillwhit[i]) && x$count_fillwhit[i] >= 5000) {
       consecutive_count <- consecutive_count + 1
       if (consecutive_count == 1) {
         out_doy <- x$doy_new[i]

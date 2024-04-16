@@ -68,5 +68,5 @@ pacman::p_load(rcartocolor)
   dat_process = "~/Github/spore_phenology/data/processed/",
   out_simple_model = "~/Github/spore_phenology/data/pheno_model/simple/",
   out_bayes_model = "~/Github/spore_phenology/data/pheno_model/bayes/",
-  out_fig = "output/figures/"
+  out_fig = "~/Github/spore_phenology/data/output/figures/"
 )
