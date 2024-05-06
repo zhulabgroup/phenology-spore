@@ -89,7 +89,7 @@ plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
   if (metric == "EOS") {
     out_gg <- out_gg + 
       ylab("End of season (day of spore year)") +
-      labs(title = expression(paste("Advanced EOS")))
+      labs(title = expression(paste("No change in EOS")))
   }
   
   if (metric == "EAS") {
@@ -101,13 +101,13 @@ plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
   if (metric == "LOS") {
     out_gg <- out_gg + 
       ylab("Length of season (days)") +
-      labs(title = expression(paste("Extended LOS")))
+      labs(title = expression(paste("No change in LOS")))
   }
   
   if (metric == "LAS") {
     out_gg <- out_gg + 
       ylab("Length of allergy season (days)") +
-      labs(title = expression(paste("Extended LAS")))
+      labs(title = expression(paste("No change in LAS")))
   }
   
   if (metric == "ln_Ca") {
@@ -119,13 +119,13 @@ plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
   if (metric == "ln_Cp") {
     out_gg <- out_gg + 
       ylab(expression("Peak concentration (spores m"^-3*")")) +
-      labs(title = expression(paste("Decreased Cp")))
+      labs(title = expression(paste("No change in Cp")))
   }
   
   if (metric == "ln_AIn") {
     out_gg <- out_gg + 
       ylab(expression("Annual integral (spores m"^-3*" days)")) +
-      labs(title = expression(paste("Decreased AIn")))
+      labs(title = expression(paste("No change in AIn")))
   }
   
   if (metric == "ln_ASIn") {

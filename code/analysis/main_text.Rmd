@@ -9,7 +9,7 @@ output:
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE, process=FALSE}
 knitr::opts_chunk$set(echo = FALSE, cache=FALSE, warning = FALSE, message = FALSE, process=FALSE)
 source("~/Github/spore_phenology/code/0_utils.R")
-df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
+df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_as4605.rds"))
 ```
 
 # Fig. metrics

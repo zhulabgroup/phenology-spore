@@ -39,7 +39,7 @@ for (x_var in c("year", "MAT", "TAP")) {
     xlims <- max(max(abs(df_coef$ci1)), max(abs(df_coef$ci2)))
     
     if (metric_type == "pheno") {
-      df_coef$metric <- factor(df_coef$metric, levels = c("LOS", "LAS", "EAS", "EOS", "SAS", "SOS"))
+      df_coef$metric <- factor(df_coef$metric, levels = c("LAS", "LOS", "EAS", "EOS", "SAS", "SOS"))
     } else {
       df_coef$metric <- factor(df_coef$metric, levels = c("ln(ASIn)", "ln(AIn)", "ln(Cp)", "ln(Ca)"))
     }

@@ -13,20 +13,20 @@ source("~/Github/spore_phenology/code/0_utils.R")
 
 # Table S1
 ```{r tbl-summary of the number of stations included in the analysis}
-df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
+df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_as4605.rds"))
 source("~/Github/spore_phenology/code/analysis/summ_trend_metric.R")
 df_summ_metric %>% 
-  knitr::kable(caption = "Sensitivity test on data completeness for four fungal spore season intensity metrics. Displayed is the slope of spore metrics with ln-transformation for concentrations, change over 2003-2022 in % for concentrations (back-transformed) and days for start date and season length metrics, and the p-value of the mixed effects model.")
+  knitr::kable(caption = "Summary of trend and observations included in the analysis for each metric. Displayed is the number of stations and observations included in the model, the slope of spore metrics with log-transformation for intensity metrics, change over 2003-2022 in day for timing metrics and % for intensity metrics (back-transformed), and the p-value of the mixed-effects model for each metric, including start of spore season (SOS), start of allergy season (SAS), end of spore season (EOS), end of allergy season (EAS), length of spore season (LOS), length of allergy season (LAS), amplitude concentration (Ca), peak concentration (Cp), annual integral (AIn), and allergy season integral (ASIn).")
 # write.csv(df_summ_metric, file = "~/Github/spore_phenology/data/output/tables/tbl_summ_trend.csv")
 ```
 
 # Table S2
 ```{r tbl-sensitivity-completeness, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE}
-df_ana_full <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_full.rds"))
+df_ana_full <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_full_as4605.rds"))
 source("~/Github/spore_phenology/code/analysis/ana_sens_cpltness.R")
 df_sens_cpltness %>%
   filter(Metric %in% c("ln(Ca)", "ln(Cp)", "ln(AIn)", "ln(ASIn)")) %>% 
-  knitr::kable(caption = "Sensitivity test on data completeness for four fungal spore season intensity metrics. Displayed is the slope of spore metrics with ln-transformation for concentrations, change over 2003-2022 in % for concentrations (back-transformed) and days for start date and season length metrics, and the p-value of the mixed effects model.")
+  knitr::kable(caption = "Sensitivity test on data completeness for four fungal spore season intensity metrics. Displayed is the number of observations included in the model, the slope of spore metrics with log-transformation, change over 2003-2022 in % for concentrations (back-transformed), and the p-value of the mixed effects model for each intensity metric, including amplitude concentration (Ca), peak concentration (Cp), annual integral (AIn), and allergy season integral (ASIn).")
 # write.csv(df_sens_cpltness, file = "~/Github/spore_phenology/data/output/tables/tbl_sens_cpltness.csv")
 ```
 
@@ -63,7 +63,7 @@ p_sens_l
 ```
 
 # Fig. S4
-```{r fig-compare-curves, fig.height=8/0.618, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE}
+```{r fig-compare-curves, fig.height=8/5/0.618, fig.width=8/2, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE}
 df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_smooth_100.rds"))
 source("~/Github/spore_phenology/code/analysis/plot_curve_raw_processed.R")
 p_curves
@@ -76,13 +76,22 @@ p_calendar_suppl
 ```
 
 # Fig. S6
-```{r fig-trend-station, fig.height=4*0.618*5, fig.width=4*2, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Station-level temporal trends of the start of spore season metrics. The trends were estimated by Theil-Sen linear regression. Warm colors indicate earlier DOY, longer days, or higher concentration, and circle sizes are proportional to the years of data at each station."}
+```{r fig-trend-station, fig.height=5*0.618*5, fig.width=5*2, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Station-level temporal trends of the start of spore season metrics. The trends were estimated by Theil-Sen linear regression. Warm colors indicate earlier DOY, longer days, or higher concentration, and circle sizes are proportional to the years of data at each station."}
+df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_as4605.rds"))
 source("~/Github/spore_phenology/code/analysis/plot_trend_map_TS_si.R")
 p_trend_map_TS_si
 ```
 
 # Fig. S7
 ```{r fig-atrr-ctnt, fig.width=2*5, fig.height=2*2*2.2, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Temporal trends of ten fungal spore metrics across all the stations. The estimated trends from linear mixed effects models across stations of year against the start of season (SOS, A), start of allergy season (SAS, F), end of season (EOS, B), end of allergy season (EAS, G), length of season (LOS, C), length of allergy season (LAS, H), amplitude (Ca, D), peak concentration (Cp, I), annual integral (AIn, E), and allergy season integral (ASIn, J). Solid black lines indicate significant (p < 0.05, t-test) slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Colors are station-level Theil-Sen linear regression slopes, with warmer colors indicating earlier day of year, longer days, or higher intensity. The slope of colorful lines are model predicted station-level trends. The top row presents metrics defined in the ecological method, while the bottom row shows metrics defined in the public health method. Intensity metrics are transformed using the natural logarithm."}
+df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_as4605.rds"))
 source("~/Github/spore_phenology/code/analysis/plot_atrr_ctnt_pred_composite.R")
 p_atrr_ctnt_pred_composite
+```
+
+# Fig. S8
+```{r fig-NAB threshold, fig.height=10*0.618, fig.width=10, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE}
+df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
+source("~/Github/spore_phenology/code/analysis/plot_coefplot.R")
+p_coef
 ```
