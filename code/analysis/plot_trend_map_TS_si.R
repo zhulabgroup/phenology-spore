@@ -1,4 +1,3 @@
-df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
 source("~/Github/spore_phenology/code/analysis/calc_trend_station_TS.R")
 source("~/Github/spore_phenology/code/analysis/plot_trend_map_TS.R")
 

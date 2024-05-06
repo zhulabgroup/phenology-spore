@@ -90,7 +90,7 @@ p_antt <- ggplot() +
     linetype = "dashed",
     col = "dark red") +
   geom_text(
-    aes(x = as_datetime("2009-01-01"), y = 6500, label = "NAB allergy threshold"),
+    aes(x = as_datetime("2009-01-01"), y = 6500, label = "allergy threshold"),
     hjust = 0,
     vjust = 1.3,
     col = "dark red",

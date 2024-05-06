@@ -70,3 +70,6 @@ pacman::p_load(rcartocolor)
   out_bayes_model = "~/Github/spore_phenology/data/pheno_model/bayes/",
   out_fig = "~/Github/spore_phenology/data/output/figures/"
 )
+
+
+options(scipen = 999)
