@@ -13,7 +13,7 @@ legend_grob <- get_legend(p_calendar_a)
 p_calendar_r1 <- plot_grid(
   p_calendar_a + theme(legend.position = 'none'), p_calendar_b + theme(legend.position = 'none'),
   ncol = 2,
-  labels = c("A", "B"), label_fontface = "plain", label_size = 12,
+  labels = c("(a)", "(b)"), label_fontface = "bold", label_size = 12,
   align = "v",
   rel_widths = c(1, 1))
 p_calendar <- plot_grid(p_calendar_r1, legend_grob, ncol = 1, rel_heights = c(4, 1))
