@@ -15,6 +15,6 @@ p_trend_map_TS_si <- plot_grid(
   p_trend_map_TS_list[[7]] + guides(size = "none", color = "none"), p_trend_map_TS_list[[8]] + guides(size = "none", color = "none"),
   p_trend_map_TS_list[[9]] + guides(size = "none", color = "none"), p_trend_map_TS_list[[10]] + guides(size = "none", color = "none"),
   ncol = 2,
-  labels = c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J"),
-  label_fontface = "plain",
+  labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)", "(j)"),
+  label_fontface = "bold",
   label_size = 12)
