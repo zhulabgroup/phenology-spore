@@ -8,7 +8,7 @@ output:
 
 ```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = FALSE, progress = FALSE)
-source("~/Github/spore_phenology/code/0_utils.R")
+source("~/Github/spore_phenology/analysis/functions/utils.R")
 ```
 
 # Table S1

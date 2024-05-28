@@ -1,8 +1,8 @@
-source("~/Github/spore_phenology/code/analysis/calc_trend_ctnt.R")
-source("~/Github/spore_phenology/code/analysis/calc_trend_station_TS.R")
-source("~/Github/spore_phenology/code/analysis/plot_trend_map_TS.R")
-source("~/Github/spore_phenology/code/analysis/extr_color_map.R")
-source("~/Github/spore_phenology/code/analysis/plot_trend_ctnt_pred.R")
+source(str_c(.path$ana_fun, "calc_trend_ctnt.R"))
+source(str_c(.path$ana_fun, "calc_trend_station_TS.R"))
+source(str_c(.path$ana_fun, "plot_trend_map_TS.R"))
+source(str_c(.path$ana_fun, "extr_color_map.R"))
+source(str_c(.path$ana_fun, "plot_trend_ctnt_pred.R"))
 
 p_trend_ctnt_pred_list <- list()
 for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn")) {
