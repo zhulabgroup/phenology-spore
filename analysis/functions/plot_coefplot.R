@@ -1,4 +1,4 @@
-source("~/Github/spore_phenology/code/analysis/calc_lme.R")
+source(str_c(.path$ana_fun, "calc_lme.R"))
 # generate the dataframe
 df_m <- data.frame()
 for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn")) {
