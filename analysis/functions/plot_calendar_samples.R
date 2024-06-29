@@ -9,11 +9,10 @@ p_calendar_a <- plot_calendar(df_calendar_a, y_label = "ecoregion")
 df_calendar_b <- calc_calendar(df_in = df_full, df_meta = df_ana_short, y_label = "mm")
 p_calendar_b <- plot_calendar(df_calendar_b, y_label = "mm")
 
-legend_grob <- get_legend(p_calendar_a)
-p_calendar_r1 <- plot_grid(
-  p_calendar_a + theme(legend.position = 'none'), p_calendar_b + theme(legend.position = 'none'),
-  ncol = 2,
-  labels = c("(a)", "(b)"), label_fontface = "bold", label_size = 12,
-  align = "v",
-  rel_widths = c(1, 1))
-p_calendar <- plot_grid(p_calendar_r1, legend_grob, ncol = 1, rel_heights = c(4, 1))
+p_calendar <- (p_calendar_a + p_calendar_b) + 
+  plot_layout(guides = 'collect') & 
+  theme(legend.position = 'bottom')
+p_calendar <- p_calendar + 
+  plot_annotation(tag_levels = 'a') & 
+  theme(plot.tag = element_text(size = 12, face = "bold")) & 
+  plot_annotation(tag_prefix = "(", tag_suffix = ")")
