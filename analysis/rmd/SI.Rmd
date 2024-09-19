@@ -13,14 +13,9 @@ source("~/Github/spore_phenology/analysis/functions/utils.R")
 
 # Table S1
 ```{r}
-df_station <- df_siteyear %>% 
-  rename(
-    "Station Name" = "station",
-    "Station City" = "city",
-    "Station State" = "state") %>% 
-  group_by(`Station Name`, `Station City`, `Station State`) %>% 
-  summarise(`Sampling period` = str_c( min(date), "to", max(date), sep = " "))
+source(str_c(.path$ana_fun, "summ_data_station.R"))
 # write.csv(df_station, file = "~/Downloads/phenology_spore/output/tables/tbl_station_meta.csv")
+write.csv(df_summ_data, file = str_c(.path$out_tbl, "tbl_station_meta_data.csv"))
 ```
 
 # Table S1
