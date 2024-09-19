@@ -63,13 +63,12 @@ pacman::p_load(rcartocolor)
 # ln -s /nfs/turbo/seas-zhukai/phenology/nab/ data/nab
 
 .path <- list( # hidden variable won't be removed
-  nab_raw = "~/Github/spore_phenology/data/nab/raw/",
-  nab_clean = "~/Github/spore_phenology/data/nab/clean/",
-  dat_process = "~/Github/spore_phenology/data/processed/",
-  out_simple_model = "~/Github/spore_phenology/data/pheno_model/simple/",
-  out_bayes_model = "~/Github/spore_phenology/data/pheno_model/bayes/",
-  out_fig = "~/Github/spore_phenology/data/output/figures/"
+  nab_raw = "~/Downloads/nab/raw/",
+  nab_clean = "~/Downloads/nab/clean/",
+  dat_process = "~/Downloads/phenology_spore/processed/2023-04-25/",
+  # out_simple_model = "~/Github/spore_phenology/data/pheno_model/simple/",
+  # out_bayes_model = "~/Github/spore_phenology/data/pheno_model/bayes/",
+  out_fig = "~/Downloads/phenology_spore/output/figures/"
 )
-
 
 options(scipen = 999)

@@ -1,6 +1,6 @@
 # read the offset of each station from turbo
 
-df_offset <- read_rds(str_c(.path$dat_process, "2023-04-25/fill_smooth_offset.rds")) %>% 
+df_offset <- read_rds(str_c(.path$dat_process, "fill_smooth_offset.rds")) %>% 
   group_by(lat, lon, station, state, country, id, lambda, offset) %>% 
   summarise(
     lat = head(lat, 1),

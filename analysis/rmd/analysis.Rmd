@@ -8,23 +8,23 @@ output:
 
 ```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = FALSE)
-source("~/Github/spore_phenology/code/0_utils.R")
+source("~/Github/spore_phenology/analysis/functions/utils.R")
 ```
 
 # read spore data
 ```{r read, message=FALSE, warning=FALSE}
-df_spore <- read_rds("~/Downloads/phenology_spore/processed/2023-04-25/spore_dat.rds")
+df_spore <- read_rds(str_c(.path$dat_process, "spore_dat.rds"))
 ```
 
 # filter the stations
 ```{r filter, message=FALSE, warning=FALSE}
-source("~/Github/spore_phenology/code/analysis/functions/filt_taxa_station_raw_data.R")
+source(str_c(.path$ana_fun, "filt_taxa_station_raw_data.R"))
 df_siteyear <- filt_taxa_station_raw_data(df_spore, "Total", 10, 3)
 ```
 
 # rename stations and tag number for each station
 ```{r message=FALSE, warning=FALSE}
-source("~/Github/spore_phenology/code/analysis/functions/tidy_rename_number_station.R")
+source(str_c(.path$ana_fun, "tidy_rename_number_station.R"))
 df_site <- tidy_rename_number_station(df_siteyear)
 ```
 
@@ -33,67 +33,67 @@ df_site <- tidy_rename_number_station(df_siteyear)
 df_meta <- df_site %>%
   distinct(n, .keep_all = T) %>%
   dplyr::select(-year, -date, -count)
-# write_rds(df_meta, str_c(.path$dat_process, "2023-04-25/meta.rds"))
+# write_rds(df_meta, str_c(.path$dat_process, "meta.rds"))
 ```
 
 # summarize the ecoregion of each station
 ```{r ecoregion, eval = F, message=FALSE, warning=FALSE}
-source("~/Github/spore_phenology/code/analysis/functions/summ_ecoregion_station.R")
+source(str_c(.path$ana_fun, "summ_ecoregion_station.R"))
 df_ecoregion <- summ_ecoregion_station(df_meta)
 ```
 
 <!-- # plot ecoregion -->
 <!-- ```{r plot-ecoregion, eval = F, message=FALSE, warning=FALSE} -->
-<!-- source("~/Github/spore_phenology/code/analysis/functions/plot_ecoregion_stations.R") -->
-<!-- df_meta <- read_rds(str_c(.path$dat_process, "2023-04-25/meta.rds")) -->
+<!-- source(str_c(.path$ana_fun, "plot_ecoregion_stations.R")) -->
+<!-- df_meta <- read_rds(str_c(.path$dat_process, "meta.rds")) -->
 <!-- p_ecoregion <- plot_ecoregion_staton(df_in = df_meta) -->
 <!-- p_ecoregion -->
 <!-- ``` -->
 
 # pre-process spore raw data: pad the date to full year round
 ```{r full, message=FALSE, warning=FALSE}
-source("~/Github/spore_phenology/code/analysis/functions/tidy_fulldate_station.R")
+source(str_c(.path$ana_fun, "tidy_fulldate_station.R"))
 df_full <- tidy_fulldate_station(df_site)
 ```
 
 # read the offset and insert into the dataset
 ```{r read offset and merge with smooth data, message=FALSE, warning=FALSE}
-source("~/Github/spore_phenology/code/analysis/functions/read_offset_station.R")
+source(str_c(.path$ana_fun, "read_offset_station.R"))
 df_full <- df_full %>%
   left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id")) %>% 
   rename(lmd_offset = lambda)
-# write_rds(df_full, str_c(.path$dat_process, "2023-04-25/dat_spore_fulldate.rds"))
+# write_rds(df_full, str_c(.path$dat_process, "dat_spore_fulldate.rds"))
 ```
 
 # linear interpolation and whittaker smoothing
 ```{r smooth, message=FALSE, warning=FALSE}
-source("~/Github/spore_phenology/code/analysis/functions/tidy_smoothfillwhit_station.R")
+source(str_c(.path$ana_fun, "tidy_smoothfillwhit_station.R"))
 df_smooth_100 <- df_full %>%
   tidy_smoothfillwhit_station(n_gap = 14, lambda = 100,column_name = count, new_column_name = count_fillwhit)
 ```
 
 # define spore year
 ```{r spore year, message=FALSE, warning=FALSE}
-source("~/Github/spore_phenology/code/analysis/functions/tidy_sporeyr_station.R")
+source(str_c(.path$ana_fun, "tidy_sporeyr_station.R"))
 df_sporeyr = df_smooth_100 %>% tidy_sporeyr_station()
-# write_rds(df_sporeyr, str_c(.path$dat_process, "2023-04-25/dat_smooth_100.rds"))
+# write_rds(df_sporeyr, str_c(.path$dat_process, "dat_smooth_100.rds"))
 ```
 
 # tag data completeness in each station-sporeyear
 ```{r message=FALSE, warning=FALSE}
-source("~/Github/spore_phenology/code/analysis/functions/calc_completeness_stationspyr.R")
+source(str_c(.path$ana_fun, "calc_completeness_stationspyr.R"))
 df_spore_cpltness <- calc_completeness_stationspyr(df_sporeyr, column_name = count_fillwhit)
 ```
 
 # extract spore metrics
 ```{r, warning=FALSE, message=FALSE}
-source("~/Github/spore_phenology/code/analysis/functions/calc_metrics_stationspyr.R")
+source(str_c(.path$ana_fun, "calc_metrics_stationspyr.R"))
 df_metrics <- calc_metrics_stationspyr(df_completeness = df_spore_cpltness, df_raw = df_sporeyr)
 ```
 
 # gather df_metrics into a long df
 ```{r}
-source("~/Github/spore_phenology/code/analysis/functions/tidy_gathermetrics.R")
+source(str_c(.path$ana_fun, "tidy_gathermetrics.R"))
 df_metrics_long <- tidy_gathermetrics(df_metrics)
 ```
 
@@ -103,38 +103,38 @@ color_palette <- colorRampPalette(colors = rainbow(55))
 df_metrics_long = df_metrics_long %>% mutate(col = color_palette(55)[n])
 ```
 
-# download the climate data
-```{r download daymet, eval = F}
-df_meta = read_rds(str_c(.path$dat_process, "2023-04-25/meta.rds"))
-source("~/Github/spore_phenology/code/analysis/functions/down_daymet_station_date.R")
-df_daymet_allday <- down_daymet_station_date(df_meta)
-write_rds(df_daymet_allday, str_c(.path$dat_process, "2023-04-25/dat_daymet_raw.rds"))
-```
+<!-- # download the climate data -->
+<!-- ```{r download daymet, eval = F} -->
+<!-- df_meta = read_rds(str_c(.path$dat_process, "meta.rds")) -->
+<!-- source(str_c(.path$ana_fun, "down_daymet_station_date.R")) -->
+<!-- df_daymet_allday <- down_daymet_station_date(df_meta) -->
+<!-- write_rds(df_daymet_allday, str_c(.path$dat_process, "dat_daymet_raw.rds")) -->
+<!-- ``` -->
 
 # read datmet raw data
 ```{r, eval = F}
-df_daymet_raw <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_daymet_raw.rds"))
+df_daymet_raw <- read_rds(str_c(.path$dat_process, "dat_daymet_raw.rds"))
 ```
 
 # calculate MAT, TAP in each spore year
 ```{r, eval = F}
-source("~/Github/spore_phenology/code/analysis/functions/calc_climate_stationspyr.R")
+source(str_c(.path$ana_fun, "calc_climate_stationspyr.R"))
 df_daymet_annual <- calc_climate_stationspyr(df_daymet_raw, df_sporeyear = df_sporeyr)
-write_rds(df_daymet_annual, str_c(.path$dat_process, "2023-04-25/dat_daymet_annual.rds"))
+write_rds(df_daymet_annual, str_c(.path$dat_process, "dat_daymet_annual.rds"))
 ```
 
 # read MAT, TAP and join with metrics data
 ```{r data}
-df_daymet_annual <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_daymet_annual.rds"))
+df_daymet_annual <- read_rds(str_c(.path$dat_process, "dat_daymet_annual.rds"))
 df_ana_full <- right_join(df_daymet_annual, df_metrics_long, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
-# write_rds(df_ana_full, str_c(.path$dat_process, "2023-04-25/dat_ana_full_as4605.rds"))
+# write_rds(df_ana_full, str_c(.path$dat_process, "dat_ana_full_as4605.rds"))
 # df_ana_short <- right_join(df_daymet_annual, df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
-# write_rds(df_ana_short, str_c(.path$dat_process, "2023-04-25/dat_ana_short_as4605.rds"))
+# write_rds(df_ana_short, str_c(.path$dat_process, "dat_ana_short_as4605.rds"))
 ```
 
 # filter stations for each metric based on the number of years
 ```{r}
-source("~/Github/spore_phenology/code/analysis/functions/filt_station_NofYears_metric.R")
+source(str_c(.path$ana_fun, "filt_station_NofYears_metric.R"))
 df_ana <- filt_station_NofYears_metric(df_in = df_ana_full, pct = 0.8)
-# write_rds(df_ana, str_c(.path$dat_process, "2023-04-25/dat_ana_as4605.rds"))
+# write_rds(df_ana, str_c(.path$dat_process, "dat_ana_as4605.rds"))
 ```

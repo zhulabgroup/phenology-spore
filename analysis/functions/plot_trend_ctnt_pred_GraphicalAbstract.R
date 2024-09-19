@@ -1,4 +1,4 @@
-plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
+plot_trend_ctnt_pred_GraphicalAbstract <- function(df_in, model, metric, pct) {
   beta_value <- fixef(model)[["year_new"]] %>% as.numeric() %>% round(3)
   p_value <- summary(model)$tTable[["year_new", "p-value"]] %>% as.numeric() %>% round(3)
   station_slope <- coef(model) %>% 
@@ -22,7 +22,7 @@ plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
     left_join(station_slope, by = "n")
   df_ci <- ggpredict(model, terms = c("year_new", "n"), type = "re") %>%
     as_tibble()
-   
+  
   out_gg <- ggplot() +
     geom_ribbon(
       data = df_ci,
@@ -33,11 +33,6 @@ plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
       aes(x = year_new, y = Value, col = col),
       alpha = 0.8,
       size = 0.7) +
-    geom_line(
-      data = df_lme,
-      aes(x = year_new, y = lme_random, group = n, col = col),
-      alpha = 0.8,
-      linewidth = 0.3) +
     scale_color_identity() +
     geom_line(
       data = df_lme,
