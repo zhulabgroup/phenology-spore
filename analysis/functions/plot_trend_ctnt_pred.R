@@ -71,7 +71,8 @@ plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
   }
   
   if (metric %in% c("ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn")) {
-    out_gg <- out_gg + scale_y_continuous(labels = scales::math_format(e^.x))
+    out_gg <- out_gg + scale_y_continuous(
+      labels = scales::math_format(e^.x))
   }
   
   if (metric == "SOS") {

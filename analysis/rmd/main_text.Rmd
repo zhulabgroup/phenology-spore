@@ -56,8 +56,8 @@ p_trend_ctnt_pred_composite
 ```{r fig-coefplot, fig.height=10*0.618, fig.width=10, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="FIGURE 5 Summary of coefficients β1 in three mixed-effects models for each metric. Points are estimated values of β1. Error bars indicate the 95% confidence intervals of the fixed slope. Specific values are annotated. Colors are different independent variables in the model. Non-transparent colors present significant coefficients (p < 0.05, t-test)."}
 source(str_c(.path$ana_fun, "plot_coefplot.R"))
 p_coef
-# ggsave(
-#   paste0(.path$out_fig, "preprint/Figure_5.png"),
-#   plot = p_coef,
-#   height = 10 * 0.618, width = 10)
+ggsave(
+  paste0(.path$out_fig, "preprint/Figure_5.png"),
+  plot = p_coef,
+  height = 10 * 0.618, width = 10)
 ```

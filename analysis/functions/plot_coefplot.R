@@ -89,15 +89,22 @@ for (x_var in c("year", "MAT", "TAP")) {
 p_coef <- 
   (p_coef_list[[1]] +
              labs(title = "Independent variable: year") +
-             theme(plot.title = element_text(face = "plain", hjust = 0.5)) +
+             theme(plot.title = element_text(face = "plain", hjust = 0.5, size = 12)) +
              p_coef_list[[3]] +
              labs(title = "Independent variable: MAT") +
-             theme(plot.title = element_text(face = "plain", hjust = 0.5)) + 
+             theme(plot.title = element_text(face = "plain", hjust = 0.5, size = 12)) + 
              p_coef_list[[5]] +
              labs(title = "Independent variable: TAP") +
-             theme(plot.title = element_text(face = "plain", hjust = 0.5))) / 
+             theme(plot.title = element_text(face = "plain", hjust = 0.5, size = 12))) / 
   (p_coef_list[[2]] +
      p_coef_list[[4]] +
-     labs(x = expression(italic(beta)[1])) + 
+     labs(x = expression("Continental US-level coefficient " * italic(beta)[1])) + 
      p_coef_list[[6]]) + 
   plot_layout(heights = c(3, 2))
+
+p_coef <- plot_grid(
+  grid::textGrob("Dependent variable", rot = 90, vjust = 0.5, gp = grid::gpar(fontsize = 12)),  # Y-axis label
+  p_coef,  # The composite plot
+  ncol = 2,  # Two columns: one for the label, one for the plot
+  rel_widths = c(0.03, 0.97)  # Adjust widths to give space to the plot
+)
