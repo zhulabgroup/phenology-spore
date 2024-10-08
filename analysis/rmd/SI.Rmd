@@ -50,8 +50,8 @@ df_trend_taxa %>%
 # Fig. S1
 ```{r fig-ecoregion, fig.height=8*0.618, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S1: Map of 55 fungal spore counting stations associated with the National Allergy Bureau (NAB) distributed in different ecoregions within the continental United States that were included in the analysis of this study. Map lines delineate study areas and do not necessarily depict accepted national boundaries."}
 source(str_c(.path$ana_fun, "plot_ecoregion_stations.R"))
-df_meta <- read_rds(str_c(.path$dat_process, "2023-04-25/meta.rds"))
-df_ecoregions <- st_read(paste0(.path$dat_process, "2023-04-25/na_cec_eco_l1/NA_CEC_Eco_Level1.shp"))
+df_meta <- read_rds(str_c(.path$dat_process, "meta.rds"))
+df_ecoregions <- st_read(paste0(.path$dat_process, "na_cec_eco_l1/NA_CEC_Eco_Level1.shp"))
 p_ecoregion <- plot_ecoregion_staton(df_in = df_meta, df_base = df_ecoregions)
 p_ecoregion
 ```

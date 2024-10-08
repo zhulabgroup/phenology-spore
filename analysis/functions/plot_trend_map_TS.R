@@ -64,7 +64,9 @@ plot_trend_map_TS <- function(df_in, metric) {
     p_map <- p_map +
       scale_color_gradient2(
         low = "red", mid= "white", high = "blue", midpoint = 0,
-        labels = function(x) {x^3}) +
+        # labels = function(x) {x^3},
+        breaks = c(-2, -1, 0, 1),
+        labels = c("-8  Earlier", "-1", "0", "1  Later")) +
       labs(color = expression("Theil-Sen trend of\nSAS (days per year)"))
   }
   if (metric == "EOS") {

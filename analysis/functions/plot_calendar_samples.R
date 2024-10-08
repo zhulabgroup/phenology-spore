@@ -1,5 +1,5 @@
-df_full <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_spore_fulldate.rds"))
-df_ana_short <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_short_as4605.rds"))
+df_full <- read_rds(str_c(.path$dat_process, "dat_spore_fulldate.rds"))
+df_ana_short <- read_rds(str_c(.path$dat_process, "dat_ana_short_as4605.rds"))
 source(str_c(.path$ana_fun, "calc_calendar.R"))
 source(str_c(.path$ana_fun, "plot_calendar.R"))
 

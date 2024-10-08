@@ -1,12 +1,12 @@
-# df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/fill_smooth_offset.rds"))
-# df_metrics <- read_rds(str_c(.path$dat_process, "2023-04-25/metrics_amplitude.rds"))
+# df_smooth <- read_rds(str_c(.path$dat_process, "fill_smooth_offset.rds"))
+# df_metrics <- read_rds(str_c(.path$dat_process, "metrics_amplitude.rds"))
 # df_antt <- df_smooth %>%
 #   filter(n == 10) %>%
 #   filter(year == 2009 | (year == 2010 & doy <= offset*2)) %>%
 #   left_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
-# write_rds(df_antt, str_c(.path$dat_process, "2023-04-25/dat_antt.rds"))
+# write_rds(df_antt, str_c(.path$dat_process, "dat_antt.rds"))
 
-df_antt <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_antt.rds"))
+df_antt <- read_rds(str_c(.path$dat_process, "dat_antt.rds"))
 p_antt <- ggplot() +
   geom_ribbon_pattern(
     data = df_antt %>% filter(year_new == 2009 & doy_new %in% 137:236),

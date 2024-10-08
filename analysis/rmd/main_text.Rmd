@@ -9,7 +9,7 @@ output:
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE, process=FALSE}
 knitr::opts_chunk$set(echo = FALSE, cache=FALSE, warning = FALSE, message = FALSE, process=FALSE)
 source("~/Github/spore_phenology/analysis/functions/utils.R")
-df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_as4605.rds"))
+df_ana <- read_rds(str_c(.path$dat_process, "dat_ana_as4605.rds"))
 ```
 
 # Fig. metrics
@@ -17,7 +17,7 @@ df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_as4605.rds"))
 source(str_c(.path$ana_fun, "plot_metrics.R"))
 p_metrics
 # ggsave(
-#   paste0(.path$out_fig, "STOTEN/Figure_1.tiff"),
+#   paste0(.path$out_fig, "preprint/Figure_1.png"),
 #   plot = p_metrics,
 #   height = 11, width = 11)
 ```
@@ -27,7 +27,7 @@ p_metrics
 source(str_c(.path$ana_fun, "plot_calendar_samples.R"))
 p_calendar
 # ggsave(
-#   paste0(.path$out_fig, "STOTEN/Figure_2.tiff"),
+#   paste0(.path$out_fig, "preprint/Figure_2.png"),
 #   plot = p_calendar,
 #   height = 5 * 0.8, width = 10)
 ```
@@ -37,7 +37,7 @@ p_calendar
 source(str_c(.path$ana_fun, "plot_trend_map_TS_SAS.R"))
 p_trend_map_TS_SAS
 # ggsave(
-#   paste0(.path$out_fig, "STOTEN/Figure_3.tiff"),
+#   paste0(.path$out_fig, "preprint/Figure_3.png"),
 #   plot = p_trend_map_TS_SAS,
 #   height = 8 * 0.618, width = 8)
 ```
@@ -47,7 +47,7 @@ p_trend_map_TS_SAS
 source(str_c(.path$ana_fun, "plot_trend_ctnt_pred_composite.R"))
 p_trend_ctnt_pred_composite
 # ggsave(
-#   paste0(.path$out_fig, "STOTEN/Figure_4.tiff"),
+#   paste0(.path$out_fig, "preprint/Figure_4.png"),
 #   plot = p_trend_ctnt_pred_composite,
 #   height = 11 * 0.8, width = 11)
 ```
@@ -57,7 +57,7 @@ p_trend_ctnt_pred_composite
 source(str_c(.path$ana_fun, "plot_coefplot.R"))
 p_coef
 # ggsave(
-#   paste0(.path$out_fig, "STOTEN/Figure_5.tiff"),
+#   paste0(.path$out_fig, "preprint/Figure_5.png"),
 #   plot = p_coef,
 #   height = 10 * 0.618, width = 10)
 ```
