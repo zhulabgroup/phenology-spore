@@ -8,11 +8,7 @@ output:
 
 ```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = FALSE)
-if (!requireNamespace("here", quietly = TRUE)) {
-  install.packages("here")
-}
-library(here)
-source(here::here("analysis/functions/utils.R"))
+source("../functions/utils.R")
 ```
 
 # read spore data
