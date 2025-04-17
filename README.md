@@ -1,8 +1,6 @@
 This repository reproduces the analysis in
 
-Wu, R., Song, Y., Head, J.R., Katz, D.S.W., Peay, K.G., Shedden, K.,
-Zhu, K. Fungal spore seasons advanced across the US over two decades of
-climate change.
+Wu, R., Song, Y., Head, J.R., Katz, D.S.W., Peay, K.G., Shedden, K., Zhu, K. Fungal spore seasons advanced across the US over two decades of climate change.
 
 This repository is organized as follows:
 
