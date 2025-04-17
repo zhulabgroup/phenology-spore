@@ -81,7 +81,7 @@ pacman::p_load("patchwork")
 .path <- list( # hidden variable won't be removed
   # nab_raw = "~/Downloads/nab/raw/",
   # nab_clean = "~/Downloads/nab/clean/",
-  # dat_process = "~/Downloads/phenology_spore/processed/2023-04-25/",
+  dat_process = "../alldata/processed/2023-04-25/",
   ana_fun = "../functions/"
   # out_fig = "~/Downloads/phenology_spore/output/figures/",
   # out_tbl = "~/Downloads/phenology_spore/output/tables/"
