@@ -7,7 +7,7 @@ tidy_fulldate_station <-function(df_raw) {
     mutate(year = format(date, "%Y") %>% as.integer()) %>%
     mutate(doy = format(date, "%j") %>% as.integer()) %>%
     ungroup() %>%
-    dplyr::select(lat, lon, station, city, state, country, id, n, year, doy, date, count)
+    select(lat, lon, station, city, state, country, id, n, year, doy, date, count)
   
   return(df)
 }

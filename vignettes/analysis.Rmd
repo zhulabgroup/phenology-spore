@@ -10,7 +10,7 @@ output:
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = FALSE)
 source("../functions/utils.R")
 
-.fulldata <- F
+.fulldata <- T
 ```
 
 # read spore data
@@ -66,30 +66,38 @@ df_ecoregion <- summ_ecoregion_station(df_meta, boundary_path = str_c(.path$inpu
 # pre-process spore raw data: pad the date to full year round
 ```{r full, message=FALSE, warning=FALSE}
 source(str_c(.path$ana_fun, "tidy_fulldate_station.R"))
-df_full <- tidy_fulldate_station(df_site)
+if (.fulldata) {
+  df_full <- tidy_fulldate_station(df_site)
+}
 ```
 
 # read the offset and insert into the dataset
 ```{r read offset and merge with smooth data, message=FALSE, warning=FALSE}
-source(str_c(.path$ana_fun, "read_offset_station.R"))
+if(.fulldata) {
+  source(str_c(.path$ana_fun, "read_offset_station.R"))
 df_full <- df_full %>%
   left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id")) %>% 
   rename(lmd_offset = lambda)
 # write_rds(df_full, str_c(.path$dat_process, "dat_spore_fulldate.rds"))
+}
 ```
 
 # linear interpolation and whittaker smoothing
 ```{r smooth, message=FALSE, warning=FALSE}
 source(str_c(.path$ana_fun, "tidy_smoothfillwhit_station.R"))
-df_smooth_100 <- df_full %>%
+if(.fulldata) {
+  df_smooth_100 <- df_full %>%
   tidy_smoothfillwhit_station(n_gap = 14, lambda = 100,column_name = count, new_column_name = count_fillwhit)
+}
 ```
 
 # define spore year
 ```{r spore year, message=FALSE, warning=FALSE}
 source(str_c(.path$ana_fun, "tidy_sporeyr_station.R"))
-df_sporeyr = df_smooth_100 %>% tidy_sporeyr_station()
-# write_rds(df_sporeyr, str_c(.path$dat_process, "dat_smooth_100.rds"))
+if(.fulldata) {
+  df_sporeyr <- df_smooth_100 %>% tidy_sporeyr_station()
+  # write_rds(df_sporeyr, str_c(.path$dat_process, "dat_smooth_100.rds"))
+}
 ```
 
 # tag data completeness in each station-sporeyear
