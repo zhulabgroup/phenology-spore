@@ -9,37 +9,50 @@ output:
 ```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = FALSE)
 source("../functions/utils.R")
+
+.fulldata <- F
 ```
 
 # read spore data
 ```{r read, message=FALSE, warning=FALSE}
-df_spore <- read_rds(str_c(.path$dat_process, "spore_dat.rds"))
+if (.fulldata) {
+  df_spore <- read_rds(str_c(.path$dat_process, "spore_dat.rds"))
+}
 ```
 
 # filter the stations
 ```{r filter, message=FALSE, warning=FALSE}
 source(str_c(.path$ana_fun, "filt_taxa_station_raw_data.R"))
-df_siteyear <- filt_taxa_station_raw_data(df_spore, "Total", 10, 3)
+
+if(.fulldata) {
+  df_siteyear <- filt_taxa_station_raw_data(df_spore, "Total", 10, 3)
+}
 ```
 
 # rename stations and tag number for each station
 ```{r message=FALSE, warning=FALSE}
 source(str_c(.path$ana_fun, "tidy_rename_number_station.R"))
-df_site <- tidy_rename_number_station(df_siteyear)
+if(.fulldata) {
+  df_site <- tidy_rename_number_station(df_siteyear)
+}
 ```
 
 # generate and save site meta data for future downloading of daymet data
 ```{r meta, eval = F, message=FALSE, warning=FALSE}
-df_meta <- df_site %>%
+if(.fulldata) {
+  df_meta <- df_site %>%
   distinct(n, .keep_all = T) %>%
-  dplyr::select(-year, -date, -count)
-# write_rds(df_meta, str_c(.path$dat_process, "meta.rds"))
+  select(-year, -date, -count)
+  write_rds(df_meta, str_c(.path$intermediate, "meta.rds"))
+} else {
+  df_meta <- read_rds(str_c(.path$intermediate, "meta.rds"))
+}
 ```
 
 # summarize the ecoregion of each station
 ```{r ecoregion, eval = F, message=FALSE, warning=FALSE}
 source(str_c(.path$ana_fun, "summ_ecoregion_station.R"))
-df_ecoregion <- summ_ecoregion_station(df_meta)
+df_ecoregion <- summ_ecoregion_station(df_meta, boundary_path = str_c(.path$input, "boundary") )
 ```
 
 <!-- # plot ecoregion -->

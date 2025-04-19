@@ -1,13 +1,26 @@
 # confirm the ecoregion of each station
 
-summ_ecoregion_station <- function(df) {
-  coordinates(df) <- ~lon+lat
-  regions <- readOGR(paste0(.path$dat_process, "2023-04-25/na_cec_eco_l1/NA_CEC_Eco_Level1.shp"))
-  crs(df) <- CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
-  df <- spTransform(df, crs(regions))
-  df$region <- over(df, regions)$NA_L1NAME
-  df <- as.data.frame(df) %>% 
-    rename(ecoregion = region)
+summ_ecoregion_station <- function(df, boundary_path) {
+  # Read in the boundary shapefile using sf
+  shp_path <- list.files(path = boundary_path, pattern = "\\.shp$", full.names = TRUE)
+  regions <- sf::st_read(shp_path)
   
-  return(df)
+  # Create a simple features (sf) object for your points (df)
+  # Assuming df contains lon and lat columns
+  df_sf <- sf::st_as_sf(df, coords = c("lon", "lat"), crs = 4326)
+  
+  # Transform the CRS of df to match the CRS of the regions shapefile
+  df_sf <- sf::st_transform(df_sf, sf::st_crs(regions))
+  
+  # Perform the spatial join using st_join (equivalent to 'over' in sp)
+  df_sf <- sf::st_join(df_sf, regions)
+  
+  # Rename the resulting region column
+  df_sf <- df_sf %>% 
+    rename(ecoregion = NA_L1NAME)
+  
+  # Convert back to a data frame if needed
+  df_sf <- as.data.frame(df_sf)
+
+  return(df_sf)
 }

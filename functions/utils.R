@@ -82,9 +82,12 @@ pacman::p_load("patchwork")
   # nab_raw = "~/Downloads/nab/raw/",
   # nab_clean = "~/Downloads/nab/clean/",
   dat_process = "../alldata/processed/2023-04-25/",
-  ana_fun = "../functions/"
+  ana_fun = "../functions/",
   # out_fig = "~/Downloads/phenology_spore/output/figures/",
   # out_tbl = "~/Downloads/phenology_spore/output/tables/"
+  input = "../data/input/",
+  intermediate = "../data/intermediate/",
+  output = "../data/output/"
 )
 
 
