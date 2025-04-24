@@ -1,7 +1,11 @@
 if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
 
 # List of required packages
-required_packages <- c("patchwork", "tidyverse")
+required_packages <- c("patchwork", "tidyverse", "ggpattern", "nlme", "lme4", "mblm","ggeffects", "cowplot", "grid")
+
+if (.fulldata) {
+  required_packages <- c(required_packages, "daymetr")
+}
 
 # Identify missing packages
 missing_packages <- setdiff(required_packages, rownames(installed.packages()))
@@ -30,7 +34,6 @@ pacman::p_load("patchwork")
 # }
 # p_load(greenbrown)
 # p_load(nimble)
-# p_load(daymetr)
 # p_load(lubridate)
 # p_load(gridExtra)
 # p_load(ggrepel)
@@ -61,11 +64,9 @@ pacman::p_load("patchwork")
 # pacman::p_load(grid)
 # pacman::p_load(plotly)
 # pacman::p_load(pracma)
-# pacman::p_load(daymetr)
 # pacman::p_load(cowplot)
 # pacman::p_load(glue)
 # # remotes::install_github("coolbutuseless/ggpattern")
-# pacman::p_load(ggpattern)
 # pacman::p_load(sp)
 # pacman::p_load(sf)
 # pacman::p_load(tigris)

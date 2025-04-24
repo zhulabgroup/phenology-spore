@@ -1,0 +1,167 @@
+---
+title: "Processing"
+author: "Ruoyu Wu, Yiluan Song"
+date: "2025-04-24"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = FALSE)
+
+.fulldata <- T
+
+source("../functions/utils.R")
+```
+
+Read spore data
+```{r read}
+if (.fulldata) {
+  df_spore <- read_rds(str_c(.path$dat_process, "spore_dat.rds"))
+}
+```
+
+Filter the stations
+```{r filter}
+source(str_c(.path$ana_fun, "filt_taxa_station_raw_data.R"))
+
+if (.fulldata) {
+  df_siteyear <- filt_taxa_station_raw_data(df_spore, "Total", 10, 3)
+}
+```
+
+Rename stations and tag number for each station
+```{r}
+source(str_c(.path$ana_fun, "tidy_rename_number_station.R"))
+if (.fulldata) {
+  df_site <- tidy_rename_number_station(df_siteyear)
+}
+```
+
+Generate and save site meta data for future downloading of daymet data
+```{r meta}
+if (.fulldata) {
+  df_meta <- df_site %>%
+    distinct(n, .keep_all = T) %>%
+    select(-year, -date, -count)
+  write_rds(df_meta, str_c(.path$intermediate, "meta.rds"))
+} else {
+  df_meta <- read_rds(str_c(.path$intermediate, "meta.rds"))
+}
+```
+
+Summarize the ecoregion of each station
+```{r ecoregion}
+source(str_c(.path$ana_fun, "summ_ecoregion_station.R"))
+df_ecoregion <- summ_ecoregion_station(df_meta, boundary_path = str_c(.path$input, "boundary"))
+```
+
+<!-- # plot ecoregion -->
+<!-- ```{r plot-ecoregion, eval = F} -->
+<!-- source(str_c(.path$ana_fun, "plot_ecoregion_stations.R")) -->
+<!-- df_meta <- read_rds(str_c(.path$dat_process, "meta.rds")) -->
+<!-- p_ecoregion <- plot_ecoregion_staton(df_in = df_meta) -->
+<!-- p_ecoregion -->
+<!-- ``` -->
+
+Pre-process spore raw data: pad the date to full year round
+```{r full}
+source(str_c(.path$ana_fun, "tidy_fulldate_station.R"))
+if (.fulldata) {
+  df_full <- tidy_fulldate_station(df_site)
+}
+```
+
+Read the offset and insert into the dataset
+```{r read offset and merge with smooth data}
+if (.fulldata) {
+  source(str_c(.path$ana_fun, "read_offset_station.R"))
+  df_full <- df_full %>%
+    left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id")) %>%
+    rename(lmd_offset = lambda)
+}
+```
+
+Linear interpolation and whittaker smoothing
+```{r smooth}
+source(str_c(.path$ana_fun, "tidy_smoothfillwhit_station.R"))
+if (.fulldata) {
+  df_smooth_100 <- df_full %>%
+    tidy_smoothfillwhit_station(n_gap = 14, lambda = 100, column_name = count, new_column_name = count_fillwhit)
+}
+```
+
+Define spore year
+```{r spore year}
+source(str_c(.path$ana_fun, "tidy_sporeyr_station.R"))
+if (.fulldata) {
+  df_sporeyr <- df_smooth_100 %>% tidy_sporeyr_station()
+}
+```
+
+Tag data completeness in each station-sporeyear
+```{r}
+source(str_c(.path$ana_fun, "calc_completeness_stationspyr.R"))
+if (.fulldata) {
+  df_spore_cpltness <- calc_completeness_stationspyr(df_sporeyr, column_name = count_fillwhit)
+}
+```
+
+Extract spore metrics
+```{r metrics}
+source(str_c(.path$ana_fun, "calc_metrics_stationspyr.R"))
+if (.fulldata) {
+  df_metrics <- calc_metrics_stationspyr(df_completeness = df_spore_cpltness, df_raw = df_sporeyr)
+  write_rds(df_metrics, str_c(.path$intermediate, "metrics.rds"))
+} else {
+  df_metrics <- read_rds(str_c(.path$intermediate, "metrics.rds"))
+}
+```
+
+Gather df_metrics into a long df
+```{r}
+source(str_c(.path$ana_fun, "tidy_gathermetrics.R"))
+df_metrics_long <- tidy_gathermetrics(df_metrics)
+```
+
+Assign color palette for 55 stations
+```{r color palette}
+color_palette <- colorRampPalette(colors = rainbow(55))
+df_metrics_long <- df_metrics_long %>% mutate(col = color_palette(55)[n])
+```
+
+Download the climate data
+```{r download daymet}
+source(str_c(.path$ana_fun, "down_daymet_station_date.R"))
+if (FALSE) {
+  df_daymet_allday <- down_daymet_station_date(df_meta) %>%
+    filter(measurement %in% c("prcp..mm.day.", "tmax..deg.c.", "tmin..deg.c.")) %>%
+    select(-tile)
+  write_rds(df_daymet_allday, str_c(.path$input, "dat_daymet_raw.rds"))
+} else {
+  df_daymet_raw <- read_rds(str_c(.path$input, "dat_daymet_raw.rds"))
+}
+```
+
+Calculate MAT, TAP in each spore year
+```{r climate summary}
+source(str_c(.path$ana_fun, "calc_climate_stationspyr.R"))
+if (FALSE) {
+  df_daymet_annual <- calc_climate_stationspyr(df_daymet_raw, df_sporeyear = df_sporeyr)
+  write_rds(df_daymet_annual, str_c(.path$intermediate, "daymet_annual.rds"))
+} else {
+  df_daymet_annual <- read_rds(str_c(.path$intermediate, "daymet_annual.rds"))
+}
+```
+
+Join MAT, TAP with metrics data
+```{r data}
+df_ana_full <- right_join(df_daymet_annual, df_metrics_long, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
+```
+
+Filter stations for each metric based on the number of years
+```{r}
+source(str_c(.path$ana_fun, "filt_station_NofYears_metric.R"))
+df_ana <- filt_station_NofYears_metric(df_in = df_ana_full, pct = 0.8)
+write_rds(df_ana, str_c(.path$intermediate, "analysis.rds"))
+```

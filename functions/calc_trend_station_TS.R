@@ -12,7 +12,7 @@ calc_trend_station_TS <- function(df_in, metric, pct) {
   df_lm <- df %>%
     group_by(lat, lon, station, city, state, country, id, n, offset) %>%
     do({
-      result <- mblm(Value ~ year_new, .)
+      result <- mblm::mblm(Value ~ year_new, .)
       data_frame(
         r_squared =
           result %>%

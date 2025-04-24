@@ -102,7 +102,7 @@ p_coef <-
      p_coef_list[[6]]) + 
   plot_layout(heights = c(3, 2))
 
-p_coef <- plot_grid(
+p_coef <- cowplot::plot_grid(
   grid::textGrob("Dependent variable", rot = 90, vjust = 0.5, gp = grid::gpar(fontsize = 12)),  # Y-axis label
   p_coef,  # The composite plot
   ncol = 2,  # Two columns: one for the label, one for the plot

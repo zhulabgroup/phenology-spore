@@ -8,28 +8,28 @@
 
 df_antt <- read_rds(str_c(.path$dat_process, "dat_antt.rds"))
 p_antt <- ggplot() +
-  geom_ribbon_pattern(
+  ggpattern::geom_ribbon_pattern(
     data = df_antt %>% filter(year_new == 2009 & doy_new %in% 137:236),
     aes(x = date, ymin = 0, ymax = count_whit, pattern_colour = "allergy season\nintegral (ASIn)"),
     pattern = "stripe",
     pattern_fill = "dark red",
     fill = NA,
     alpha = 0.4) +
-  scale_pattern_colour_manual(
+  ggpattern::scale_pattern_colour_manual(
     name = "",
     values = c("dark red"),
     guide = guide_legend(alpha = 0.4)) +
-  geom_ribbon_pattern(
+  ggpattern::geom_ribbon_pattern(
     data = df_antt %>% filter(year_new == 2009 & doy_new %in% 1:78),
     aes(x = date, ymin = 0, ymax = count_whit, pattern_fill = "10% of the\nannual integral"),
     pattern = "stripe",
     pattern_colour = "orange",
     fill = NA) +
-  scale_pattern_fill_manual(
+  ggpattern::scale_pattern_fill_manual(
     name = "",
     values = c("orange"),
     guide = guide_legend(alpha = 0.4)) +
-  geom_ribbon_pattern(
+  ggpattern::geom_ribbon_pattern(
     data = df_antt %>% filter(year_new == 2009 & doy_new %in% 282:365),
     aes(x = date, ymin = 0, ymax = count_whit),
     pattern = "stripe",

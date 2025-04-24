@@ -7,7 +7,7 @@ This repository is organized as follows:
 # `vignettes/`
 Contains all the core R Markdown files for reproducing the analysis.
 
-- `analysis.Rmd` Performs all data wrangling and processing.
+- `processing.Rmd` Performs all data wrangling and processing.
 
 - `main_text.Rmd` Generates the figures used in the main text of the manuscript.
 

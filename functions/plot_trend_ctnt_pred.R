@@ -1,5 +1,5 @@
 plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
-  beta_value <- fixef(model)[["year_new"]] %>% as.numeric() %>% round(3)
+  beta_value <- lme4::fixef(model)[["year_new"]] %>% as.numeric() %>% round(3)
   p_value <- summary(model)$tTable[["year_new", "p-value"]] %>% as.numeric() %>% round(3)
   station_slope <- coef(model) %>% 
     rename("random_intercept" = "(Intercept)") %>% 
@@ -20,7 +20,7 @@ plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
     mutate(n = as.character(n)) %>%
     as_tibble() %>% 
     left_join(station_slope, by = "n")
-  df_ci <- ggpredict(model, terms = c("year_new", "n"), type = "re") %>%
+  df_ci <- ggeffects::ggpredict(model, terms = c("year_new", "n"), type = "random") %>%
     as_tibble()
    
   out_gg <- ggplot() +

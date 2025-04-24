@@ -1,63 +1,87 @@
 ---
 title: "main text"
-author: "Ruoyu Wu"
-date: "2024-02-07"
+author: "Ruoyu Wu, Yiluan Song"
+date: "2025-04-24"
 output:
   html_document: default
 ---
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE, process=FALSE}
-knitr::opts_chunk$set(echo = FALSE, cache=FALSE, warning = FALSE, message = FALSE, process=FALSE)
-source("~/Github/spore_phenology/analysis/functions/utils.R")
-df_ana <- read_rds(str_c(.path$dat_process, "dat_ana_as4605.rds"))
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE, warning = FALSE, message = FALSE, process = FALSE)
+
+.fulldata <- F
+.figsave <- T
+
+source("../functions/utils.R")
+
+df_ana <- read_rds(str_c(.path$intermediate, "analysis.rds"))
 ```
 
-# Fig. metrics
-```{r fig-metrics, fig.height=11, fig.width=11, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="FIGURE 1 Definition and numerical summary of ten fungal spore metrics. (a) The annotation of ten fungal spore metrics. Orange indicates metrics defined in the ecological approach, while dark red indicates metrics defined in the public health approach. Each box represents each metric’s interquartile range (IQR), with the median value indicated by the line inside. Whiskers extend to the minimum and maximum values within 1.5 times the IQR, while points beyond the whiskers are considered outliers. (c) Phenology metrics are in the unit of day of spore year (DOY) or days (for season lengths LOS, LAS), while intensity metrics are in the unit of  (b) spores m^-3 or (d) spores m^-3 days, displayed on a natural logarithm-transformed scale. The abbreviations of metrics used in (b), (c), and (d) are defined in (a)."}
+# Spore phenology metrics
+```{r fig-metrics, fig.height=11, fig.width=11, fig.cap="FIGURE 1 Definition and numerical summary of ten fungal spore metrics. (a) The annotation of ten fungal spore metrics. Orange indicates metrics defined in the ecological approach, while dark red indicates metrics defined in the public health approach. Each box represents each metric’s interquartile range (IQR), with the median value indicated by the line inside. Whiskers extend to the minimum and maximum values within 1.5 times the IQR, while points beyond the whiskers are considered outliers. (c) Phenology metrics are in the unit of day of spore year (DOY) or days (for season lengths LOS, LAS), while intensity metrics are in the unit of  (b) spores m^-3 or (d) spores m^-3 days, displayed on a natural logarithm-transformed scale. The abbreviations of metrics used in (b), (c), and (d) are defined in (a)."}
 source(str_c(.path$ana_fun, "plot_metrics.R"))
 p_metrics
-# ggsave(
-#   paste0(.path$out_fig, "preprint/Figure_1.png"),
-#   plot = p_metrics,
-#   height = 11, width = 11)
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "Figure_1.png"),
+    plot = p_metrics,
+    height = 11, width = 11
+  )
+}
 ```
 
-# Fig. calendar
-```{r fig-calendar, fig.width=10, fig.height=5*0.8, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="FIGURE 2 Fungal spore calendar for ten sampling stations. The daily long-term mean of fungal spore concentration is displayed, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. (a) Stations show variable seasonality across ecological regions. (b) Stations with higher long-term mean of total annual precipitation (mm) show higher intensity of fungal spore seasons."}
+# Spore phenology calendar
+```{r fig-calendar, fig.width=10, fig.height=5*0.8, fig.cap="FIGURE 2 Fungal spore calendar for ten sampling stations. The daily long-term mean of fungal spore concentration is displayed, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. (a) Stations show variable seasonality across ecological regions. (b) Stations with higher long-term mean of total annual precipitation (mm) show higher intensity of fungal spore seasons."}
 source(str_c(.path$ana_fun, "plot_calendar_samples.R"))
 p_calendar
-# ggsave(
-#   paste0(.path$out_fig, "preprint/Figure_2.png"),
-#   plot = p_calendar,
-#   height = 5 * 0.8, width = 10)
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "Figure_2.png"),
+    plot = p_calendar,
+    height = 5 * 0.8, width = 10
+  )
+}
 ```
 
-# Fig. station level trend
-```{r fig-trend-station, fig.height=8*0.618, fig.width=8, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="FIGURE 3 Station-level temporal trends of the start of allergy season (SAS). The trends were estimated by Theil-Sen linear regression. Warm colors indicate earlier seasons, and circle sizes are proportional to the years of data at each station. Map lines delineate study areas and do not necessarily depict accepted national boundaries."}
+# Station level trend
+```{r fig-trend-station, fig.height=8*0.618, fig.width=8, fig.cap="FIGURE 3 Station-level temporal trends of the start of allergy season (SAS). The trends were estimated by Theil-Sen linear regression. Warm colors indicate earlier seasons, and circle sizes are proportional to the years of data at each station. Map lines delineate study areas and do not necessarily depict accepted national boundaries."}
 source(str_c(.path$ana_fun, "plot_trend_map_TS_SAS.R"))
 p_trend_map_TS_SAS
-# ggsave(
-#   paste0(.path$out_fig, "preprint/Figure_3.png"),
-#   plot = p_trend_map_TS_SAS,
-#   height = 8 * 0.618, width = 8)
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "Figure_3.png"),
+    plot = p_trend_map_TS_SAS,
+    height = 8 * 0.618, width = 8
+  )
+}
 ```
 
-# Fig. continent level trend
-```{r fig-trend-ctnt, fig.width=11, fig.height=11*0.8, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="FIGURE 4 Temporal trends of ten fungal spore metrics across all the stations. The estimated trends from linear mixed effects models across stations of year against (a) the start of season (SOS), (f) start of allergy season (SAS), (b) end of season (EOS), (g) end of allergy season (EAS), (c) length of season (LOS), (h) length of allergy season (LAS), (d) amplitude concentration (Ca), (i) peak concentration (Cp), (e) annual integral (AIn), and (j) allergy season integral (ASIn). Solid black lines indicate significant (p < 0.05, t-test) slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Colors are station-level Theil-Sen linear regression slopes, with warmer colors indicating earlier day of year, longer days, or higher intensity. The slope of colorful lines are model predicted station-level trends. The top row presents metrics defined in the ecological method, while the bottom row shows metrics defined in the public health method. Intensity metrics are transformed using the natural logarithm."}
+# Continent level trend
+```{r fig-trend-ctnt, fig.width=11, fig.height=11*0.8, fig.cap="FIGURE 4 Temporal trends of ten fungal spore metrics across all the stations. The estimated trends from linear mixed effects models across stations of year against (a) the start of season (SOS), (f) start of allergy season (SAS), (b) end of season (EOS), (g) end of allergy season (EAS), (c) length of season (LOS), (h) length of allergy season (LAS), (d) amplitude concentration (Ca), (i) peak concentration (Cp), (e) annual integral (AIn), and (j) allergy season integral (ASIn). Solid black lines indicate significant (p < 0.05, t-test) slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Colors are station-level Theil-Sen linear regression slopes, with warmer colors indicating earlier day of year, longer days, or higher intensity. The slope of colorful lines are model predicted station-level trends. The top row presents metrics defined in the ecological method, while the bottom row shows metrics defined in the public health method. Intensity metrics are transformed using the natural logarithm."}
 source(str_c(.path$ana_fun, "plot_trend_ctnt_pred_composite.R"))
 p_trend_ctnt_pred_composite
-# ggsave(
-#   paste0(.path$out_fig, "preprint/Figure_4.png"),
-#   plot = p_trend_ctnt_pred_composite,
-#   height = 11 * 0.8, width = 11)
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "Figure_4.png"),
+    plot = p_trend_ctnt_pred_composite,
+    height = 11 * 0.8, width = 11
+  )
+}
 ```
 
-# Fig. coefplot
-```{r fig-coefplot, fig.height=10*0.618, fig.width=10, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="FIGURE 5 Summary of coefficients β1 in three mixed-effects models for each metric. Points are estimated values of β1. Error bars indicate the 95% confidence intervals of the fixed slope. Specific values are annotated. Colors are different independent variables in the model. Non-transparent colors present significant coefficients (p < 0.05, t-test)."}
+# Coefficient plot
+```{r fig-coefplot, fig.height=10*0.618, fig.width=10, fig.cap="FIGURE 5 Summary of coefficients β1 in three mixed-effects models for each metric. Points are estimated values of β1. Error bars indicate the 95% confidence intervals of the fixed slope. Specific values are annotated. Colors are different independent variables in the model. Non-transparent colors present significant coefficients (p < 0.05, t-test)."}
 source(str_c(.path$ana_fun, "plot_coefplot.R"))
 p_coef
-ggsave(
-  paste0(.path$out_fig, "preprint/Figure_5.png"),
-  plot = p_coef,
-  height = 10 * 0.618, width = 10)
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "Figure_5.png"),
+    plot = p_coef,
+    height = 10 * 0.618, width = 10
+  )
+}
 ```
