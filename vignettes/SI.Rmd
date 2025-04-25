@@ -18,37 +18,37 @@ source(str_c(.path$ana_fun, "summ_data_station.R"))
 write.csv(df_summ_data, file = str_c(.path$out_tbl, "tbl_station_meta_data.csv"))
 ```
 
-# Table S1
-```{r tbl-summary of the number of stations included in the analysis}
-df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_as4605.rds"))
-source("~/Github/spore_phenology/code/analysis/functions/summ_trend_metric.R")
-df_summ_metric %>% 
-  knitr::kable(caption = "Table S1: Summary of trend and observations included in the analysis for each metric. Displayed is the number of stations and observations included in the model, the slope (estimated β1 in the linear mixed-effects models) of spore metrics with log-transformation for intensity metrics, change over 2003-2022 in day for timing metrics and % for intensity metrics (back-transformed), and the p-value of the mixed-effects model for each metric, including start of spore season (SOS), start of allergy season (SAS), end of spore season (EOS), end of allergy season (EAS), length of spore season (LOS), length of allergy season (LAS), amplitude concentration (Ca), peak concentration (Cp), annual integral (AIn), and allergy season integral (ASIn).")
-# write.csv(df_summ_metric, file = "~/Github/spore_phenology/data/output/tables/tbl_summ_trend.csv")
-```
-
 # Table S2
-```{r tbl-sensitivity-completeness, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE}
-df_ana_full <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_full_as4605.rds"))
-source("~/Github/spore_phenology/code/analysis/functions/ana_sens_cpltness.R")
-df_sens_cpltness %>%
-  filter(Metric %in% c("ln(Ca)", "ln(Cp)", "ln(AIn)", "ln(ASIn)")) %>% 
-  knitr::kable(caption = "Table S2: Sensitivity test on data completeness for four fungal spore season intensity metrics. Displayed is the number of observations included in the model, the slope (estimated β1 in the linear mixed-effects models) of spore metrics with log-transformation, change over 2003-2022 in % for concentrations (back-transformed), and the p-value of the mixed effects model for each intensity metric, including amplitude concentration (Ca), peak concentration (Cp), annual integral (AIn), and allergy season integral (ASIn).")
-# write.csv(df_sens_cpltness, file = "~/Github/spore_phenology/data/output/tables/tbl_sens_cpltness.csv")
-```
-
-# Table S3
 ```{r tbl-composition-shifts, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE}
 df_spore <- read_rds(str_c(.path$dat_process, "2023-04-25/spore_dat.rds"))
 df_full <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_spore_fulldate.rds"))
 source("~/Github/spore_phenology/code/analysis/functions/summ_trend_composition.R")
 df_trend_taxa %>%
-  knitr::kable(caption = "Table S3: Temporal trends in the relative abundance of two main taxa across all the stations. To test the temporal shifts of taxa composition, we used linear mixed-effects models of the relative abundance of the two main taxa against year. We did not observe significant changes in these two main taxa.")
+  knitr::kable()
 # write.csv(df_trend_taxa, file = "~/Github/spore_phenology/data/output/tables/tbl_trend_taxa.csv")
 ```
 
+# Table S3
+```{r tbl-summary of the number of stations included in the analysis}
+df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_as4605.rds"))
+source("~/Github/spore_phenology/code/analysis/functions/summ_trend_metric.R")
+df_summ_metric %>% 
+  knitr::kable()
+# write.csv(df_summ_metric, file = "~/Github/spore_phenology/data/output/tables/tbl_summ_trend.csv")
+```
+
+# Table S4
+```{r tbl-sensitivity-completeness, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE}
+df_ana_full <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_full_as4605.rds"))
+source("~/Github/spore_phenology/code/analysis/functions/ana_sens_cpltness.R")
+df_sens_cpltness %>%
+  filter(Metric %in% c("ln(Ca)", "ln(Cp)", "ln(AIn)", "ln(ASIn)")) %>% 
+  knitr::kable()
+# write.csv(df_sens_cpltness, file = "~/Github/spore_phenology/data/output/tables/tbl_sens_cpltness.csv")
+```
+
 # Fig. S1
-```{r fig-ecoregion, fig.height=8*0.618, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S1: Map of 55 fungal spore counting stations associated with the National Allergy Bureau (NAB) distributed in different ecoregions within the continental United States that were included in the analysis of this study. Map lines delineate study areas and do not necessarily depict accepted national boundaries."}
+```{r fig-ecoregion, fig.height=8*0.618, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S1. Map of 55 monitoring stations associated with the National Allergy Bureau (NAB) distributed in different ecoregions within the continental United States that were included in the analysis of this study."}
 source(str_c(.path$ana_fun, "plot_ecoregion_stations.R"))
 df_meta <- read_rds(str_c(.path$intermediate, "meta.rds"))
 df_eco_sp <- sf::st_read(paste0(.path$input, "boundary/NA_CEC_Eco_Level1.shp"))
@@ -57,47 +57,47 @@ p_ecoregion
 ```
 
 # Fig. S2 summary the family composition
-```{r fig-composition, fig.height=6*0.618, fig.width=6, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S2: Relative abundance of 23 spore families during the study period across all the stations."}
+```{r fig-composition, fig.height=6*0.618, fig.width=6, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S2. Relative abundance of 23 spore families during the study period across all the stations."}
 source("~/Github/spore_phenology/code/analysis/functions/calc_composition_station.R")
 p_comm_pie
 ```
 
 # Fig. S3
-```{r fig-compare-curves, fig.height=8/5/0.618, fig.width=8/2, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S4: Pre-processing of raw fungal spore data. Gray dots are raw daily concentrations, while black lines are pre-processed data. Smoothing enhances the quality of the data by providing more stable and representative signals, enabling a clearer analysis of underlying trends and recurring patterns in spore season metrics. The Whittaker-Henderson smoother is particularly advantageous for its capabilities in auto-interpolating missing observations, adapting to data boundaries, and allowing for precise adjustment of smoothness levels (ref)."}
+```{r fig-compare-curves, fig.height=8/5/0.618, fig.width=8/2, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S3. Pre-processing of raw fungal spore data. Gray dots are raw daily concentrations, while black lines are pre-processed data. Smoothing enhances the quality of the data by providing more stable and representative signals, enabling a clearer analysis of underlying trends and recurring patterns in spore season metrics. The Whittaker-Henderson smoother is particularly advantageous for its capabilities in auto-interpolating missing observations, adapting to data boundaries, and allowing for precise adjustment of smoothness levels (Eilers, 2003)."}
 df_smooth <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_smooth_100.rds"))
 source("~/Github/spore_phenology/code/analysis/functions/plot_curve_raw_processed.R")
 p_curves
 ```
 
 # Fig. S4
-```{r fig-calendars, fig.width=9, fig.height=8*1.618, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap = "Figure S5: Fungal spore calendar for all the 55 stations meeting our inclusion criteria. Displayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations, while missing data are represented in white. Vertical black lines are the start of the spore year. Annotated numbers are the average data availability across available years for each station. Stations are ranked by longitude."}
+```{r fig-calendars, fig.width=9, fig.height=8*1.618, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap = "Figure S4. Fungal spore calendar for all the 55 stations meeting our inclusion criteria. Displayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations while missing data are represented in white. Vertical black lines are the start of the spore year. Annotated numbers are the average data availability across available years for each station. Stations are ranked by longitude."}
 source("~/Github/spore_phenology/analysis/functions/plot_calendar_si.R")
 p_calendar_suppl
 ```
 
 # Fig. S5
-```{r fig-sensitivity-lambda, fig.height=8, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S3: Sensitivity test on the smoothness parameter, lambda, applied in Whittaker-Henderson smoothing for ten fungal spore season metrics. The lambda was varied from ten to 500. This analysis confirmed that the observed trends in spore season were similar across the range of smoothing parameters tested. Points are estimated values of β1 in the linear mixed-effects models for trend detection. Error bars indicate the 95% confidence intervals of the fixed slope. Annotated slope and p-value describe the linear regression result of fixed slopes against lambda (t-test). Metrics defined in ecological approach are in the left panel, while metrics defined in the public health approach are in the right panel."}
+```{r fig-sensitivity-lambda, fig.height=8, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S5. Sensitivity test on the smoothness parameter, lambda, applied in Whittaker-Henderson smoothing for ten fungal spore season metrics. The lambda was varied from ten to 500. This analysis confirmed that the observed trends in spore season were similar across the range of smoothing parameters tested. Points are estimated values of β1 in the linear mixed-effects models for trend detection. Error bars indicate the 95% confidence intervals of the fixed slope. Annotated slope and p-value describe the linear regression result of fixed slopes against lambda (t-test). Metrics defined in the ecological approach are in the left panel, while metrics defined in the public health approach are in the right panel."}
 df_full <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_spore_fulldate.rds"))
 source("~/Github/spore_phenology/code/analysis/functions/ana_sens_l.R")
 p_sens_l
 ```
 
 # Fig. S6
-```{r fig-trend-station, fig.height=5*0.618*5, fig.width=5*2, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S6: Station-level temporal trends of the spore season metrics. The trends were estimated by Theil-Sen linear regression. Redder colors indicate earlier DOY, longer days, or higher concentration, and circle sizes are proportional to the years of data at each station. Map lines delineate study areas and do not necessarily depict accepted national boundaries."}
+```{r fig-trend-station, fig.height=5*0.618*5, fig.width=5*2, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S6. Station-level temporal trends of the spore season metrics. The trends were estimated by Theil-Sen linear regression. Redder colors indicate earlier DOY, longer days, or higher concentration, and circle sizes are proportional to the years of data at each station."}
 df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_as4605.rds"))
 source("~/Github/spore_phenology/code/analysis/functions/plot_trend_map_TS_si.R")
 p_trend_map_TS_si
 ```
 
 # Fig. S7
-```{r fig-atrr-ctnt, fig.width=2*5, fig.height=2*2*2.2, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S7: Correlation between fungal spore metrics and climate variables. Black lines are predicted slopes from linear mixed-effects models across all stations. Solid black lines indicate significant (p < 0.05, t-test) slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Point/line colors are stations. Colors are station-level Theil-Sen linear regression slopes, with warmer colors indicating earlier day of year, longer days, or higher intensity. The slope of colorful lines are model predicted station-level correlations. Intensity metrics are transformed using the natural logarithm."}
+```{r fig-atrr-ctnt, fig.width=2*5, fig.height=2*2*2.2, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S7. Correlation between fungal spore metrics and climate variables. Black lines are predicted slopes from linear mixed-effects models across all stations. Solid black lines indicate significant (p < 0.05, t-test) slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Point/line colors are stations. Colors are station-level Theil-Sen linear regression slopes, with warmer colors indicating an earlier day of year, longer days, or higher intensity. The slope of colored lines are model-predicted station-level correlations. Intensity metrics are transformed using the natural logarithm."}
 df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana_as4605.rds"))
 source("~/Github/spore_phenology/code/analysis/functions/plot_atrr_ctnt_pred_composite.R")
 p_atrr_ctnt_pred_composite
 ```
 
 # Fig. S8
-```{r fig-NAB threshold, fig.height=10*0.618, fig.width=10, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S8: Summary of results when using NAB threshold, 6500 spores m^⁻3."}
+```{r fig-NAB threshold, fig.height=10*0.618, fig.width=10, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S8. Summary of results when using NAB threshold, 6,500 spores m–3."}
 df_ana <- read_rds(str_c(.path$dat_process, "2023-04-25/dat_ana.rds"))
 source("~/Github/spore_phenology/code/analysis/functions/plot_coefplot.R")
 p_coef
