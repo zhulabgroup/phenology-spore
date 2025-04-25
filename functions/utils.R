@@ -1,7 +1,7 @@
 if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
 
 # List of required packages
-required_packages <- c("patchwork", "tidyverse", "ggpattern", "nlme", "lme4", "mblm","ggeffects", "cowplot", "grid")
+required_packages <- c("patchwork", "tidyverse", "ggpattern", "nlme", "mblm","ggeffects", "cowplot", "grid")
 
 if (.fulldata) {
   required_packages <- c(required_packages, "daymetr")
