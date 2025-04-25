@@ -1,5 +1,5 @@
 plot_trend_ctnt_pred <- function(df_in, model, metric, pct) {
-  beta_value <- lme4::fixef(model)[["year_new"]] %>% as.numeric() %>% round(3)
+  beta_value <- nlme::fixef(model)[["year_new"]] %>% as.numeric() %>% round(3)
   p_value <- summary(model)$tTable[["year_new", "p-value"]] %>% as.numeric() %>% round(3)
   station_slope <- coef(model) %>% 
     rename("random_intercept" = "(Intercept)") %>% 

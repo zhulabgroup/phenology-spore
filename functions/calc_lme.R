@@ -30,8 +30,8 @@ calc_lme <- function(df_in, metric, x_vrb, pct) {
       random = ~ x_variable | n) 
     # Extract CI
     n_obsv <- nobs(m_lme)
-    beta <- lme4::fixef(m_lme)[["x_variable"]] %>% as.numeric() %>% round(5)
-    alpha <- lme4::fixef(m_lme)[["(Intercept)"]] %>% as.numeric() %>% round(5)
+    beta <- nlme::fixef(m_lme)[["x_variable"]] %>% as.numeric() %>% round(5)
+    alpha <- nlme::fixef(m_lme)[["(Intercept)"]] %>% as.numeric() %>% round(5)
     y2003 <- alpha + beta * 2003
     y2022 <- alpha + beta * 2022
     if (metric %in% c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS")) {
@@ -56,8 +56,8 @@ calc_lme <- function(df_in, metric, x_vrb, pct) {
       control = nlme::lmeControl(opt = "optim"))
     # Extract CI
     n_obsv <- nobs(m_lme)
-    beta <- lme4::fixef(m_lme)[["x_variable"]] %>% as.numeric() %>% round(5)
-    alpha <- lme4::fixef(m_lme)[["(Intercept)"]] %>% as.numeric() %>% round(5)
+    beta <- nlme::fixef(m_lme)[["x_variable"]] %>% as.numeric() %>% round(5)
+    alpha <- nlme::fixef(m_lme)[["(Intercept)"]] %>% as.numeric() %>% round(5)
     y2003 <- alpha + beta * 2003
     y2022 <- alpha + beta * 2022
     if (metric %in% c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS")) {
