@@ -56,14 +56,6 @@ source(str_c(.path$ana_fun, "summ_ecoregion_station.R"))
 df_ecoregion <- summ_ecoregion_station(df_meta, boundary_path = str_c(.path$input, "boundary"))
 ```
 
-<!-- # plot ecoregion -->
-<!-- ```{r plot-ecoregion, eval = F} -->
-<!-- source(str_c(.path$ana_fun, "plot_ecoregion_stations.R")) -->
-<!-- df_meta <- read_rds(str_c(.path$dat_process, "meta.rds")) -->
-<!-- p_ecoregion <- plot_ecoregion_staton(df_in = df_meta) -->
-<!-- p_ecoregion -->
-<!-- ``` -->
-
 Pre-process spore raw data: pad the date to full year round
 ```{r full}
 source(str_c(.path$ana_fun, "tidy_fulldate_station.R"))

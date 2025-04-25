@@ -1,13 +1,13 @@
 plot_ecoregion_staton <- function(df_in, df_base) {
-  conic_projection <- st_crs("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96")
-  us_states <- tigris::states(class = "sf") %>% st_transform(conic_projection)
+  conic_projection <- sf::st_crs("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96")
+  us_states <- tigris::states(class = "sf") %>% sf::st_transform(conic_projection)
   contus_states <- us_states[us_states$STUSPS %in% c("AL", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"), ]
-  us_cont <- contus_states %>% st_union()
-  df_base <- df_base %>% st_transform(conic_projection) %>% st_simplify(dTolerance = 0.0001)
-  us_cont <- st_simplify(us_cont, dTolerance = 0.0001)
+  us_cont <- contus_states %>% sf::st_union()
+  df_base <- df_base %>% sf::st_transform(conic_projection) %>% sf::st_simplify(dTolerance = 0.0001)
+  us_cont <- sf::st_simplify(us_cont, dTolerance = 0.0001)
   us_epa <- df_base %>% 
-    st_transform(conic_projection) %>% 
-    st_intersection(us_cont) %>% 
+    sf::st_transform(conic_projection) %>% 
+    sf::st_intersection(us_cont) %>% 
     rename(Ecoregions = NA_L1NAME) %>% 
     mutate(col_value = case_when(
       Ecoregions == "EASTERN TEMPERATE FORESTS" ~ "#BDDB8E",
@@ -36,8 +36,8 @@ plot_ecoregion_staton <- function(df_in, df_base) {
   col_map <- us_epa %>% 
     distinct(Ecoregions, .keep_all = T) %>% 
     dplyr::select(Ecoregions, col_value)
-  df_meta_sf <- st_as_sf(df_in, coords = c("lon", "lat"), crs = st_crs(4326)) %>% 
-    st_transform(conic_projection)
+  df_meta_sf <- sf::st_as_sf(df_in, coords = c("lon", "lat"), crs = sf::st_crs(4326)) %>% 
+    sf::st_transform(conic_projection)
   p <- ggplot(us_epa) +
     geom_sf(aes(group = Ecoregions, fill = Ecoregions, color = Ecoregions)) +
     scale_fill_manual(
