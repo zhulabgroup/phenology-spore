@@ -126,10 +126,10 @@ Download the climate data
 ```{r download daymet}
 source(str_c(.path$ana_fun, "down_daymet_station_date.R"))
 if (FALSE) {
-  df_daymet_allday <- down_daymet_station_date(df_meta) %>%
+  dat_daymet_raw <- down_daymet_station_date(df_meta) %>%
     filter(measurement %in% c("prcp..mm.day.", "tmax..deg.c.", "tmin..deg.c.")) %>%
     select(-tile)
-  write_rds(df_daymet_allday, str_c(.path$input, "dat_daymet_raw.rds"))
+  write_rds(dat_daymet_raw, str_c(.path$input, "dat_daymet_raw.rds"))
 } else {
   df_daymet_raw <- read_rds(str_c(.path$input, "dat_daymet_raw.rds"))
 }
