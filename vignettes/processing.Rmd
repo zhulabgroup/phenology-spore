@@ -9,9 +9,17 @@ output:
 ```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = FALSE)
 
+library(phenologyspore)
+
 .fulldata <- F
 
-source("../functions/utils.R")
+.path <- list(
+  dat_process = "../alldata/processed/2023-04-25/",
+  ana_fun = "../functions/",
+  input = "../data/input/",
+  intermediate = "../data/intermediate/",
+  output = "../data/output/"
+)
 ```
 
 Read spore data
