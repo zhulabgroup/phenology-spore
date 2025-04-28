@@ -20,7 +20,7 @@ df_ava_raw <- df_smooth_100 %>%
   summarize(ava_raw = mean(ppt)) %>%
   mutate(ava_raw = paste0(round(ava_raw * 100, 1), "%"))
 
-summ_miss_stationyear_raw_data(column_name = count) %>%
+df_miss <- summ_miss_stationyear_raw_data(df_ava_raw, column_name = count) %>%
   left_join(
     df_ana_short %>%
       group_by(lat, lon, station, city, state, country, id, n) %>%
