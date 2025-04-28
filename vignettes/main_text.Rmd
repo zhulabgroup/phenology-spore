@@ -9,7 +9,6 @@ output:
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE, process=FALSE}
 knitr::opts_chunk$set(echo = TRUE, cache = FALSE, warning = FALSE, message = FALSE, process = FALSE)
 
-.fulldata <- F
 .figsave <- T
 
 source("../functions/utils.R")

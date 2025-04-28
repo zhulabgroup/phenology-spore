@@ -9,7 +9,7 @@ output:
 ```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = FALSE)
 
-.fulldata <- T
+.fulldata <- F
 
 source("../functions/utils.R")
 ```

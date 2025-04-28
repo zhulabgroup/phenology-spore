@@ -22,10 +22,10 @@ whitfun <- function(x, lambda) {
 
 tidy_smoothfillwhit_station <- function(df_raw, n_gap, lambda, column_name, new_column_name) {
   df <- df_raw %>%
-    group_by(lat, lon, station, city, state, country, id, n) %>% 
-    mutate({{new_column_name}} := zoo::na.approx({{column_name}}, maxgap = n_gap, na.rm = F)) %>% 
-    mutate({{new_column_name}} := whitfun({{new_column_name}}, lambda)) %>%
+    group_by(lat, lon, station, city, state, country, id, n) %>%
+    mutate({{ new_column_name }} := zoo::na.approx({{ column_name }}, maxgap = n_gap, na.rm = F)) %>%
+    mutate({{ new_column_name }} := whitfun({{ new_column_name }}, lambda)) %>%
     ungroup()
-  
+
   return(df)
 }

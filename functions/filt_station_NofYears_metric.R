@@ -7,10 +7,10 @@ filt_station_NofYears_metric <- function(df_in, pct) {
       drop_na(Value) %>%
       group_by(lat, lon, station, city, state, country, id, n, offset) %>%
       filter(n() >= 5) %>%
-      mutate(Nyear = max(year_new) - min(year_new) + 1) %>% 
+      mutate(Nyear = max(year_new) - min(year_new) + 1) %>%
       ungroup()
-    df_out <-rbind(df_out, df)
+    df_out <- rbind(df_out, df)
   }
-  
+
   return(df_out)
 }

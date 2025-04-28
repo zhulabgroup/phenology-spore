@@ -19,6 +19,6 @@ tidy_gathermetrics <- function(df_in) {
     mutate(Metric = ifelse(Metric == "ln_amplitude", "ln_Ca", Metric)) %>%
     mutate(Metric = ifelse(Metric == "ln_integral", "ln_AIn", Metric)) %>%
     mutate(Metric = ifelse(Metric == "ln_integral_as", "ln_ASIn", Metric))
-  
+
   return(df)
 }
