@@ -1,3 +1,43 @@
+#' @export
+calc_lme_all <- function(df_analysis, pct = 0.8) {
+  # generate the dataframe
+  df_m <- data.frame()
+  for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn")) {
+    for (x in c("year_new", "MAT", "TAP")) {
+      m_rslt <- calc_lme(df_in = df_analysis, metric = m_metric, x_vrb = x, pct = pct)
+      df_m <- rbind(df_m, m_rslt)
+    }
+  }
+  colnames(df_m) <- c("metric", "cpltness", "n_obsv", "change", "x_variable", "beta", "ci1", "ci2", "p")
+  df <- df_m %>%
+    mutate(beta = as.numeric(beta)) %>%
+    mutate(ci1 = as.numeric(ci1)) %>%
+    mutate(ci2 = as.numeric(ci2)) %>%
+    mutate(p = as.numeric(p)) %>%
+    mutate(pspct = ifelse(
+      metric %in% c("SOS", "EOS", "LOS", "ln_Ca", "ln_AIn"),
+      "Ecology Perspective",
+      "Public Health Perspective"
+    )) %>%
+    mutate(metric = case_when(
+      metric == "ln_Ca" ~ "ln(Ca)",
+      metric == "ln_Cp" ~ "ln(Cp)",
+      metric == "ln_AIn" ~ "ln(AIn)",
+      metric == "ln_ASIn" ~ "ln(ASIn)",
+      T ~ metric
+    )) %>%
+    mutate(x_variable = ifelse(x_variable == "year_new", "year", x_variable)) %>%
+    mutate(mtype = ifelse(
+      metric %in% c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS"),
+      "pheno",
+      "intst"
+    )) %>%
+    mutate(transparency = ifelse(p < 0.05, 1, 0.5))
+
+  return(df)
+}
+
+#' @export
 calc_lme <- function(df_in, metric, x_vrb, pct) {
   df <- df_in %>%
     filter(Metric == metric) %>%

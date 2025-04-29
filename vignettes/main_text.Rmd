@@ -102,11 +102,12 @@ if (.figsave) {
 
 # Coefficient plot
 ```{r fig-coefplot, fig.height=10*0.618, fig.width=10, fig.cap="Figure 5. Summary of coefficients β1 in three mixed-effects models for each metric. Points are estimated values of β1. Error bars indicate the 95% confidence intervals of the fixed slope. Specific values are annotated. Colors are different independent variables in the model. Non-transparent colors present significant coefficients (p < 0.05, t-test)."}
-source(str_c(.path$ana_fun, "plot_coefplot.R"))
-p_coef
+df_lme <- calc_lme_all(df_analysis, pct = 0.8)
+(p_coef <- plot_coef(df_lme))
+
 if (.figsave) {
   ggsave(
-    str_c(.path$output, "Figure_5.png"),
+    str_c(.path$output, "figures/Figure_5.png"),
     plot = p_coef,
     height = 10 * 0.618, width = 10
   )
