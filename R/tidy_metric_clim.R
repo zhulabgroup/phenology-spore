@@ -1,3 +1,12 @@
+##' @export
+tidy_metric_clim <- function(df_metrics, df_daymet_annual, pct = 0.8) {
+  df_ana_full <- left_join(df_metrics, df_daymet_annual, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
+
+  df_ana <- filt_station_NofYears_metric(df_in = df_ana_full, pct = pct)
+
+  return(df_ana)
+}
+
 filt_station_NofYears_metric <- function(df_in, pct) {
   df_out <- data.frame()
   for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "Ca", "ln_Ca", "Cp", "ln_Cp", "AIn", "ln_AIn", "ASIn", "ln_ASIn")) {

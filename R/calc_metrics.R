@@ -1,5 +1,4 @@
 # extract ten metrics for each station-sporeyr
-#  %>% filter(country == "US") %>% filter(!(state %in% c("PR", "AK", "HI")))
 
 calc_metrics <- function(df_ts) {
   df_peak <- df_ts %>%

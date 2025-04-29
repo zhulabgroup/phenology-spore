@@ -15,8 +15,6 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = FAL
 
 if (exists(".fulldata") && isTRUE(.fulldata)) {
   .path <- list(
-    # dat_process = "../alldata/processed/2023-04-25/",
-    # ana_fun = "../functions/",
     input = "../alldata/input/",
     intermediate = "../alldata/intermediate/",
     output = "../alldata/output/"
@@ -73,36 +71,24 @@ if (.fulldata) {
 
 Download the climate data
 ```{r download daymet}
-source(str_c(.path$ana_fun, "down_daymet_station_date.R"))
-if (FALSE) {
-  dat_daymet_raw <- down_daymet_station_date(df_meta) %>%
-    filter(measurement %in% c("prcp..mm.day.", "tmax..deg.c.", "tmin..deg.c.")) %>%
-    select(-tile)
-  write_rds(dat_daymet_raw, str_c(.path$input, "dat_daymet_raw.rds"))
-} else {
-  df_daymet_raw <- read_rds(str_c(.path$input, "dat_daymet_raw.rds"))
+if (.fulldata) {
+  df_daymet_raw <- down_daymet_station_date(df_meta, path = str_c(.path$input, "dat_daymet_raw.rds"))
 }
 ```
 
 Calculate MAT, TAP in each spore year
 ```{r climate summary}
-source(str_c(.path$ana_fun, "calc_climate_stationspyr.R"))
-if (FALSE) {
-  df_daymet_annual <- calc_climate_stationspyr(df_daymet_raw, df_sporeyear = df_sporeyr)
+if (.fulldata) {
+  df_daymet_annual <- calc_climate_stationspyr(df_daymet_raw = df_daymet_raw, df_spore = df_ts)
   write_rds(df_daymet_annual, str_c(.path$intermediate, "daymet_annual.rds"))
-} else {
-  df_daymet_annual <- read_rds(str_c(.path$intermediate, "daymet_annual.rds"))
+  usethis::use_data(df_daymet_annual, overwrite = T)
 }
 ```
 
 Join MAT, TAP with metrics data
-```{r data}
-df_ana_full <- right_join(df_daymet_annual, df_metrics_long, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new"))
-```
-
 Filter stations for each metric based on the number of years
-```{r}
-source(str_c(.path$ana_fun, "filt_station_NofYears_metric.R"))
-df_ana <- filt_station_NofYears_metric(df_in = df_ana_full, pct = 0.8)
-write_rds(df_ana, str_c(.path$intermediate, "analysis.rds"))
+```{r tidy metric clim}
+df_analysis <- tidy_metric_clim(df_metrics, df_daymet_annual, pct = 0.8)
+write_rds(df_analysis, str_c(.path$intermediate, "analysis.rds"))
+usethis::use_data(df_analysis, overwrite = T)
 ```
