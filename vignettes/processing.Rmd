@@ -34,7 +34,7 @@ if (.fulldata) {
 Filter to stations in continental US and specified family
 Rename stations and tag number for each station
 Pad the date to full year round
-```{r filter}
+```{r process nab data}
 if (.fulldata) {
   df_full <- tidy_nab_data(df_spore, f = "Total", n_m = 10, n_yr = 3, rename = T, pad = T)
 }
@@ -47,69 +47,28 @@ if (.fulldata) {
     distinct(n, .keep_all = T) %>%
     select(lat, lon, station, city, state, country, id, n)
   write_rds(df_meta, str_c(.path$intermediate, "meta.rds"))
-
-  # usethis::use_data(df_meta, overwrite = T)
-} else {
-  df_meta <- read_rds(str_c(.path$intermediate, "meta.rds"))
+  usethis::use_data(df_meta, overwrite = T)
 }
 ```
 
 Read the offset and insert into the dataset
-```{r read offset and merge with smooth data}
-if (.fulldata) {
-  source(str_c(.path$ana_fun, "read_offset_station.R"))
-  df_full <- df_full %>%
-    left_join(df_offset, by = c("lat", "lon", "station", "state", "country", "id")) %>%
-    rename(lmd_offset = lambda)
-}
-```
-
 Linear interpolation and whittaker smoothing
-```{r smooth}
-source(str_c(.path$ana_fun, "tidy_smoothfillwhit_station.R"))
-if (.fulldata) {
-  df_smooth_100 <- df_full %>%
-    tidy_smoothfillwhit_station(n_gap = 14, lambda = 100, column_name = count, new_column_name = count_fillwhit)
-}
-```
-
 Define spore year
-```{r spore year}
-source(str_c(.path$ana_fun, "tidy_sporeyr_station.R"))
-if (.fulldata) {
-  df_sporeyr <- df_smooth_100 %>% tidy_sporeyr_station()
-}
-```
-
 Tag data completeness in each station-sporeyear
-```{r}
-source(str_c(.path$ana_fun, "calc_completeness_stationspyr.R"))
+
+```{r process time series}
 if (.fulldata) {
-  df_spore_cpltness <- calc_completeness_stationspyr(df_sporeyr, column_name = count_fillwhit)
+  df_ts <- tidy_nab_ts(df_full, path_offset = str_c(.path$intermediate, "fill_smooth_offset.rds"))
 }
 ```
 
-Extract spore metrics
+Extract spore season metrics
 ```{r metrics}
-source(str_c(.path$ana_fun, "calc_metrics_stationspyr.R"))
 if (.fulldata) {
-  df_metrics <- calc_metrics_stationspyr(df_completeness = df_spore_cpltness, df_raw = df_sporeyr)
+  df_metrics <- calc_metrics(df_ts)
   write_rds(df_metrics, str_c(.path$intermediate, "metrics.rds"))
-} else {
-  df_metrics <- read_rds(str_c(.path$intermediate, "metrics.rds"))
+  usethis::use_data(df_metrics, overwrite = T)
 }
-```
-
-Gather df_metrics into a long df
-```{r}
-source(str_c(.path$ana_fun, "tidy_gathermetrics.R"))
-df_metrics_long <- tidy_gathermetrics(df_metrics)
-```
-
-Assign color palette for 55 stations
-```{r color palette}
-color_palette <- colorRampPalette(colors = rainbow(55))
-df_metrics_long <- df_metrics_long %>% mutate(col = color_palette(55)[n])
 ```
 
 Download the climate data

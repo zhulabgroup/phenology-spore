@@ -1,8 +1,9 @@
 # extract ten metrics for each station-sporeyr
 #  %>% filter(country == "US") %>% filter(!(state %in% c("PR", "AK", "HI")))
 
-calc_metrics_stationspyr <- function(df_completeness, df_raw) {
-  df_peak <- df_completeness %>%
+calc_metrics <- function(df_ts) {
+  df_peak <- df_ts %>%
+    drop_na(count_fillwhit) %>%
     group_by(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness) %>%
     filter(count_fillwhit == max(count_fillwhit)) %>%
     summarise(
@@ -11,7 +12,7 @@ calc_metrics_stationspyr <- function(df_completeness, df_raw) {
       peak_date_old = head(date, 1)
     ) %>%
     mutate(peak = ifelse(peak_doy %in% 11:355, peak, NA)) %>%
-    right_join(df_raw, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>%
+    right_join(df_ts, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new", "cpltness")) %>%
     drop_na(peak) %>%
     group_by(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness) %>%
     filter(doy_new %in% (peak_doy - 10):(peak_doy + 10)) %>%
@@ -22,7 +23,8 @@ calc_metrics_stationspyr <- function(df_completeness, df_raw) {
       peak_date_old = head(peak_date_old, 1)
     )
 
-  df_amplitude <- df_completeness %>%
+  df_amplitude <- df_ts %>%
+    drop_na(count_fillwhit) %>%
     group_by(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness) %>%
     filter(count_fillwhit == min(count_fillwhit)) %>%
     summarise(
@@ -43,7 +45,7 @@ calc_metrics_stationspyr <- function(df_completeness, df_raw) {
         TRUE ~ trough_doy + 10
       )
     ) %>%
-    right_join(df_raw, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>%
+    right_join(df_ts, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new", "cpltness")) %>%
     drop_na(trough) %>%
     group_by(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness) %>%
     filter(doy_new %in% trough_start:trough_end) %>%
@@ -56,11 +58,13 @@ calc_metrics_stationspyr <- function(df_completeness, df_raw) {
     full_join(df_peak, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new", "cpltness")) %>%
     mutate(amplitude = peak - trough)
 
-  df_integral <- df_completeness %>%
+  df_integral <- df_ts %>%
+    drop_na(count_fillwhit) %>%
     group_by(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness) %>%
     summarise(integral = sum(count_fillwhit) / n() * 365)
 
-  df_season <- df_completeness %>%
+  df_season <- df_ts %>%
+    drop_na(count_fillwhit) %>%
     filter(cpltness >= 1) %>%
     group_by(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness) %>%
     filter(cumsum(count_fillwhit) >= 0.1 * sum(count_fillwhit) & cumsum(count_fillwhit) <= 0.9 * sum(count_fillwhit)) %>%
@@ -72,11 +76,7 @@ calc_metrics_stationspyr <- function(df_completeness, df_raw) {
     ) %>%
     mutate(los = eos - sos)
 
-  df_allergy_season <- df_raw %>%
-    drop_na(count_fillwhit) %>%
-    group_by(lat, lon, station, city, state, country, id, n, offset, year_new) %>%
-    summarise(cpltness = n() / 365) %>%
-    right_join(df_raw, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>%
+  df_allergy_season <- df_ts %>%
     group_by(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness) %>%
     group_modify(~ find_sas(.)) %>%
     ungroup() %>%
@@ -105,8 +105,9 @@ calc_metrics_stationspyr <- function(df_completeness, df_raw) {
     )
 
   df_integral_as <- df_allergy_season %>%
-    right_join(df_completeness, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new", "cpltness")) %>%
-    filter(!is.na(las)) %>%
+    right_join(df_ts, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new", "cpltness")) %>%
+    drop_na(count_fillwhit) %>%
+    drop_na(las) %>%
     group_by(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness, sas, eas, las, sas_date_old, eas_date_old) %>%
     filter(doy_new %in% sas:eas) %>%
     summarise(
@@ -132,6 +133,13 @@ calc_metrics_stationspyr <- function(df_completeness, df_raw) {
     mutate(ln_integral = log(integral + 1)) %>%
     mutate(ln_integral_as = log(integral_as + 1)) %>%
     mutate(ln_amplitude = log(amplitude + 1))
+
+  # Gather df_metrics into a long df
+  df <- df %>% tidy_gathermetrics()
+
+  # Assign color palette for 55 stations
+  color_palette <- colorRampPalette(colors = rainbow(55))
+  df <- df %>% mutate(col = color_palette(55)[n])
 
   return(df)
 }
@@ -168,4 +176,29 @@ find_sas <- function(x) {
   x$out_doy <- out_doy
   x$out_date_old <- out_date_old
   return(x)
+}
+
+# gather df_metrics into a long df and name the metrics
+tidy_gathermetrics <- function(df_in) {
+  df <- df_in %>%
+    gather(key = "Metric", value = "Value", peak, ln_peak, amplitude, ln_amplitude, integral, ln_integral, sos, eos, los, sas, eas, las, integral_as, ln_integral_as) %>%
+    mutate(cpltness = ifelse(Metric %in% c("sas", "eas", "las"), 1, cpltness)) %>%
+    mutate(cpltness = ifelse(Metric %in% c("integral_as", "ln_integral_as"), cpltness_as, cpltness)) %>%
+    dplyr::select(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness, Metric, Value) %>%
+    mutate(Metric = ifelse(Metric == "sos", "SOS", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "eos", "EOS", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "los", "LOS", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "sas", "SAS", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "eas", "EAS", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "las", "LAS", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "peak", "Cp", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "amplitude", "Ca", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "integral", "AIn", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "integral_as", "ASIn", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "ln_peak", "ln_Cp", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "ln_amplitude", "ln_Ca", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "ln_integral", "ln_AIn", Metric)) %>%
+    mutate(Metric = ifelse(Metric == "ln_integral_as", "ln_ASIn", Metric))
+
+  return(df)
 }
