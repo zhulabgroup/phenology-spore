@@ -47,7 +47,7 @@ if (.fulldata) {
   usethis::use_data(df_comm, overwrite = T)
 }
 
-df_trend_taxa <- summ_composition_trend(df_comm, ls_family = c("Unidentified", "Cladosporiaceae"))
+df_trend_taxa <- summ_trend_composition(df_comm, ls_family = c("Unidentified", "Cladosporiaceae"))
 
 if (.tablesave) {
   write_csv(df_trend_taxa, file = str_c(.path$output, "tbl_trend_taxa.csv"))
@@ -58,10 +58,11 @@ df_trend_taxa %>% knitr::kable()
 
 # Table S3
 ```{r tbl-summary of the number of stations included in the analysis}
-df_ana <- read_rds(str_c(.path$intermediate, "analysis.rds"))
-source(str_c(.path$ana_fun, "summ_trend_metric.R"))
-write_csv(df_summ_metric, file = str_c(.path$output, "tbl_summ_trend.csv"))
-df_summ_metric %>% knitr::kable()
+df_summ_trend <- tidy_trend_metric(df_lme)
+if (.tablesave) {
+  write_csv(df_summ_trend, file = str_c(.path$output, "tbl_summ_trend.csv"))
+}
+df_summ_trend %>% knitr::kable()
 ```
 
 # Table S4

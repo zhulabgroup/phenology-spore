@@ -8,7 +8,7 @@ calc_lme_all <- function(df_analysis, pct = 0.8) {
       df_m <- rbind(df_m, m_rslt)
     }
   }
-  colnames(df_m) <- c("metric", "cpltness", "n_obsv", "change", "x_variable", "beta", "ci1", "ci2", "p")
+  colnames(df_m) <- c("metric", "cpltness", "n_station", "n_obsv", "change", "x_variable", "beta", "ci1", "ci2", "p")
   df <- df_m %>%
     mutate(beta = as.numeric(beta)) %>%
     mutate(ci1 = as.numeric(ci1)) %>%
@@ -82,6 +82,9 @@ calc_lme <- function(df_in, metric, x_vrb, pct) {
   )
 
   # Now process the fitted model once
+  n_station <- df %>%
+    distinct(n) %>%
+    nrow()
   n_obsv <- nobs(m_lme)
   beta <- nlme::fixef(m_lme)[["x_variable"]] %>%
     as.numeric() %>%
@@ -114,6 +117,6 @@ calc_lme <- function(df_in, metric, x_vrb, pct) {
     round(5)
 
   # Final result
-  result <- c(metric, pct, n_obsv, change, x_vrb, beta, CI1, CI2, p)
+  result <- c(metric, pct, n_station, n_obsv, change, x_vrb, beta, CI1, CI2, p)
   return(result)
 }

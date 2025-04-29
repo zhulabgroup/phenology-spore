@@ -85,7 +85,7 @@ calc_trend_taxa <- function(df_in, fml) {
 }
 
 #' @export
-summ_composition_trend <- function(df_comm, ls_family = c("Unidentified", "Cladosporiaceae")) {
+summ_trend_composition <- function(df_comm, ls_family = c("Unidentified", "Cladosporiaceae")) {
   # generate table
   df_trend_taxa <- data.frame()
   for (fam in ls_family) {
