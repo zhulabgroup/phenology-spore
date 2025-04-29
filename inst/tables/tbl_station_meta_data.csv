@@ -1,0 +1,56 @@
+country,lat,lon,id,station,city,state,ava_raw,Sampling period,ava_intplt,diff
+US,42.713,-73.7739,54d909d1-1aa3-4c49-8994-4f5f69eec560,Certified Allergy Consultants,Albany,NY,45.3%,2003-01-01 to 2012-12-31,50.7%,5.5%
+US,41.136,-73.7009,49f7aa31-07fb-4bc0-86e8-314f6aa9c344,The Louis Calder Center,Armonk,NY,16.3%,2003-01-01 to 2007-12-31,44.2%,27.9%
+US,38.7435,-90.341,77c9eb75-609b-4cf7-80f5-e3708ad1c70e,Saint Louis County Health Department,Berkeley,MO,67%,2003-01-01 to 2022-12-31,99.2%,32.1%
+US,46.7932,-96.8397,76b34d0e-698a-4892-b0dd-8a3d062438e6,North Dakota Public Health Lab,Bismarck,ND,14.5%,2003-01-01 to 2005-12-31,33.7%,19.2%
+US,42.5911,-71.3556,f12635aa-b1b2-48cb-a7ac-afefc0973b88,Allergy and Asthma Specialists,Chelmsford,MA,21%,2004-01-01 to 2006-12-31,35.8%,14.8%
+US,47.7248,-116.789,085d0f9b-0ade-4aa0-8461-ab28176816d5,Asthma and Allergy of Idaho,Coeur d'Alene,ID,3.4%,2016-01-01 to 2022-12-31,25.7%,22.3%
+US,30.5118,-96.3171,3e7417fa-930c-4bc6-900f-30e708625c86,Scott & White Clinic,College Station,TX,5.1%,2003-01-01 to 2011-12-31,17%,11.9%
+US,38.876,-104.817,ec05ce9d-3ad2-4b0c-bdc3-7a30c8ededa5,"Asthma & Allergy Associates, PC",Colorado Springs,CO,44.7%,2003-01-01 to 2005-12-31,54.1%,9.4%
+US,39.7581,-84.2001,cdb45a94-db0d-429b-bf3c-dfeb233fdce5,RAPCA,Dayton,OH,62.1%,2003-01-01 to 2018-12-31,95.2%,33.1%
+US,42.1109,-80.1534,07dacc11-245f-49dc-bf83-2c434f124113,Allergy & Asthma Associates of Northwestern PA,Erie,PA,24.9%,2003-01-01 to 2018-12-31,49%,24%
+US,46.7932,-96.8397,575d5ea9-8809-4cd5-a1bc-ffe9b31cdedd,Allergy & Asthma Care Center,Fargo,ND,18.3%,2003-01-01 to 2008-12-31,35.3%,17%
+US,29.8052,-95.5607,b9b76ac7-87b3-4c1c-9ecf-52d4c7a8a6ac,Allergy & ENT Associates,Houston (Station 1),TX,34.9%,2005-01-01 to 2009-12-31,71.1%,36.2%
+US,29.7041,-95.401,9eec5ce0-6c54-4f8e-bd16-2c9e85ae9820,City of Houston,Houston (Station 2),TX,60.4%,2009-01-01 to 2022-12-31,92.5%,32%
+US,39.8977,-86.1797,d569113d-5767-4986-99f8-974764220991,Allergy and Asthma Specialists,Indianapolis,IN,28.1%,2003-01-01 to 2009-12-31,68.1%,40%
+US,39.0837,-94.5868,086cc3e6-3cb7-474a-acb8-83ecaddd2018,Children's Mercy Hospital,Kansas City,MO,44.1%,2003-01-01 to 2021-12-31,65.9%,21.8%
+US,35.946,-84.0235,6459f43e-7fc1-4360-9f32-ccee34da4151,"Allergy, Asthma and Immunology",Knoxville,TN,16%,2003-01-01 to 2018-12-31,51.3%,35.3%
+US,43.8974,-91.2314,63def952-7b0f-49d1-9732-53ce2a9afeb0,Allergy Associates of LaCrosse,La Crosse,WI,16.1%,2003-01-01 to 2017-12-31,40.2%,24.1%
+US,32.8919,-117.2035,3b2da95e-68b0-495c-b9a9-ed0d7d9cc6fd,Erik and Ese Banck Clinical Research Center,La Jolla,CA,46.2%,2005-01-01 to 2019-12-31,86.6%,40.3%
+US,36.175,-115.13720000000001,30754aec-a791-4ecc-8506-2dd2b6992c97,Clark County Dept. of Air Quality Management,Las Vegas (Station 1),NV,33.1%,2003-01-01 to 2010-12-31,90.4%,57.3%
+US,36.175,-115.13720000000001,5bcd73ec-84c5-42e4-bf32-60422b75f2f6,University of Nevada Las Vegas,Las Vegas (Station 2),NV,91.1%,2014-01-01 to 2022-12-31,93.5%,2.4%
+US,38.0321,-84.5084,d0432cf5-580f-4ec5-9639-5cc835808049,University of Kentucky Asthma Allergy & Immunology,Lexington (Station 1),KY,33.6%,2003-01-01 to 2018-12-31,58.3%,24.7%
+US,38.0102,-84.4274,e4adc0a8-d78b-467c-9c93-93ed02c3b2c8,Family Allergy & Asthma - Lexington,Lexington (Station 2),KY,18.3%,2012-01-01 to 2018-12-31,51.9%,33.5%
+US,41.90409,-87.86386,6a660b77-ea62-47f6-9600-1724c1ec1117,"Allergy, Sinus, and Asthma Professionals",Melrose Park,IL,36.4%,2004-01-01 to 2022-12-31,53.3%,16.9%
+US,25.6694,-80.4085,873b3c78-1b44-400d-8ea0-36b945cf7fc4,Florida Center For Allergy & Asthma Care,Miami,FL,32.5%,2014-01-01 to 2020-12-31,82.7%,50.2%
+US,43.0128,-88.2705,6a202db1-abab-4f04-b502-ceb719fad5c2,"Allergy & Asthma Centers, S.C.",Milwaukee,WI,11.8%,2003-01-01 to 2016-12-31,53.8%,42%
+US,40.429,-79.7623,50a529bc-baa0-4273-9a4d-6c97e46668da,"Division of Allergy, Asthma and Immunology, East Suburban Pediatrics",Monroeville,PA,40.3%,2004-01-01 to 2019-12-31,65.7%,25.3%
+US,39.9478,-74.9036,6261714f-e5ae-41ef-96a7-0b1c108256a2,"Allergy and Asthma Specialty Physicians, LLC",Mount Laurel,NJ,31.7%,2003-01-01 to 2022-12-31,62.4%,30.7%
+US,39.5929,-75.6515,1f420ee3-defb-43ea-86cc-15bac7405c13,"Division of Air Quality, DNREC, State of Delaware",New Castle,DE,23.6%,2006-01-01 to 2017-12-31,65.3%,41.6%
+US,29.9614,-90.1577,64841901-d921-4d60-91f8-cf9d75e854a4,Ochsner Clinic,New Orleans,LA,57.2%,2007-01-01 to 2011-12-31,88.4%,31.3%
+US,35.5514,-97.4075,2c2e4860-e9e1-4398-93f5-51c4b66db9f5,"Oklahoma Allergy & Asthma Clinic, Inc.",Oklahoma City (Station 1),OK,63.2%,2003-01-01 to 2022-12-31,96.6%,33.4%
+US,35.5835,-97.5638,1d2dbe4e-7b5e-4b44-9e15-23f312e861d5,Allergy & Asthma Center,Oklahoma City (Station 2),OK,47.9%,2003-01-01 to 2017-12-31,89.5%,41.6%
+US,42.0821,-78.426,d49c2673-09c8-48ed-a8c7-64d4a6760024,"Fred H Lewis, MD FAAAAI",Olean,NY,25.5%,2009-01-01 to 2022-12-31,52.9%,27.4%
+US,33.7867,-117.8742,66689425-ca61-49da-a683-a69dccc8116a,Children's Hospital of Orange County-Pediatric Subspecialty Faculty,Orange,CA,81%,2003-01-01 to 2011-12-31,90.9%,9.9%
+US,28.5826,-81.1907,9aa7037b-66a4-4e13-adf4-ec9e38ea0a3d,Allergy & Asthma Center of East Orlando,Oviedo,FL,6.3%,2005-01-01 to 2007-12-31,31.7%,25.4%
+US,41.1156,-95.9393,0f2af69c-a4ee-48c7-a1aa-9c637fbac1cf,"The Asthma and Allergy Center, PC",Papillion,NE,48.6%,2007-01-01 to 2022-12-31,62.8%,14.3%
+US,39.9487,-75.1593,1afdaa42-0a1f-4610-b9cd-c30a1493a2c9,The Asthma Center,Philadelphia,PA,29.3%,2003-01-01 to 2019-12-31,60.1%,30.7%
+US,38.7609,-121.2867,efd630d9-5bc1-49d1-bef1-eff88f59c709,Allergy Medical Group of the North Area,Roseville,CA,12.8%,2003-01-01 to 2018-12-31,91.8%,79%
+US,29.4241,-98.4936,11fb5164-9840-4e99-b73d-9bff4ab53734,Wilford Hall Ambulatory Surgical Center,San Antonio,TX,95%,2011-01-01 to 2022-12-31,96.1%,1.1%
+US,37.3163,-121.9356,de57b11e-d034-48f8-86b1-6193f7593de4,"Theodore J. Chu, M.D.",San Jose,CA,12.6%,2003-01-01 to 2022-12-31,87.8%,75.2%
+US,34.4208,-119.6982,c068b8c1-e07d-4848-9b34-7798846ce983,Sansum Clinic,Santa Barbara,CA,36.4%,2003-01-01 to 2010-12-31,84.6%,48.2%
+US,27.3111,-82.5195,504760ec-6782-46a4-9cd6-e0b3efb7e841,Dr. Mary Jelks,Sarasota,FL,88.9%,2003-01-01 to 2013-12-31,93.1%,4.2%
+US,33.5879,-111.8404,62f56574-633c-48bb-83ea-58a0c52106ed,Mayo Clinic Arizona,Scottsdale,AZ,20%,2020-01-01 to 2022-12-31,52%,32%
+US,38.9982,-77.0338,b52dbac2-7b3f-495a-b479-7548a138dfa6,US Army Centralized Allergen Extract Lab.,Silver Spring,MD,55.8%,2003-01-01 to 2022-12-31,98.8%,43.1%
+US,37.2117,-93.299,fbbe9b77-c48b-4672-a117-44e5c60e9e88,Springfield -Greene County Health Department,Springfield,MO,40.2%,2010-01-01 to 2018-12-31,58.9%,18.7%
+US,42.4941,-82.899,7521e060-40a9-45ff-9e6b-0644b21b2b47,Lakeshore Ear Nose & Throat Center,St. Clair Shores,MI,24%,2003-01-01 to 2017-12-31,45.1%,21.1%
+US,41.708,-83.7068,d265c1ad-e921-47e6-8e86-3f1463ee96e6,Allergy Clinic Ohio - Dr. Safadi,Sylvania,OH,50.1%,2015-01-01 to 2022-12-31,61.1%,10.9%
+US,30.4771,-84.2246,fae28764-ef06-49e0-82ca-cb38e54abf3c,"Ronald Saff, MD FAAAAI",Tallahassee,FL,31.2%,2003-01-01 to 2005-12-31,43.2%,12%
+US,28.0502,-82.45,0115f165-d63b-4cbb-9a57-d03e972f3b89,University of South Florida,Tampa,FL,23.2%,2003-01-01 to 2022-12-31,83.7%,60.5%
+US,36.0467,-95.8841,e23c5c5d-f0d0-4ea7-af60-5ea065dcc406,Allergy Clinic of Tulsa,Tulsa (Station 1),OK,38.3%,2003-01-01 to 2022-12-31,82.5%,44.2%
+US,36.1464,-95.9526,17bbef1e-be58-42df-9635-bcfe69e56610,University of Tulsa,Tulsa (Station 2),OK,98.2%,2003-01-01 to 2015-12-31,99.6%,1.4%
+US,42.31397,-114.65953,3695a2ea-0b87-4fe4-a028-0b030f53cdd7,Asthma & Allergy of Idaho,Twin Falls,ID,16.8%,2010-01-01 to 2022-12-31,50.1%,33.3%
+US,45.6032,-122.5133,e40b7ffc-246e-465c-9561-ccf823d54cf3,"AAIM Care, LLC",Vancouver,WA,39%,2003-01-01 to 2010-12-31,94.9%,55.9%
+US,31.5051,-97.2311,136005cd-70cc-4e6e-8a0e-8a5b413a9b85,Allergy & Asthma Care of Waco,Waco,TX,53.4%,2003-01-01 to 2022-12-31,97.4%,44%
+US,37.6873,-121.8957,14d1f032-caf7-487d-aa97-a19a815771d2,Allergy and Asthma Group of the Bay Area,Walnut Creek,CA,18.2%,2003-01-01 to 2022-12-31,75.3%,57.1%
+US,39.7994,-75.5317,88b6a97a-b630-4794-ab23-eee689e93b8f,Nemours/A.I. Dupont Childen's Hospital,Wilmington,DE,7.9%,2011-01-01 to 2013-12-31,49%,41.1%

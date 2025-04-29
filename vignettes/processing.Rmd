@@ -35,6 +35,7 @@ Pad the date to full year round
 ```{r process nab data}
 if (.fulldata) {
   df_full <- tidy_nab_data(df_spore, f = "Total", n_m = 10, n_yr = 3, rename = T, pad = T)
+  write_rds(df_full, str_c(.path$intermediate, "full.rds"))
 }
 ```
 

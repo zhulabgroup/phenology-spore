@@ -1,30 +1,36 @@
-# 55 stations included in our analysis
-df_station <- df_spore %>%
-  left_join(
-    df_full %>%
-      distinct(n, .keep_all = T) %>%
-      dplyr::select(station, state, n),
-    by = c("station", "state")
-  ) %>%
-  drop_na(n)
+#' @export
+calc_comm_comp <- function(df_spore, df_full) {
+  # 55 stations included in our analysis
+  df_station <- df_spore %>%
+    left_join(
+      df_full %>%
+        distinct(n, .keep_all = T) %>%
+        select(station, state, n),
+      by = c("station", "state")
+    ) %>%
+    drop_na(n)
 
-# calculate relative abundance for each family per year
-df_comm <- df_station %>%
-  filter(family != "Total" | is.na(family)) %>%
-  mutate(year = format(date, "%Y") %>% as.integer()) %>%
-  group_by(lat, lon, station, city, state, country, id, n, year) %>%
-  summarise(total = sum(count, na.rm = T)) %>%
-  ungroup() %>%
-  right_join(
-    df_station %>% mutate(year = format(date, "%Y") %>% as.integer()),
-    by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "year")
-  ) %>%
-  mutate(family = ifelse(is.na(family), "Unidentified", family)) %>%
-  group_by(lat, lon, station, city, state, country, id, n, year, total, family) %>%
-  summarise(count = sum(count, na.rm = T)) %>%
-  mutate(pctg = count / total) %>%
-  arrange(desc(pctg)) %>%
-  ungroup()
+  # calculate relative abundance for each family per year
+  df_comm <- df_station %>%
+    filter(family != "Total" | is.na(family)) %>%
+    mutate(year = format(date, "%Y") %>% as.integer()) %>%
+    group_by(lat, lon, station, city, state, country, id, n, year) %>%
+    summarise(total = sum(count, na.rm = T)) %>%
+    ungroup() %>%
+    right_join(
+      df_station %>% mutate(year = format(date, "%Y") %>% as.integer()),
+      by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "year")
+    ) %>%
+    mutate(family = ifelse(is.na(family), "Unidentified", family)) %>%
+    group_by(lat, lon, station, city, state, country, id, n, year, total, family) %>%
+    summarise(count = sum(count, na.rm = T)) %>%
+    mutate(pctg = count / total) %>%
+    arrange(desc(pctg)) %>%
+    ungroup() %>%
+    select(n, family, year, total, pctg)
+
+  return(df_comm)
+}
 
 # fit lme
 calc_trend_taxa <- function(df_in, fml) {
@@ -78,10 +84,15 @@ calc_trend_taxa <- function(df_in, fml) {
   return(result)
 }
 
-# generate table
-df_trend_taxa <- data.frame()
-for (fam in c("Unidentified", "Cladosporiaceae")) {
-  m_rslt <- calc_trend_taxa(df_in = df_comm, fml = fam)
-  df_trend_taxa <- rbind(df_trend_taxa, m_rslt)
+#' @export
+summ_composition_trend <- function(df_comm, ls_family = c("Unidentified", "Cladosporiaceae")) {
+  # generate table
+  df_trend_taxa <- data.frame()
+  for (fam in ls_family) {
+    m_rslt <- calc_trend_taxa(df_in = df_comm, fml = fam)
+    df_trend_taxa <- rbind(df_trend_taxa, m_rslt)
+  }
+  colnames(df_trend_taxa) <- c("Taxa", "beta0SD", "beta1SD", "rsdlSD", "b0", "b1", "b0SE", "b1SE", "b0t", "b1t", "p")
+
+  return(df_trend_taxa)
 }
-colnames(df_trend_taxa) <- c("Taxa", "beta0SD", "beta1SD", "rsdlSD", "b0", "b1", "b0SE", "b1SE", "b0t", "b1t", "p")
