@@ -13,6 +13,18 @@ library(phenologyspore)
 
 .fulldata <- F
 .figsave <- T
+
+if (exists(".fulldata") && isTRUE(.fulldata)) {
+  .path <- list(
+    input = "../alldata/input/",
+    intermediate = "../alldata/intermediate/",
+    output = "../alldata/output/"
+  )
+} else {
+  .path <- list(
+    output = "../inst/"
+  )
+}
 ```
 
 # Spore phenology metrics
@@ -30,7 +42,7 @@ if (.fulldata) {
 
 if (.figsave) {
   ggsave(
-    str_c(.path$output, "Figure_1.png"),
+    str_c(.path$output, "figures/Figure_1.png"),
     plot = p_metrics,
     height = 11, width = 11
   )
@@ -39,15 +51,24 @@ if (.figsave) {
 
 # Spore phenology calendar
 ```{r fig-calendar, fig.width=10, fig.height=5*0.8, fig.cap="Figure 2. Fungal spore calendar for ten sampling stations. The daily long-term mean of fungal spore concentration is displayed, 2003-2022. Darker colors indicate higher concentrations while missing data are represented in white. (a) Stations show variable seasonality across ecological regions. (b) Stations with higher long-term mean of total annual precipitation (mm) show higher intensity of fungal spore seasons."}
-source(str_c(.path$ana_fun, "plot_calendar_samples.R"))
-p_calendar
+if (.fulldata) {
+  df_ts <- read_rds(str_c(.path$intermediate, "ts.rds"))
+  (p_calendar <- plot_calendar(df_ts))
 
-if (.figsave) {
-  ggsave(
-    str_c(.path$output, "Figure_2.png"),
-    plot = p_calendar,
-    height = 5 * 0.8, width = 10
-  )
+  if (.figsave) {
+    ggsave(
+      str_c(.path$output, "figures/Figure_2.png"),
+      plot = p_calendar,
+      height = 5 * 0.8, width = 10
+    )
+    file.copy(
+      from = str_c(.path$output, "figures/Figure_2.png"),
+      to = str_c("../inst/", "figures/Figure_2.png")
+    )
+  }
+} else {
+  (p_calendar <- cowplot::ggdraw() +
+    cowplot::draw_image(str_c(.path$output, "figures/Figure_2.png")))
 }
 ```
 

@@ -17,6 +17,7 @@ LazyData: true
 Depends:
     R (>= 3.3),
     tidyverse,
+    patchwork,
     ggpattern,
     nlme,
     mblm,

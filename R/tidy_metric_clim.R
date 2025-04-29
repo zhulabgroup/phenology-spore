@@ -1,4 +1,4 @@
-##' @export
+#' @export
 tidy_metric_clim <- function(df_metrics, df_daymet_annual, pct = 0.8) {
   df_analysis <- left_join(df_metrics, df_daymet_annual, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>%
     filt_station_NofYears_metric(pct = pct) %>%

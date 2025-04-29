@@ -1,6 +1,6 @@
 # download climate data from daymet dataset
 #' @export
-down_daymet_station_date <- function(df_meta, path) {
+down_daymet <- function(df_meta, path) {
   if (!file.exists(path)) {
     path_temp <- tempfile(pattern = "meta_for_daymet_", fileext = ".csv")
 

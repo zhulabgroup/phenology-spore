@@ -19,7 +19,7 @@ tidy_sample_data <- function(fill_smooth_offset_path, metrics_amplitude_path) {
   df_sample <- df_smooth %>%
     filter(n == 10) %>%
     filter(year == 2009 | (year == 2010 & doy <= offset * 2)) %>%
-    left_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>% 
+    left_join(df_metrics, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>%
     select(-lat, -lon, -station, -city, -state, -country, -id, -n)
 
   return(df_sample)

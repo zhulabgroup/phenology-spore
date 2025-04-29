@@ -57,6 +57,7 @@ Tag data completeness in each station-sporeyear
 ```{r process time series}
 if (.fulldata) {
   df_ts <- tidy_nab_ts(df_full, path_offset = str_c(.path$intermediate, "fill_smooth_offset.rds"))
+  write_rds(df_ts, str_c(.path$intermediate, "ts.rds"))
 }
 ```
 
@@ -72,14 +73,14 @@ if (.fulldata) {
 Download the climate data
 ```{r download daymet}
 if (.fulldata) {
-  df_daymet_raw <- down_daymet_station_date(df_meta, path = str_c(.path$input, "dat_daymet_raw.rds"))
+  df_daymet_raw <- down_daymet(df_meta, path = str_c(.path$input, "dat_daymet_raw.rds"))
 }
 ```
 
 Calculate MAT, TAP in each spore year
 ```{r climate summary}
 if (.fulldata) {
-  df_daymet_annual <- calc_climate_stationspyr(df_daymet_raw = df_daymet_raw, df_spore = df_ts)
+  df_daymet_annual <- summ_climate(df_daymet_raw = df_daymet_raw, df_spore = df_ts)
   write_rds(df_daymet_annual, str_c(.path$intermediate, "daymet_annual.rds"))
   usethis::use_data(df_daymet_annual, overwrite = T)
 }

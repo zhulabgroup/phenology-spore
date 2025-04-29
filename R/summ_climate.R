@@ -1,6 +1,6 @@
 # calculate the TAP, MAT
 #' @export
-calc_climate_stationspyr <- function(df_daymet_raw, df_spore) {
+summ_climate <- function(df_daymet_raw, df_spore) {
   df <- df_daymet_raw %>%
     filter(measurement %in% c("tmax..deg.c.", "tmin..deg.c.", "prcp..mm.day.")) %>%
     spread(key = "measurement", value = "value") %>%
