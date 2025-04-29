@@ -31,33 +31,26 @@ if (.fulldata) {
 }
 ```
 
-Filter the stations
+Filter to stations in continental US and specified family
 Rename stations and tag number for each station
+Pad the date to full year round
 ```{r filter}
 if (.fulldata) {
-  df_siteyear <- tidy_taxa_station_raw_data(df_spore, f = "Total", n_m = 10, n_yr = 3, rename = F)
+  df_full <- tidy_nab_data(df_spore, f = "Total", n_m = 10, n_yr = 3, rename = T, pad = T)
 }
 ```
 
 Generate and save site meta data for future downloading of daymet data
 ```{r meta}
 if (.fulldata) {
-  df_meta <- df_site %>%
+  df_meta <- df_full %>%
     distinct(n, .keep_all = T) %>%
-    select(-year, -date, -count)
+    select(lat, lon, station, city, state, country, id, n)
   write_rds(df_meta, str_c(.path$intermediate, "meta.rds"))
 
   # usethis::use_data(df_meta, overwrite = T)
 } else {
   df_meta <- read_rds(str_c(.path$intermediate, "meta.rds"))
-}
-```
-
-Pre-process spore raw data: pad the date to full year round
-```{r full}
-source(str_c(.path$ana_fun, "tidy_fulldate_station.R"))
-if (.fulldata) {
-  df_full <- tidy_fulldate_station(df_site)
 }
 ```
 
