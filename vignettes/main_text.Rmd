@@ -89,13 +89,12 @@ if (.figsave) {
 
 # Continent level trend
 ```{r fig-trend-ctnt, fig.width=11, fig.height=11*0.8, fig.cap="Figure 4. Temporal trends of ten fungal spore metrics across all the stations. The estimated trends from linear mixed effects models across stations of the year against (a) the start of season (SOS), (f) start of allergy season (SAS), (b) end of season (EOS), (g) end of allergy season (EAS), (c) length of season (LOS), (h) length of allergy season (LAS), (d) amplitude concentration (Ca), (i) peak concentration (Cp), (e) annual integral (AIn), and (j) allergy season integral (ASIn). Solid black lines indicate significant (p < 0.05, t-test) slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Colors are station-level Theil-Sen linear regression slopes, with warmer colors indicating earlier days of year, longer days, or higher intensity. The slope of colored lines are model-predicted station-level trends. The top row presents metrics defined in the ecological approach, while the bottom row shows metrics defined in the public health approach. Intensity metrics are transformed using the natural logarithm. To highlight trends, all intensity metrics are displayed on a natural logarithm scale, consistent with the transformations used during model fitting."}
-source(str_c(.path$ana_fun, "plot_trend_ctnt_pred_composite.R"))
-p_trend_ctnt_pred_composite
+(p_trend_ctnt_pred <- plot_trend_ctnt_pred(df_analysis))
 
 if (.figsave) {
   ggsave(
-    str_c(.path$output, "Figure_4.png"),
-    plot = p_trend_ctnt_pred_composite,
+    str_c(.path$output, "figures/Figure_4.png"),
+    plot = p_trend_ctnt_pred,
     height = 11 * 0.8, width = 11
   )
 }

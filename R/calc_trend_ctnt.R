@@ -1,3 +1,4 @@
+#' @export
 calc_trend_ctnt <- function(df_in, metric, pct) {
   df <- df_in %>%
     filter(Metric == metric) %>%

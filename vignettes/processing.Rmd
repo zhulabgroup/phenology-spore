@@ -9,9 +9,9 @@ output:
 ```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = FALSE)
 
-# library(phenologyspore)
+library(phenologyspore)
 
-.fulldata <- T
+.fulldata <- F
 
 if (exists(".fulldata") && isTRUE(.fulldata)) {
   .path <- list(
