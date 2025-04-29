@@ -1,3 +1,4 @@
+#' @export
 calc_trend_station_TS <- function(df_in, metric, pct) {
   # filter station-year
   df <- df_in %>%

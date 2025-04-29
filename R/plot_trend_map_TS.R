@@ -1,3 +1,4 @@
+#' @export
 plot_trend_map_TS <- function(df_in, metric) {
   p_map <- ggplot() +
     geom_polygon(data = map_data("state"), aes(x = long, y = lat, group = group), fill = "white") +
@@ -35,18 +36,6 @@ plot_trend_map_TS <- function(df_in, metric) {
       breaks = round(seq(min(df_in$Nyear), max(df_in$Nyear), length.out = 5)),
       name = "Number\nof years"
     ) +
-    # geom_point(
-    #   data = df_in,
-    #   aes(
-    #     x = lon, y = lat,
-    #     shape = ifelse(p_value >= 0.05, ">= 0.05", "< 0.05"),
-    #     size = Nyear)) +
-    # scale_shape_manual(
-    #   values = c(10, 1),
-    #   guide = guide_legend(
-    #     title = expression(italic("p-value")),
-    #     override.aes = list(size = c(4, 4)))) +
-    # guides(size = "none", shape = "none") +
     theme(
       legend.position = c(0.01, 0.01),
       legend.box = "horizontal",
