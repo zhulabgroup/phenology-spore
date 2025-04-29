@@ -40,7 +40,7 @@ calc_lme <- function(df_in, metric, x_vrb, pct) {
       )
     }
   )
-  
+
   # Now process the fitted model once
   n_obsv <- nobs(m_lme)
   beta <- nlme::fixef(m_lme)[["x_variable"]] %>%
@@ -51,7 +51,7 @@ calc_lme <- function(df_in, metric, x_vrb, pct) {
     round(5)
   y2003 <- alpha + beta * 2003
   y2022 <- alpha + beta * 2022
-  
+
   if (metric %in% c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS")) {
     change <- (y2022 - y2003) %>%
       as.numeric() %>%
@@ -61,7 +61,7 @@ calc_lme <- function(df_in, metric, x_vrb, pct) {
       as.numeric() %>%
       round(5)
   }
-  
+
   CI <- nlme::intervals(m_lme, which = "fixed")
   CI1 <- CI$fixed[2, "lower"] %>%
     as.numeric() %>%
@@ -72,7 +72,7 @@ calc_lme <- function(df_in, metric, x_vrb, pct) {
   p <- summary(m_lme)$tTable[["x_variable", "p-value"]] %>%
     as.numeric() %>%
     round(5)
-  
+
   # Final result
   result <- c(metric, pct, n_obsv, change, x_vrb, beta, CI1, CI2, p)
   return(result)

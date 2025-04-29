@@ -60,6 +60,13 @@ df_sens_cpltness %>%
 ```
 
 # Fig. S1
+
+Summarize the ecoregion of each station
+```{r ecoregion}
+source(str_c(.path$ana_fun, "summ_ecoregion_station.R"))
+df_ecoregion <- summ_ecoregion_station(df_meta, boundary_path = str_c(.path$input, "boundary"))
+```
+
 ```{r fig-ecoregion, fig.height=8*0.618, fig.width=8, fig.cap="Figure S1. Map of 55 monitoring stations associated with the National Allergy Bureau (NAB) distributed in different ecoregions within the continental United States that were included in the analysis of this study."}
 source(str_c(.path$ana_fun, "plot_ecoregion_stations.R"))
 df_meta <- read_rds(str_c(.path$intermediate, "meta.rds"))
