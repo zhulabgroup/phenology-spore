@@ -1,6 +1,6 @@
 # extract ten metrics for each station-sporeyr
 
-calc_metrics <- function(df_ts) {
+calc_metrics <- function(df_ts, thres = 4605) {
   df_peak <- df_ts %>%
     drop_na(count_fillwhit) %>%
     group_by(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness) %>%
@@ -77,7 +77,7 @@ calc_metrics <- function(df_ts) {
 
   df_allergy_season <- df_ts %>%
     group_by(lat, lon, station, city, state, country, id, n, offset, year_new, cpltness) %>%
-    group_modify(~ find_sas(.)) %>%
+    group_modify(~ find_sas(., thres = thres)) %>%
     ungroup() %>%
     rename(
       sas = out_doy,
@@ -143,7 +143,7 @@ calc_metrics <- function(df_ts) {
   return(df)
 }
 
-find_sas <- function(x) {
+find_sas <- function(x, thres = 4605) {
   # find the first day of 10 consecutive days with spore count >= threshold (thrsh)
   # 10 values before sas are not NA, otherwise, return NA
   # if sas <= 10, all the values before sas should not be NA, otherwise return NA
@@ -152,7 +152,7 @@ find_sas <- function(x) {
   out_doy <- NA
   out_date_old <- NA
   for (i in 1:nrow(x)) {
-    if (!is.na(x$count_fillwhit[i]) && x$count_fillwhit[i] >= 4605) {
+    if (!is.na(x$count_fillwhit[i]) && x$count_fillwhit[i] >= thres) {
       consecutive_count <- consecutive_count + 1
       if (consecutive_count == 1) {
         out_doy <- x$doy_new[i]

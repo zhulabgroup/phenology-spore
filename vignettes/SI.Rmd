@@ -191,6 +191,23 @@ p_atrr_ctnt_pred_composite
 
 # Fig. S8
 ```{r fig-NAB threshold, fig.height=10*0.618, fig.width=10, fig.cap="Figure S8. Summary of results when using NAB threshold, 6,500 spores m–3."}
-source(str_c(.path$ana_fun, "plot_coefplot.R"))
-p_coef
+if (.fulldata) {
+  df_metrics_6500 <- calc_metrics(df_ts, thres = 6500)
+  write_rds(df_metrics_6500, str_c(.path$intermediate, "metrics_6500.rds"))
+  usethis::use_data(df_metrics_6500, overwrite = T)
+}
+
+df_analysis_6500 <- tidy_metric_clim(df_metrics_6500, df_daymet_annual, pct = 0.8)
+
+df_lme_6500 <- calc_lme_all(df_analysis_6500, x_vrb = c("year_new", "MAT", "TAP"), pct = 0.8)
+
+(p_coef_6500 <- plot_coef(df_lme_6500))
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "figures/Figure_S8.png"),
+    plot = p_coef_6500,
+    height = 10 * 0.618, width = 10
+  )
+}
 ```

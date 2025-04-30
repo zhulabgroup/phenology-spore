@@ -1,3 +1,9 @@
+#' @export
+plot_atrr_ctnt_pred_composite <- function(model, df_in, ls_metric = c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn"), cli_vrb, pct) {
+
+}
+
+#' @export
 plot_atrr_ctnt_pred <- function(model, df_in, metric, cli_vrb, pct) {
   beta_value <- nlme::fixef(model)[["climate"]] %>%
     as.numeric() %>%
