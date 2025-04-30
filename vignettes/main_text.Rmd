@@ -53,7 +53,7 @@ if (.figsave) {
 ```{r fig-calendar, fig.width=10, fig.height=5*0.8, fig.cap="Figure 2. Fungal spore calendar for ten sampling stations. The daily long-term mean of fungal spore concentration is displayed, 2003-2022. Darker colors indicate higher concentrations while missing data are represented in white. (a) Stations show variable seasonality across ecological regions. (b) Stations with higher long-term mean of total annual precipitation (mm) show higher intensity of fungal spore seasons."}
 if (.fulldata) {
   df_ts <- read_rds(str_c(.path$intermediate, "ts.rds"))
-  (p_calendar <- plot_calendar(df_ts))
+  (p_calendar <- plot_calendar(df_ts, df_daymet_annual))
 
   if (.figsave) {
     ggsave(

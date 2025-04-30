@@ -137,8 +137,17 @@ if (.fulldata) {
 # Fig. S4
 ```{r fig-calendars, fig.width=9, fig.height=8*1.618, fig.cap = "Figure S4. Fungal spore calendar for all the 55 stations meeting our inclusion criteria. Displayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations while missing data are represented in white. Vertical black lines are the start of the spore year. Annotated numbers are the average data availability across available years for each station. Stations are ranked by longitude."}
 if (.fulldata) {
-  source(str_c(.path$ana_fun, "plot_calendar_si.R"))
-  p_calendar_suppl
+  (p_calendar_lon <- plot_calendar(df_ts, option = "si"))
+  if (.figsave) {
+    ggsave(
+      str_c(.path$output, "figures/Figure_S4.png"),
+      plot = p_calendar_lon,
+      height = 8 * 1.618, width = 9
+    )
+  }
+} else {
+  (p_calendar_lon <- cowplot::ggdraw() +
+    cowplot::draw_image(str_c(.path$output, "figures/Figure_S4.png")))
 }
 ```
 

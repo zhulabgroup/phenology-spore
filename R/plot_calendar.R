@@ -1,17 +1,22 @@
 #' @export
-plot_calendar <- function(df_ts) {
-  df_calendar_a <- calc_calendar_samples(df_ts, df_metrics, df_daymet_annual, y_label = "ecoregion")
-  p_calendar_a <- plot_calendar_samples(df_calendar_a, y_label = "ecoregion")
+plot_calendar <- function(df_ts, df_daymet_annual, option = "main") {
+  if (option == "main") {
+    df_calendar_a <- calc_calendar_samples(df_ts, df_metrics, y_label = "ecoregion")
+    p_calendar_a <- plot_calendar_samples(df_calendar_a, y_label = "ecoregion")
 
-  df_calendar_b <- calc_calendar_samples(df_ts, df_metrics, df_daymet_annual, y_label = "mm")
-  p_calendar_b <- plot_calendar_samples(df_calendar_b, y_label = "mm")
+    df_calendar_b <- calc_calendar_samples(df_ts, df_metrics, df_daymet_annual, y_label = "mm")
+    p_calendar_b <- plot_calendar_samples(df_calendar_b, y_label = "mm")
 
-  p_calendar <- (p_calendar_a + p_calendar_b) +
-    plot_layout(guides = "collect") &
-    theme(legend.position = "bottom") +
-      plot_annotation(tag_levels = "a") &
-    theme(plot.tag = element_text(size = 12, face = "bold")) &
-    plot_annotation(tag_prefix = "(", tag_suffix = ")")
+    p_calendar <- (p_calendar_a + p_calendar_b) +
+      plot_layout(guides = "collect") &
+      theme(legend.position = "bottom") +
+        plot_annotation(tag_levels = "a") &
+      theme(plot.tag = element_text(size = 12, face = "bold")) &
+      plot_annotation(tag_prefix = "(", tag_suffix = ")")
+  } else if (option == "si") {
+    df_calendar_lon <- calc_calendar_samples(df_ts, df_metrics, y_label = "lon")
+    p_calendar <- plot_calendar_samples(df_in = df_calendar_lon, y_label = "lon")
+  }
 
   return(p_calendar)
 }
@@ -61,23 +66,14 @@ plot_calendar_samples <- function(df_in, y_label) {
   return(out_gg)
 }
 
-calc_calendar_samples <- function(df_in, df_metrics, df_daymet_annual, y_label) {
+calc_calendar_samples <- function(df_in, df_metrics, df_daymet_annual = NULL, y_label) {
   df <- df_in %>%
     group_by(lat, lon, station, city, state, country, id, n, offset, doy) %>%
     summarise(count_mean = mean(count, na.rm = T)) %>%
     mutate(count_mean = ifelse(is.nan(count_mean), NA, count_mean)) %>%
     mutate(count_rescale = ifelse(count_mean < 50000, count_mean, 50000)) %>%
     mutate(count_rescale = ifelse(count_rescale > 100, count_rescale, 100)) %>%
-    subset(doy != 366) %>%
-    left_join(
-      left_join(df_metrics, df_daymet_annual, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>%
-        group_by(lat, lon, station, city, state, country, id, n, offset) %>%
-        summarise(
-          tap_mean = mean(tap),
-          mat_mean = mean(mat)
-        ),
-      by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")
-    )
+    subset(doy != 366)
 
   if (y_label == "lon") {
     df_out <- df %>%
@@ -94,6 +90,15 @@ calc_calendar_samples <- function(df_in, df_metrics, df_daymet_annual, y_label) 
       mutate(order = lon)
   } else if (y_label == "mm") {
     df_out <- df %>%
+      left_join(
+        left_join(df_metrics, df_daymet_annual, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset", "year_new")) %>%
+          group_by(lat, lon, station, city, state, country, id, n, offset) %>%
+          summarise(
+            tap_mean = mean(tap),
+            mat_mean = mean(mat)
+          ),
+        by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")
+      ) %>%
       filter(n %in% c(5, 44, 7, 38, 52)) %>%
       mutate(ylab = paste0(city, ", ", state, "\n(", round(tap_mean), " mm)")) %>%
       mutate(order = tap_mean)
