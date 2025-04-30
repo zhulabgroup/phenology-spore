@@ -1,7 +1,7 @@
 #' @export
-tidy_trend_metric <- function(df_lme) {
+tidy_trend_metric <- function(df_lme, x_vrb = "year") {
   df_summ_metric_new <- df_lme %>%
-    filter(x_variable == "year") %>%
+    filter(x_variable %in% x_vrb) %>%
     mutate(metric = case_when(
       metric == "ln_Ca" ~ "ln(Ca)",
       metric == "ln_Cp" ~ "ln(Cp)",

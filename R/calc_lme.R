@@ -1,19 +1,23 @@
 #' @export
-calc_lme_all <- function(df_analysis, pct = 0.8) {
+calc_lme_all <- function(df_analysis, x_vrb = "year_new", pct = 0.8) {
   # generate the dataframe
-  df_m <- data.frame()
+  ls_df_m <- list()
   for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn")) {
-    for (x in c("year_new", "MAT", "TAP")) {
-      m_rslt <- calc_lme(df_in = df_analysis, metric = m_metric, x_vrb = x, pct = pct)
-      df_m <- rbind(df_m, m_rslt)
+    if (length(x_vrb) > 1 & length(pct) == 1) {
+      for (x in x_vrb) {
+        m_rslt <- calc_lme(df_in = df_analysis, metric = m_metric, x_vrb = x, pct = pct)
+        ls_df_m[[str_c(m_metric, x, sep = " ")]] <- m_rslt
+      }
+    } else if (length(x_vrb) == 1 & length(pct) > 1) {
+      for (cplt in pct) {
+        m_rslt <- calc_lme(df_in = df_analysis, metric = m_metric, x_vrb = x_vrb, pct = cplt)
+        ls_df_m[[str_c(m_metric, cplt, sep = " ")]] <- m_rslt
+      }
     }
   }
-  colnames(df_m) <- c("metric", "cpltness", "n_station", "n_obsv", "change", "x_variable", "beta", "ci1", "ci2", "p")
+  df_m <- bind_rows(ls_df_m)
+
   df <- df_m %>%
-    mutate(beta = as.numeric(beta)) %>%
-    mutate(ci1 = as.numeric(ci1)) %>%
-    mutate(ci2 = as.numeric(ci2)) %>%
-    mutate(p = as.numeric(p)) %>%
     mutate(pspct = ifelse(
       metric %in% c("SOS", "EOS", "LOS", "ln_Ca", "ln_AIn"),
       "Ecology Perspective",
@@ -117,6 +121,18 @@ calc_lme <- function(df_in, metric, x_vrb, pct) {
     round(5)
 
   # Final result
-  result <- c(metric, pct, n_station, n_obsv, change, x_vrb, beta, CI1, CI2, p)
+  result <- data.frame(
+    metric = metric,
+    cpltness = pct,
+    n_station = n_station,
+    n_obsv = n_obsv,
+    change = change,
+    x_variable = x_vrb,
+    beta = beta,
+    ci1 = CI1,
+    ci2 = CI2,
+    p = p
+  )
+
   return(result)
 }

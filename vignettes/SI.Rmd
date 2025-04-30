@@ -14,6 +14,18 @@ library(phenologyspore)
 .fulldata <- F
 .figsave <- T
 .tablesave <- T
+
+if (exists(".fulldata") && isTRUE(.fulldata)) {
+  .path <- list(
+    input = "../alldata/input/",
+    intermediate = "../alldata/intermediate/",
+    output = "../alldata/output/"
+  )
+} else {
+  .path <- list(
+    output = "../inst/"
+  )
+}
 ```
 
 # Table S1
@@ -24,13 +36,9 @@ if (.fulldata) {
 
   if (.tablesave) {
     write_csv(df_summ_data, file = str_c(.path$output, "tables/tbl_station_meta_data.csv"))
-    file.copy(
-      from = str_c(.path$output, "tables/tbl_station_meta_data.csv"),
-      to = str_c("../inst/", "tables/tbl_station_meta_data.csv")
-    )
   }
 } else {
-  df_summ_data <- read_csv(str_c(.path$output, "tbl_station_meta_data.csv"))
+  df_summ_data <- read_csv(str_c(.path$output, "tables/tbl_station_meta_data.csv"))
 }
 
 df_summ_data %>% knitr::kable()
@@ -67,8 +75,13 @@ df_summ_trend %>% knitr::kable()
 
 # Table S4
 ```{r tbl-sensitivity-completeness}
-source(str_c(.path$ana_fun, "ana_sens_cpltness.R"))
-write_csv(df_sens_cpltness, file = str_c(.path$output, "tbl_sens_cpltness.csv"))
+df_lme_cplt <- calc_lme_all(df_analysis, x_vrb = "year_new", pct = c(1, 0.9, 0.8, 0.7, 0.6))
+df_sens_cpltness <- tidy_trend_metric(df_lme_cplt)
+
+if (.tablesave) {
+  write_csv(df_sens_cpltness, file = str_c(.path$output, "tables/tbl_sens_cpltness.csv"))
+}
+
 df_sens_cpltness %>%
   filter(Metric %in% c("ln(Ca)", "ln(Cp)", "ln(AIn)", "ln(ASIn)")) %>%
   knitr::kable()
