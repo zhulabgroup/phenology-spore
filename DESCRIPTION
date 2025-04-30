@@ -25,4 +25,6 @@ Depends:
     cowplot,
     grid
 Imports:
-    daymetr
+    daymetr,
+    sf,
+    tigris
