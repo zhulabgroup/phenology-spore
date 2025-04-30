@@ -118,9 +118,19 @@ if (.figsave) {
 # Fig. S3
 ```{r fig-compare-curves, fig.height=8/5/0.618, fig.width=8/2, fig.cap="Figure S3. Pre-processing of raw fungal spore data. Gray dots are raw daily concentrations, while black lines are pre-processed data. Smoothing enhances the quality of the data by providing more stable and representative signals, enabling a clearer analysis of underlying trends and recurring patterns in spore season metrics. The Whittaker-Henderson smoother is particularly advantageous for its capabilities in auto-interpolating missing observations, adapting to data boundaries, and allowing for precise adjustment of smoothness levels (Eilers, 2003)."}
 if (.fulldata) {
-  df_smooth <- read_rds(str_c(.path$dat_process, "dat_smooth_100.rds"))
-  source(str_c(.path$ana_fun, "plot_curve_raw_processed.R"))
-  p_curves
+  df_ts <- read_rds(str_c(.path$intermediate, "ts.rds"))
+  p_curves <- plot_ts(df_ts)
+
+  if (.figsave) {
+    ggsave(
+      str_c(.path$output, "figures/Figure_S3.png"),
+      plot = p_curves,
+      height = 8 / 5 / 0.618, width = 8 / 2
+    )
+  }
+} else {
+  (p_curves <- cowplot::ggdraw() +
+    cowplot::draw_image(str_c(.path$output, "figures/Figure_S3.png")))
 }
 ```
 
