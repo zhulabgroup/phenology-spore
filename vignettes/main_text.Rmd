@@ -38,12 +38,12 @@ if (.fulldata) {
   usethis::use_data(df_sample, overwrite = T)
 }
 
-(p_metrics <- plot_metrics(df_sample, df_analysis))
+(p_conceptual <- plot_conceptual(df_sample, df_analysis))
 
 if (.figsave) {
   ggsave(
     str_c(.path$output, "figures/Figure_1.png"),
-    plot = p_metrics,
+    plot = p_conceptual,
     height = 11, width = 11
   )
 }

@@ -154,8 +154,18 @@ if (.fulldata) {
 # Fig. S5
 ```{r fig-sensitivity-lambda, fig.height=8, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S5. Sensitivity test on the smoothness parameter, lambda, applied in Whittaker-Henderson smoothing for ten fungal spore season metrics. The lambda was varied from ten to 500. This analysis confirmed that the observed trends in spore season were similar across the range of smoothing parameters tested. Points are estimated values of β1 in the linear mixed-effects models for trend detection. Error bars indicate the 95% confidence intervals of the fixed slope. Annotated slope and p-value describe the linear regression result of fixed slopes against lambda (t-test). Metrics defined in the ecological approach are in the left panel, while metrics defined in the public health approach are in the right panel."}
 if (.fulldata) {
-  source(str_c(.path$ana_fun, "ana_sens_l.R"))
-  p_sens_l
+  df_lme_lambda <- calc_sens_lamda(df_full, path_offset = str_c(.path$intermediate, "fill_smooth_offset.rds"), ls_lmd = c(10, seq(50, 500, by = 50)))
+  write_rds(df_lme_lambda, str_c(.path$intermediate, "lme_lambda.rds"))
+  usethis::use_data(df_lme_lambda, overwrite = T)
+}
+(p_sens_lambda <- plot_sens_lambda(df_lme_lambda))
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "figures/Figure_S5.png"),
+    plot = p_sens_lambda,
+    height = 8, width = 8
+  )
 }
 ```
 

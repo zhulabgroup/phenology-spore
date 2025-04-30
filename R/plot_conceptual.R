@@ -1,5 +1,5 @@
 #' @export
-plot_metrics <- function(df_sample, df_analysis) {
+plot_conceptual <- function(df_sample, df_analysis) {
   p_conceptual <- plot_conceptual(df_sample)
   p_boxplot <- plot_boxplot_metric(df_analysis)
 

@@ -3,15 +3,10 @@ calc_lme_all <- function(df_analysis, x_vrb = "year_new", pct = 0.8) {
   # generate the dataframe
   ls_df_m <- list()
   for (m_metric in c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn")) {
-    if (length(x_vrb) > 1 & length(pct) == 1) {
-      for (x in x_vrb) {
-        m_rslt <- calc_lme(df_in = df_analysis, metric = m_metric, x_vrb = x, pct = pct)
-        ls_df_m[[str_c(m_metric, x, sep = " ")]] <- m_rslt
-      }
-    } else if (length(x_vrb) == 1 & length(pct) > 1) {
+    for (x in x_vrb) {
       for (cplt in pct) {
-        m_rslt <- calc_lme(df_in = df_analysis, metric = m_metric, x_vrb = x_vrb, pct = cplt)
-        ls_df_m[[str_c(m_metric, cplt, sep = " ")]] <- m_rslt
+        m_rslt <- calc_lme(df_in = df_analysis, metric = m_metric, x_vrb = x, pct = cplt)
+        ls_df_m[[str_c(m_metric, x, cplt, sep = " ")]] <- m_rslt
       }
     }
   }
