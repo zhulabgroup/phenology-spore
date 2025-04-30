@@ -104,10 +104,15 @@ if (.figsave) {
 
 # Fig. S2 summary the family composition
 ```{r fig-composition, fig.height=6*0.618, fig.width=6, fig.cap="Figure S2. Relative abundance of 23 spore families during the study period across all the stations."}
-if (.fulldata) {
-  source(str_c(.path$ana_fun, "calc_composition_station.R"))
+(p_comm_pie <- plot_comp(df_comm))
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "figures/Figure_S2.png"),
+    plot = p_comm_pie,
+    height = 6 * 0.618, width = 6
+  )
 }
-p_comm_pie
 ```
 
 # Fig. S3

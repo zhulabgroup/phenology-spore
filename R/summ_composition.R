@@ -96,3 +96,23 @@ summ_trend_composition <- function(df_comm, ls_family = c("Unidentified", "Clado
 
   return(df_trend_taxa)
 }
+
+# community composition in each year across all stations
+
+#' @export
+plot_comp <- function(df_comm) {
+  p_comm_pie <- df_comm %>%
+    filter(family != "Total") %>%
+    group_by(family) %>%
+    summarise(pctg = median(pctg, na.rm = T)) %>%
+    arrange(desc(pctg)) %>%
+    ungroup() %>%
+    rename("Family" = "family") %>%
+    ggplot(aes(x = "", y = pctg, fill = Family)) +
+    geom_bar(stat = "identity", width = 1) +
+    coord_polar("y", start = 0) +
+    theme_void() +
+    theme(legend.position = "right")
+
+  return(p_comm_pie)
+}
