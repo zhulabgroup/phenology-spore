@@ -1,9 +1,10 @@
 ---
-title: "Processing"
+title: "0 processing"
 author: "Ruoyu Wu, Yiluan Song"
-date: "2025-04-24"
+date: "2025-04-30"
 output: rmarkdown::html_vignette
 vignette: >
+  %\VignetteIndexEntry{0 processing}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -3,7 +3,7 @@ Use this R package _phenologyspore_ to reproduce key steps in the manuscript
 Wu, R., Song, Y., Head, J.R., Katz, D.S.W., Peay, K.G., Shedden, K., Zhu, K. Fungal spore seasons advanced across the US over two decades of climate change.
 
 ## Installation
-Please install the permanent version of our package following the steps below.
+Please install our package following the steps below.
 
 1. Download the zip folder on Zenodo. Remember the location where you've downloaded it to.
 2. Unzip the downloaded zip file. You'll get a folder named phenology-spore.
@@ -23,15 +23,16 @@ To reproduce the analysis, you can build and read the package vignette. It is li
 
 There are three vignettes in the package:
 
-- `processing.Rmd` Performs all data wrangling and processing.
+- `0_processing.Rmd` Performs all data wrangling and processing.
 
-- `main_text.Rmd` Generates the figures used in the main text of the manuscript.
+- `1_main_text.Rmd` Generates the figures used in the main text of the manuscript.
 
-- `SI.Rmd` Generates the figures and tables included in the Supplementary Information.
+- `2_SI.Rmd` Generates the figures and tables included in the Supplementary Information.
 
+### Option 1
 You may build the vignettes as you install the package, by setting `build_vignettes = TRUE` in
 ```R
-devtools::install(quick = TRUE, build_vignettes = TRUE)
+devtools::install(build_vignettes = TRUE)
 ```
 
 You can now view the vignette using
@@ -41,6 +42,11 @@ browseVignettes(package = "phenologyspore")
 
 Then, click on the HTML link of the vignettes to open them in your browser.
 
+### Option 2
+
+You may build the vignettes manually by knitting the R markdown files in the `vignettes/` folder. You can do this in RStudio by clicking the "Knit" button.
+
+### Option 3
 You can also run the code chunks in the vignettes in your R environment and explore the functions demonstrated.
 
 ## Additional files

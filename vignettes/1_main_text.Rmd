@@ -1,9 +1,10 @@
 ---
-title: "main text"
+title: "1 main text"
 author: "Ruoyu Wu, Yiluan Song"
-date: "2025-04-24"
+date: "2025-04-30"
 output: rmarkdown::html_vignette
 vignette: >
+  %\VignetteIndexEntry{1 main text}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
