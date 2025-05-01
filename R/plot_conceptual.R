@@ -1,6 +1,6 @@
 #' @export
 plot_conceptual <- function(df_sample, df_analysis) {
-  p_conceptual <- plot_conceptual(df_sample)
+  p_conceptual <- plot_conceptual_curve(df_sample)
   p_boxplot <- plot_boxplot_metric(df_analysis)
 
   p_metrics <- cowplot::plot_grid(p_conceptual, p_boxplot$p_metrics_con, p_boxplot$p_metrics_pheno, p_boxplot$p_metrics_in,
@@ -26,7 +26,7 @@ tidy_sample_data <- function(fill_smooth_offset_path, metrics_amplitude_path) {
 }
 
 #' @export
-plot_conceptual <- function(df_sample) {
+plot_conceptual_curve <- function(df_sample) {
   p_conceptual <- ggplot() +
     ggpattern::geom_ribbon_pattern(
       data = df_sample %>% filter(year_new == 2009 & doy_new %in% 137:236),

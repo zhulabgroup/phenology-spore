@@ -1,0 +1,195 @@
+## ----setup, include=FALSE, message=FALSE--------------------------------------
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, cache = FALSE, progress = FALSE)
+
+library(phenologyspore)
+
+.fulldata <- F
+.datsave <- F
+.figsave <- T
+.tablesave <- T
+
+if (exists(".fulldata") && isTRUE(.fulldata)) {
+  .path <- list(
+    input = "../alldata/input/",
+    intermediate = "../alldata/intermediate/",
+    output = "../alldata/output/"
+  )
+} else {
+  .path <- list(
+    input = "../inst/extdata/",
+    output = "../inst/"
+  )
+}
+
+## -----------------------------------------------------------------------------
+if (.fulldata) {
+  df_ts <- read_rds(str_c(.path$intermediate, "ts.rds"))
+  df_summ_data <- summ_data_station(df_ts)
+
+  if (.tablesave) {
+    write_csv(df_summ_data, file = str_c(.path$output, "tables/tbl_station_meta_data.csv"))
+  }
+} else {
+  df_summ_data <- read_csv(str_c(.path$output, "tables/tbl_station_meta_data.csv"))
+}
+
+df_summ_data %>% knitr::kable()
+
+## ----tbl-composition-shifts---------------------------------------------------
+if (.fulldata) {
+  df_spore <- read_rds(str_c(.path$input, "dat_spore.rds"))
+  df_full <- read_rds(str_c(.path$intermediate, "full.rds"))
+
+  df_comm <- calc_comm_comp(df_spore, df_full)
+
+  if (.datsave) {
+    write_rds(df_comm, str_c(.path$intermediate, "comm.rds"))
+    usethis::use_data(df_comm, overwrite = T)
+  }
+}
+
+df_trend_taxa <- summ_trend_composition(df_comm, ls_family = c("Unidentified", "Cladosporiaceae"))
+
+if (.tablesave) {
+  write_csv(df_trend_taxa, file = str_c(.path$output, "tables/tbl_trend_taxa.csv"))
+}
+
+df_trend_taxa %>% knitr::kable()
+
+## ----tbl-summary of the number of stations included in the analysis-----------
+df_summ_trend <- tidy_trend_metric(df_lme)
+if (.tablesave) {
+  write_csv(df_summ_trend, file = str_c(.path$output, "tables/tbl_summ_trend.csv"))
+}
+df_summ_trend %>% knitr::kable()
+
+## ----tbl-sensitivity-completeness---------------------------------------------
+df_lme_cplt <- calc_lme_all(df_analysis, x_vrb = "year_new", pct = c(1, 0.9, 0.8, 0.7, 0.6))
+df_sens_cpltness <- tidy_trend_metric(df_lme_cplt)
+
+if (.tablesave) {
+  write_csv(df_sens_cpltness, file = str_c(.path$output, "tables/tbl_sens_cpltness.csv"))
+}
+
+df_sens_cpltness %>%
+  filter(Metric %in% c("ln(Ca)", "ln(Cp)", "ln(AIn)", "ln(ASIn)")) %>%
+  knitr::kable()
+
+## ----fig-ecoregion, fig.height=8*0.618, fig.width=8, fig.cap="Figure S1. Map of 55 monitoring stations associated with the National Allergy Bureau (NAB) distributed in different ecoregions within the continental United States that were included in the analysis of this study."----
+(p_ecoregion <- plot_ecoregion(df_meta = df_meta, boundary_path = str_c(.path$input, "boundary")))
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "figures/Figure_S1.png"),
+    plot = p_ecoregion,
+    height = 8 * 0.618, width = 8
+  )
+}
+
+## ----fig-composition, fig.height=6*0.618, fig.width=6, fig.cap="Figure S2. Relative abundance of 23 spore families during the study period across all the stations."----
+(p_comm_pie <- plot_comp(df_comm))
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "figures/Figure_S2.png"),
+    plot = p_comm_pie,
+    height = 6 * 0.618, width = 6
+  )
+}
+
+## ----fig-compare-curves, fig.height=8/5/0.618, fig.width=8/2, fig.cap="Figure S3. Pre-processing of raw fungal spore data. Gray dots are raw daily concentrations, while black lines are pre-processed data. Smoothing enhances the quality of the data by providing more stable and representative signals, enabling a clearer analysis of underlying trends and recurring patterns in spore season metrics. The Whittaker-Henderson smoother is particularly advantageous for its capabilities in auto-interpolating missing observations, adapting to data boundaries, and allowing for precise adjustment of smoothness levels (Eilers, 2003)."----
+if (.fulldata) {
+  df_ts <- read_rds(str_c(.path$intermediate, "ts.rds"))
+  p_curves <- plot_ts(df_ts)
+
+  if (.figsave) {
+    ggsave(
+      str_c(.path$output, "figures/Figure_S3.png"),
+      plot = p_curves,
+      height = 8 / 5 / 0.618, width = 8 / 2
+    )
+  }
+} else {
+  (p_curves <- cowplot::ggdraw() +
+    cowplot::draw_image(str_c(.path$output, "figures/Figure_S3.png")))
+}
+
+## ----fig-calendars, fig.width=9, fig.height=8*1.618, fig.cap = "Figure S4. Fungal spore calendar for all the 55 stations meeting our inclusion criteria. Displayed is the daily long-term mean of fungal spore concentration, 2003-2022. Darker colors indicate higher concentrations while missing data are represented in white. Vertical black lines are the start of the spore year. Annotated numbers are the average data availability across available years for each station. Stations are ranked by longitude."----
+if (.fulldata) {
+  (p_calendar_lon <- plot_calendar(df_ts, option = "si"))
+  if (.figsave) {
+    ggsave(
+      str_c(.path$output, "figures/Figure_S4.png"),
+      plot = p_calendar_lon,
+      height = 8 * 1.618, width = 9
+    )
+  }
+} else {
+  (p_calendar_lon <- cowplot::ggdraw() +
+    cowplot::draw_image(str_c(.path$output, "figures/Figure_S4.png")))
+}
+
+## ----fig-sensitivity-lambda, fig.height=8, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S5. Sensitivity test on the smoothness parameter, lambda, applied in Whittaker-Henderson smoothing for ten fungal spore season metrics. The lambda was varied from ten to 500. This analysis confirmed that the observed trends in spore season were similar across the range of smoothing parameters tested. Points are estimated values of β1 in the linear mixed-effects models for trend detection. Error bars indicate the 95% confidence intervals of the fixed slope. Annotated slope and p-value describe the linear regression result of fixed slopes against lambda (t-test). Metrics defined in the ecological approach are in the left panel, while metrics defined in the public health approach are in the right panel."----
+if (.fulldata) {
+  df_lme_lambda <- calc_sens_lamda(df_full, path_offset = str_c(.path$intermediate, "fill_smooth_offset.rds"), ls_lmd = c(10, seq(50, 500, by = 50)))
+  if (.datsave) {
+    write_rds(df_lme_lambda, str_c(.path$intermediate, "lme_lambda.rds"))
+    usethis::use_data(df_lme_lambda, overwrite = T)
+  }
+}
+(p_sens_lambda <- plot_sens_lambda(df_lme_lambda))
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "figures/Figure_S5.png"),
+    plot = p_sens_lambda,
+    height = 8, width = 8
+  )
+}
+
+## ----fig-trend-station, fig.height=5*0.618*5, fig.width=5*2, fig.cap="Figure S6. Station-level temporal trends of the spore season metrics. The trends were estimated by Theil-Sen regression. Redder colors indicate earlier DOY, longer days, or higher concentration, and circle sizes are proportional to the years of data at each station."----
+df_trend_station_si <- calc_trend_station_TS(df_in = df_analysis, ls_metric = c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn"), pct = 0.8)
+(p_trend_map_TS_si <- plot_trend_map_TS(df_in = df_trend_station_si, ls_metric = c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn")))
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "figures/Figure_S6.png"),
+    plot = p_trend_map_TS_si,
+    height = 5 * 0.618 * 5, width = 5 * 2
+  )
+}
+
+## ----fig-atrr-ctnt, fig.width=2*5, fig.height=2*2*2.2, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S7. Correlation between fungal spore metrics and climate variables. Black lines are predicted slopes from linear mixed-effects models across all stations. Solid black lines indicate significant (p < 0.05, t-test) slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Point/line colors are stations. Colors are station-level Theil-Sen linear regression slopes, with warmer colors indicating an earlier day of year, longer days, or higher intensity. The slope of colored lines are model-predicted station-level correlations. Intensity metrics are transformed using the natural logarithm."----
+(p_attr_ctnt_pred <- plot_trend_ctnt_pred(df_analysis, ls_x_var = c("mat", "tap"), annotate = F, y_label_short = T))
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "figures/Figure_S7.png"),
+    plot = p_attr_ctnt_pred,
+    height = 2 * 2 * 2.2, width = 2 * 5
+  )
+}
+
+## ----fig-NAB threshold, fig.height=10*0.618, fig.width=10, fig.cap="Figure S8. Summary of results when using NAB threshold, 6,500 spores m–3."----
+if (.fulldata) {
+  df_metrics_6500 <- calc_metrics(df_ts, thres = 6500)
+  if (.datsave) {
+    write_rds(df_metrics_6500, str_c(.path$intermediate, "metrics_6500.rds"))
+    usethis::use_data(df_metrics_6500, overwrite = T)
+  }
+}
+
+df_analysis_6500 <- tidy_metric_clim(df_metrics_6500, df_daymet_annual, pct = 0.8)
+
+df_lme_6500 <- calc_lme_all(df_analysis_6500, x_vrb = c("year_new", "MAT", "TAP"), pct = 0.8)
+
+(p_coef_6500 <- plot_coef(df_lme_6500))
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "figures/Figure_S8.png"),
+    plot = p_coef_6500,
+    height = 10 * 0.618, width = 10
+  )
+}
+

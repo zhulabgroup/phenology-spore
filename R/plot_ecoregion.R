@@ -1,6 +1,7 @@
+#' @export
 plot_ecoregion <- function(df_meta, boundary_path) {
   conic_projection <- sf::st_crs("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96")
-  us_states <- tigris::states(class = "sf") %>% sf::st_transform(conic_projection)
+  suppressMessages(us_states <- tigris::states(class = "sf") %>% sf::st_transform(conic_projection))
   contus_states <- us_states[us_states$STUSPS %in% c("AL", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"), ]
   us_cont <- contus_states %>% sf::st_union()
 

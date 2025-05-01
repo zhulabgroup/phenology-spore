@@ -2,8 +2,10 @@
 title: "SI"
 author: "Ruoyu Wu, Yiluan Song"
 date: "2025-04-27"
-output:
-  html_document: default
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE, message=FALSE}
@@ -12,6 +14,7 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE, cache = FALSE, progress 
 library(phenologyspore)
 
 .fulldata <- F
+.datsave <- F
 .figsave <- T
 .tablesave <- T
 
@@ -52,14 +55,17 @@ if (.fulldata) {
   df_full <- read_rds(str_c(.path$intermediate, "full.rds"))
 
   df_comm <- calc_comm_comp(df_spore, df_full)
-  write_rds(df_comm, str_c(.path$intermediate, "comm.rds"))
-  usethis::use_data(df_comm, overwrite = T)
+
+  if (.datsave) {
+    write_rds(df_comm, str_c(.path$intermediate, "comm.rds"))
+    usethis::use_data(df_comm, overwrite = T)
+  }
 }
 
 df_trend_taxa <- summ_trend_composition(df_comm, ls_family = c("Unidentified", "Cladosporiaceae"))
 
 if (.tablesave) {
-  write_csv(df_trend_taxa, file = str_c(.path$output, "tbl_trend_taxa.csv"))
+  write_csv(df_trend_taxa, file = str_c(.path$output, "tables/tbl_trend_taxa.csv"))
 }
 
 df_trend_taxa %>% knitr::kable()
@@ -69,7 +75,7 @@ df_trend_taxa %>% knitr::kable()
 ```{r tbl-summary of the number of stations included in the analysis}
 df_summ_trend <- tidy_trend_metric(df_lme)
 if (.tablesave) {
-  write_csv(df_summ_trend, file = str_c(.path$output, "tbl_summ_trend.csv"))
+  write_csv(df_summ_trend, file = str_c(.path$output, "tables/tbl_summ_trend.csv"))
 }
 df_summ_trend %>% knitr::kable()
 ```
@@ -155,8 +161,10 @@ if (.fulldata) {
 ```{r fig-sensitivity-lambda, fig.height=8, fig.width=8, echo=FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S5. Sensitivity test on the smoothness parameter, lambda, applied in Whittaker-Henderson smoothing for ten fungal spore season metrics. The lambda was varied from ten to 500. This analysis confirmed that the observed trends in spore season were similar across the range of smoothing parameters tested. Points are estimated values of β1 in the linear mixed-effects models for trend detection. Error bars indicate the 95% confidence intervals of the fixed slope. Annotated slope and p-value describe the linear regression result of fixed slopes against lambda (t-test). Metrics defined in the ecological approach are in the left panel, while metrics defined in the public health approach are in the right panel."}
 if (.fulldata) {
   df_lme_lambda <- calc_sens_lamda(df_full, path_offset = str_c(.path$intermediate, "fill_smooth_offset.rds"), ls_lmd = c(10, seq(50, 500, by = 50)))
-  write_rds(df_lme_lambda, str_c(.path$intermediate, "lme_lambda.rds"))
-  usethis::use_data(df_lme_lambda, overwrite = T)
+  if (.datsave) {
+    write_rds(df_lme_lambda, str_c(.path$intermediate, "lme_lambda.rds"))
+    usethis::use_data(df_lme_lambda, overwrite = T)
+  }
 }
 (p_sens_lambda <- plot_sens_lambda(df_lme_lambda))
 
@@ -200,8 +208,10 @@ if (.figsave) {
 ```{r fig-NAB threshold, fig.height=10*0.618, fig.width=10, fig.cap="Figure S8. Summary of results when using NAB threshold, 6,500 spores m–3."}
 if (.fulldata) {
   df_metrics_6500 <- calc_metrics(df_ts, thres = 6500)
-  write_rds(df_metrics_6500, str_c(.path$intermediate, "metrics_6500.rds"))
-  usethis::use_data(df_metrics_6500, overwrite = T)
+  if (.datsave) {
+    write_rds(df_metrics_6500, str_c(.path$intermediate, "metrics_6500.rds"))
+    usethis::use_data(df_metrics_6500, overwrite = T)
+  }
 }
 
 df_analysis_6500 <- tidy_metric_clim(df_metrics_6500, df_daymet_annual, pct = 0.8)

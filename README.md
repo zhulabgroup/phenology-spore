@@ -15,7 +15,7 @@ install.packages("devtools")
 ```
 6. Install _phenologyspore_ with
 ```R
-devtools::install()
+devtools::install(quick = TRUE)
 ```
 
 ## Vignettes
@@ -31,7 +31,7 @@ There are three vignettes in the package:
 
 You may build the vignettes as you install the package, by setting `build_vignettes = TRUE` in
 ```R
-devtools::install(build_vignettes = TRUE)
+devtools::install(quick = TRUE, build_vignettes = TRUE)
 ```
 
 You can now view the vignette using

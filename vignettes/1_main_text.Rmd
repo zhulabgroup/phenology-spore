@@ -2,8 +2,10 @@
 title: "main text"
 author: "Ruoyu Wu, Yiluan Song"
 date: "2025-04-24"
-output:
-  html_document: default
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE, process=FALSE}
@@ -12,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE, cache = FALSE, warning = FALSE, message = FAL
 library(phenologyspore)
 
 .fulldata <- F
+.datsave <- F
 .figsave <- T
 
 if (exists(".fulldata") && isTRUE(.fulldata)) {
@@ -34,8 +37,10 @@ if (.fulldata) {
     fill_smooth_offset_path = str_c(.path$intermediate, "fill_smooth_offset.rds"),
     metrics_amplitude_path = str_c(.path$intermediate, "metrics_amplitude.rds")
   )
-  write_rds(df_sample, str_c(.path$intermediate, "sample.rds"))
-  usethis::use_data(df_sample, overwrite = T)
+  if (.datsave) {
+    write_rds(df_sample, str_c(.path$intermediate, "sample.rds"))
+    usethis::use_data(df_sample, overwrite = T)
+  }
 }
 
 (p_conceptual <- plot_conceptual(df_sample, df_analysis))
@@ -71,11 +76,11 @@ if (.fulldata) {
 # Station level trend
 ```{r fig-trend-station, fig.height=8*0.618, fig.width=8, fig.cap="Figure 3. Station-level temporal trends of the start of allergy season (SAS). The trends were estimated by Theil-Sen linear regression. Warm colors indicate earlier seasons, and circle sizes are proportional to the years of data at each station."}
 df_trend_station_SAS <- calc_trend_station_TS(df_in = df_analysis, ls_metric = "SAS", pct = 0.8)
-(p_trend_map_TS_SAS <- plot_trend_map_TS(df_in = df_trend_station_SAS, metric = "SAS"))
+(p_trend_map_TS_SAS <- plot_trend_map_TS(df_in = df_trend_station_SAS, ls_metric = "SAS"))
 
 if (.figsave) {
   ggsave(
-    str_c(.path$output, "Figure_3.png"),
+    str_c(.path$output, "figures/Figure_3.png"),
     plot = p_trend_map_TS_SAS,
     height = 8 * 0.618, width = 8
   )
@@ -98,8 +103,10 @@ if (.figsave) {
 # Coefficient plot
 ```{r fig-coefplot, fig.height=10*0.618, fig.width=10, fig.cap="Figure 5. Summary of coefficients β1 in three mixed-effects models for each metric. Points are estimated values of β1. Error bars indicate the 95% confidence intervals of the fixed slope. Specific values are annotated. Colors are different independent variables in the model. Non-transparent colors present significant coefficients (p < 0.05, t-test)."}
 df_lme <- calc_lme_all(df_analysis, x_vrb = c("year_new", "MAT", "TAP"), pct = 0.8)
-write_rds(df_lme, str_c(.path$intermediate, "lme.rds"))
-usethis::use_data(df_lme, overwrite = T)
+if (.datsave) {
+  write_rds(df_lme, str_c(.path$intermediate, "lme.rds"))
+  usethis::use_data(df_lme, overwrite = T)
+}
 
 (p_coef <- plot_coef(df_lme))
 

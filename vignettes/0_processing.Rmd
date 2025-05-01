@@ -2,8 +2,10 @@
 title: "Processing"
 author: "Ruoyu Wu, Yiluan Song"
 date: "2025-04-24"
-output:
-  html_document: default
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE, message=FALSE}
@@ -12,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = FAL
 library(phenologyspore)
 
 .fulldata <- F
+.datsave <- F
 
 if (exists(".fulldata") && isTRUE(.fulldata)) {
   .path <- list(
@@ -35,7 +38,9 @@ Pad the date to full year round
 ```{r process nab data}
 if (.fulldata) {
   df_full <- tidy_nab_data(df_spore, f = "Total", n_m = 10, n_yr = 3, rename = T, pad = T)
-  write_rds(df_full, str_c(.path$intermediate, "full.rds"))
+  if (.datsave) {
+    write_rds(df_full, str_c(.path$intermediate, "full_raw.rds"))
+  }
 }
 ```
 
@@ -45,8 +50,10 @@ if (.fulldata) {
   df_meta <- df_full %>%
     distinct(n, .keep_all = T) %>%
     select(lat, lon, station, city, state, country, id, n)
-  write_rds(df_meta, str_c(.path$intermediate, "meta.rds"))
-  usethis::use_data(df_meta, overwrite = T)
+  if (.datsave) {
+    write_rds(df_meta, str_c(.path$intermediate, "meta.rds"))
+    usethis::use_data(df_meta, overwrite = T)
+  }
 }
 ```
 
@@ -58,7 +65,9 @@ Tag data completeness in each station-sporeyear
 ```{r process time series}
 if (.fulldata) {
   df_ts <- tidy_nab_ts(df_full, path_offset = str_c(.path$intermediate, "fill_smooth_offset.rds"))
-  write_rds(df_ts, str_c(.path$intermediate, "ts.rds"))
+  if (.datsave) {
+    write_rds(df_ts, str_c(.path$intermediate, "ts.rds"))
+  }
 }
 ```
 
@@ -66,8 +75,10 @@ Extract spore season metrics
 ```{r metrics}
 if (.fulldata) {
   df_metrics <- calc_metrics(df_ts)
-  write_rds(df_metrics, str_c(.path$intermediate, "metrics.rds"))
-  usethis::use_data(df_metrics, overwrite = T)
+  if (.datsave) {
+    write_rds(df_metrics, str_c(.path$intermediate, "metrics.rds"))
+    usethis::use_data(df_metrics, overwrite = T)
+  }
 }
 ```
 
@@ -82,8 +93,10 @@ Calculate MAT, TAP in each spore year
 ```{r climate summary}
 if (.fulldata) {
   df_daymet_annual <- summ_climate(df_daymet_raw = df_daymet_raw, df_spore = df_ts)
-  write_rds(df_daymet_annual, str_c(.path$intermediate, "daymet_annual.rds"))
-  usethis::use_data(df_daymet_annual, overwrite = T)
+  if (.datsave) {
+    write_rds(df_daymet_annual, str_c(.path$intermediate, "daymet_annual.rds"))
+    usethis::use_data(df_daymet_annual, overwrite = T)
+  }
 }
 ```
 
@@ -91,6 +104,8 @@ Join MAT, TAP with metrics data
 Filter stations for each metric based on the number of years
 ```{r tidy metric clim}
 df_analysis <- tidy_metric_clim(df_metrics, df_daymet_annual, pct = 0.8)
-write_rds(df_analysis, str_c(.path$intermediate, "analysis.rds"))
-usethis::use_data(df_analysis, overwrite = T)
+if (.datsave) {
+  write_rds(df_analysis, str_c(.path$intermediate, "analysis.rds"))
+  usethis::use_data(df_analysis, overwrite = T)
+}
 ```
