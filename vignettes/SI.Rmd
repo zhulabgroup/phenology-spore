@@ -185,8 +185,15 @@ if (.figsave) {
 
 # Fig. S7
 ```{r fig-atrr-ctnt, fig.width=2*5, fig.height=2*2*2.2, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S7. Correlation between fungal spore metrics and climate variables. Black lines are predicted slopes from linear mixed-effects models across all stations. Solid black lines indicate significant (p < 0.05, t-test) slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Point/line colors are stations. Colors are station-level Theil-Sen linear regression slopes, with warmer colors indicating an earlier day of year, longer days, or higher intensity. The slope of colored lines are model-predicted station-level correlations. Intensity metrics are transformed using the natural logarithm."}
-source(str_c(.path$ana_fun, "plot_atrr_ctnt_pred_composite.R"))
-p_atrr_ctnt_pred_composite
+(p_attr_ctnt_pred <- plot_trend_ctnt_pred(df_analysis, ls_x_var = c("mat", "tap"), annotate = F, y_label_short = T))
+
+if (.figsave) {
+  ggsave(
+    str_c(.path$output, "figures/Figure_S7.png"),
+    plot = p_attr_ctnt_pred,
+    height = 2 * 2 * 2.2, width = 2 * 5
+  )
+}
 ```
 
 # Fig. S8
