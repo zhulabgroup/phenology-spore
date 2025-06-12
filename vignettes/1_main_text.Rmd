@@ -50,7 +50,8 @@ if (.figsave) {
   ggsave(
     str_c(.path$output, "figures/Figure_1.png"),
     plot = p_conceptual,
-    height = 11, width = 11
+    height = 11, width = 11,
+    device = png, type = "cairo"
   )
 }
 ```
@@ -65,7 +66,8 @@ if (.fulldata) {
     ggsave(
       str_c(.path$output, "figures/Figure_2.png"),
       plot = p_calendar,
-      height = 5 * 0.8, width = 10
+      height = 5 * 0.8, width = 10,
+      device = png, type = "cairo"
     )
   }
 } else {
@@ -83,7 +85,8 @@ if (.figsave) {
   ggsave(
     str_c(.path$output, "figures/Figure_3.png"),
     plot = p_trend_map_TS_SAS,
-    height = 9 * 0.618, width = 9
+    height = 9 * 0.618, width = 9,
+    device = png, type = "cairo"
   )
 }
 ```
@@ -96,7 +99,8 @@ if (.figsave) {
   ggsave(
     str_c(.path$output, "figures/Figure_4.png"),
     plot = p_trend_ctnt_pred,
-    height = 11 * 0.8, width = 11
+    height = 11 * 0.8, width = 11,
+    device = png, type = "cairo"
   )
 }
 ```
@@ -115,7 +119,8 @@ if (.figsave) {
   ggsave(
     str_c(.path$output, "figures/Figure_5.png"),
     plot = p_coef,
-    height = 10 * 0.618, width = 10
+    height = 10 * 0.618, width = 10,
+    device = png, type = "cairo"
   )
 }
 ```
