@@ -137,8 +137,11 @@ calc_metrics <- function(df_ts, thres = 4605) {
   df <- df %>% tidy_gathermetrics()
 
   # Assign color palette for 55 stations
-  color_palette <- colorRampPalette(colors = rainbow(55))
-  df <- df %>% mutate(col = color_palette(55)[n])
+  tableau20 <- ggthemes::tableau_color_pal("Tableau 20")(20)
+  color_palette <- colorRampPalette(tableau20)(55)
+  set.seed(1)
+  color_palette_randomized <- sample(color_palette, size = length(color_palette), replace = FALSE)
+  df <- df %>% mutate(col = color_palette_randomized[n])
 
   return(df)
 }

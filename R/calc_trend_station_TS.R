@@ -37,7 +37,7 @@ calc_trend_station_TS <- function(df_in, ls_metric = c("SOS", "SAS", "EOS", "EAS
       rename("slope" = "year_new", "intercept" = "(Intercept)") %>%
       ungroup() %>%
       right_join(df, by = c("lat", "lon", "station", "city", "state", "country", "id", "n", "offset")) %>%
-      mutate(rescaled_slope = sign(slope) * abs(slope)^(1 / 3)) %>%
+      # mutate(rescaled_slope = sign(slope) * abs(slope)^(1 / 3)) %>%
       mutate(metric = metric)
   }
 

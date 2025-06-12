@@ -5,12 +5,8 @@ plot_trend_ctnt_pred <- function(df_analysis, ls_x_var = "year_new", pct = 0.8, 
     for (x_var in ls_x_var) {
       # fit lme model
       m_trend <- calc_trend_ctnt(df_in = df_analysis, metric = m_metric, x_var = x_var, pct = pct)
-      # acquire col for each station
-      df_trend_station <- calc_trend_station_TS(df_in = df_analysis, ls_metric = m_metric, pct = pct)
-      p_trend_map <- plot_trend_map_TS(df_in = df_trend_station, ls_metric = m_metric)
-      df_trend_station_col <- extr_color_map(df_in = df_trend_station, p_map = p_trend_map)
       # plot
-      p_trend_ctnt_pred <- plot_trend_ctnt_pred_metric(df_in = df_trend_station_col, model = m_trend, metric = m_metric, x_var = x_var, pct = pct, annotate = annotate, y_label_short = y_label_short)
+      p_trend_ctnt_pred <- plot_trend_ctnt_pred_metric(df_in = df_analysis, model = m_trend, metric = m_metric, x_var = x_var, pct = pct, annotate = annotate, y_label_short = y_label_short)
       p_trend_ctnt_pred_list[[str_c(m_metric, x_var, sep = "_")]] <- p_trend_ctnt_pred
     }
   }
@@ -73,7 +69,7 @@ plot_trend_ctnt_pred_metric <- function(df_in, model, metric, x_var = "year_new"
     filter(Metric == metric) %>%
     filter(cpltness >= pct) %>%
     drop_na(Value) %>%
-    group_by(lat, lon, station, city, state, country, id, n, offset) %>%
+    group_by(lat, lon, station, city, state, country, id, n, offset, col) %>%
     filter(n() >= 5) %>%
     ungroup() %>%
     mutate(
@@ -206,20 +202,4 @@ title_label <- function(beta_value, p_value, metric) {
   label <- str_c(label1, label2)
 
   return(label)
-}
-
-extr_color_map <- function(df_in, p_map) {
-  df <- ggplot_build(p_map)$data[[3]][c("colour", "x", "y")] %>%
-    distinct(x, .keep_all = T) %>%
-    rename(
-      col = colour,
-      lon = x,
-      lat = y
-    ) %>%
-    right_join(
-      df_in %>% dplyr::select(-col),
-      by = c("lon", "lat")
-    )
-
-  return(df)
 }

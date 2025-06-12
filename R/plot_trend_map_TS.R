@@ -8,7 +8,6 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
     p_map <- ggplot() +
       geom_polygon(data = map_data("state"), aes(x = long, y = lat, group = group), fill = "white") +
       geom_path(data = map_data("state"), aes(x = long, y = lat, group = group), color = "grey50", alpha = 0.5, lwd = 0.2) +
-      # coord_map("conic", lat0 = 30) +
       theme_bw() +
       theme(
         panel.grid.major = element_blank(),
@@ -25,16 +24,10 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
       labs(x = "Longitude", y = "Latitude") +
       geom_point(
         data = df,
-        aes(x = lon, y = lat, size = Nyear, color = rescaled_slope),
-        alpha = 0.8
-      ) +
-      geom_point(
-        data = df,
-        aes(x = lon, y = lat, size = Nyear),
-        shape = 1,
-        fill = "transparent",
+        aes(x = lon, y = lat, size = Nyear, fill = slope),
+        shape = 21,
         col = "grey40",
-        alpha = 0.5
+        alpha = 1
       ) +
       scale_size_continuous(
         range = c(5, 7),
@@ -51,110 +44,103 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
         legend.background = element_blank(),
         legend.key = element_blank()
       ) +
-      guides(size = "none")
-
+      guides(
+        size = "none",
+        fill = guide_colorbar(reverse = TRUE)
+      )
 
     # add color palette
     if (m == "SOS") {
       p_map <- p_map +
-        scale_color_gradient2(
+        scale_fill_gradient2(
           low = "red", mid = "white", high = "blue", midpoint = 0,
-          labels = function(x) {
-            x^3
-          }
+          breaks = c(-8, -4, 0, 4),
+          labels = c("-8  Earlier", "-4", "0", "4  Later")
         ) +
-        labs(color = expression("Theil-Sen trend of\nSOS (days per year)"))
+        labs(fill = expression("Theil-Sen trend of\nSOS (days/year)"))
     }
     if (m == "SAS") {
       p_map <- p_map +
-        scale_color_gradient2(
+        scale_fill_gradient2(
           low = "red", mid = "white", high = "blue", midpoint = 0,
-          # labels = function(x) {x^3},
-          breaks = c(-2, -1, 0, 1),
-          labels = c("-8  Earlier", "-1", "0", "1  Later")
+          breaks = c(-8, -4, 0, 4),
+          labels = c("-8  Earlier", "-4", "0", "4  Later")
         ) +
-        labs(color = expression("Theil-Sen trend of\nSAS (days per year)"))
+        labs(fill = expression("Theil-Sen trend of\nSAS (days/year)"))
     }
     if (m == "EOS") {
       p_map <- p_map +
-        scale_color_gradient2(
+        scale_fill_gradient2(
           low = "red", mid = "white", high = "blue", midpoint = 0,
-          labels = function(x) {
-            x^3
-          }
+          breaks = c(-2, 0, 2, 5),
+          labels = c("-2  Earlier", "0", "2", "5  Later")
         ) +
-        labs(color = expression("Theil-Sen trend of\nEOS (days per year)"))
+        labs(fill = expression("Theil-Sen trend of\nEOS (days/year)"))
     }
     if (m == "EAS") {
       p_map <- p_map +
-        scale_color_gradient2(
+        scale_fill_gradient2(
           low = "red", mid = "white", high = "blue", midpoint = 0,
-          labels = function(x) {
-            x^3
-          }
+          breaks = c(-20, -10, 0, 5),
+          labels = c("-20  Earlier", "-10", "0", "5  Later")
         ) +
-        labs(color = expression("Theil-Sen trend of\nEAS (days per year)"))
+        labs(fill = expression("Theil-Sen trend of\nEAS (days/year)"))
     }
     if (m == "LOS") {
       p_map <- p_map +
-        scale_color_gradient2(
+        scale_fill_gradient2(
           low = "blue", mid = "white", high = "red", midpoint = 0,
-          labels = function(x) {
-            x^3
-          }
+          breaks = c(-5, 0, 5),
+          labels = c("-5  Shorter", "0", "5  Longer")
         ) +
-        labs(color = expression("Theil-Sen trend of\nLOS (days per year)"))
+        labs(fill = expression("Theil-Sen trend of\nLOS (days/year)"))
     }
     if (m == "LAS") {
       p_map <- p_map +
-        scale_color_gradient2(
+        scale_fill_gradient2(
           low = "blue", mid = "white", high = "red", midpoint = 0,
-          labels = function(x) {
-            x^3
-          }
+          breaks = c(-10, 0, 10),
+          labels = c("-10  Shorter", "0", "10  Longer")
         ) +
-        labs(color = expression("Theil-Sen trend of\nLAS (days per year)"))
+        labs(fill = expression("Theil-Sen trend of\nLAS (days/year)"))
     }
     if (m == "ln_Ca") {
       p_map <- p_map +
-        scale_color_gradient2(
+        scale_fill_gradient2(
           low = "blue", mid = "white", high = "red", midpoint = 0,
-          labels = function(x) {
-            x^3
-          }
+          breaks = c(-0.4, -0.2, 0, 0.2),
+          labels = c("-0.4  Lower", "-0.2", "0", "0.2  Higher")
         ) +
-        labs(color = expression("Theil-Sen trend\nof ln(Ca)"))
+        labs(fill = expression("Theil-Sen trend\nof ln(Ca)"))
     }
     if (m == "ln_Cp") {
       p_map <- p_map +
-        scale_color_gradient2(
+        scale_fill_gradient2(
           low = "blue", mid = "white", high = "red", midpoint = 0,
-          labels = function(x) {
-            x^3
-          }
+          breaks = c(-0.2, -0.1, 0),
+          labels = c("-0.2  Lower", "-0.1", "0")
         ) +
-        labs(color = expression("Theil-Sen trend\nof ln(Cp)"))
+        labs(fill = expression("Theil-Sen trend\nof ln(Cp)"))
     }
     if (m == "ln_AIn") {
       p_map <- p_map +
-        scale_color_gradient2(
+        scale_fill_gradient2(
           low = "blue", mid = "white", high = "red", midpoint = 0,
-          labels = function(x) {
-            x^3
-          }
+          breaks = c(-0.2, -0.1, 0),
+          labels = c("-0.2  Lower", "-0.1", "0")
         ) +
-        labs(color = expression("Theil-Sen trend\nof ln(AIn)"))
+        labs(fill = expression("Theil-Sen trend\nof ln(AIn)"))
     }
     if (m == "ln_ASIn") {
       p_map <- p_map +
-        scale_color_gradient2(
+        scale_fill_gradient2(
           low = "blue", mid = "white", high = "red", midpoint = 0,
-          labels = function(x) {
-            x^3
-          }
+          breaks = c(-0.1, -0.05, 0, 0.05),
+          labels = c("-0.1  Lower", "-0.05", "0", "0.05  Higher")
         ) +
-        labs(color = expression("Theil-Sen trend\nof ln(ASIn)"))
+        labs(fill = expression("Theil-Sen trend\nof ln(ASIn)"))
     }
+
     ls_p_map[[m]] <- p_map
   }
 
@@ -172,4 +158,14 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
     )
   }
   return(p_map_out)
+}
+
+# Create a signed root transformation function
+signed_root_trans <- function(power = 3) {
+  scales::trans_new(
+    name = paste0("signed_root_", power),
+    transform = function(x) sign(x) * abs(x)^(1 / power),
+    inverse = function(x) sign(x) * abs(x)^power,
+    domain = c(-Inf, Inf)
+  )
 }
