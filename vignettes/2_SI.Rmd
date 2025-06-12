@@ -179,28 +179,28 @@ if (.figsave) {
 ```
 
 # Fig. S6
-```{r fig-trend-station, fig.height=5*0.618*5, fig.width=5*2, fig.cap="Figure S6. Station-level temporal trends of the spore season metrics. The trends were estimated by Theil-Sen regression. Redder colors indicate earlier DOY, longer days, or higher concentration, and circle sizes are proportional to the years of data at each station."}
+```{r fig-trend-station, fig.height=9*0.618*5, fig.width=9*2, fig.cap="Figure S6. Station-level temporal trends of the spore season metrics. The trends were estimated by Theil-Sen regression. Redder colors indicate earlier DOY, longer days, or higher concentration, and circle sizes are proportional to the years of data at each station."}
 df_trend_station_si <- calc_trend_station_TS(df_in = df_analysis, ls_metric = c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn"), pct = 0.8)
-(p_trend_map_TS_si <- plot_trend_map_TS(df_in = df_trend_station_si, ls_metric = c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn")))
+(p_trend_map_TS_si <- plot_trend_map_TS(df_in = df_trend_station_si, ls_metric = c("SOS", "SAS", "EOS", "EAS", "LOS", "LAS", "ln_Ca", "ln_Cp", "ln_AIn", "ln_ASIn"), trans = T, trans_power = 3))
 
 if (.figsave) {
   ggsave(
     str_c(.path$output, "figures/Figure_S6.png"),
     plot = p_trend_map_TS_si,
-    height = 5 * 0.618 * 5, width = 5 * 2
+    height = 9 * 0.618 * 5, width = 9 * 2
   )
 }
 ```
 
 # Fig. S7
-```{r fig-atrr-ctnt, fig.width=2*5, fig.height=2*2*2.2, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S7. Correlation between fungal spore metrics and climate variables. Black lines are predicted slopes from linear mixed-effects models across all stations. Solid black lines indicate significant (p < 0.05, t-test) slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Point/line colors are stations. Colors are station-level Theil-Sen linear regression slopes, with warmer colors indicating an earlier day of year, longer days, or higher intensity. The slope of colored lines are model-predicted station-level correlations. Intensity metrics are transformed using the natural logarithm."}
+```{r fig-atrr-ctnt, fig.width=2.5*5, fig.height=2.5*2*2.2, echo = FALSE, message=FALSE, warning=FALSE, process=FALSE, fig.cap="Figure S7. Correlation between fungal spore metrics and climate variables. Black lines are predicted slopes from linear mixed-effects models across all stations. Solid black lines indicate significant (p < 0.05, t-test) slopes. Shaded areas indicate the 95% confidence intervals of the fixed effect. Points are individual years at individual stations. Point/line colors are stations. Colors are station-level Theil-Sen linear regression slopes, with warmer colors indicating an earlier day of year, longer days, or higher intensity. The slope of colored lines are model-predicted station-level correlations. Intensity metrics are transformed using the natural logarithm."}
 (p_attr_ctnt_pred <- plot_trend_ctnt_pred(df_analysis, ls_x_var = c("mat", "tap"), annotate = F, y_label_short = T))
 
 if (.figsave) {
   ggsave(
     str_c(.path$output, "figures/Figure_S7.png"),
     plot = p_attr_ctnt_pred,
-    height = 2 * 2 * 2.2, width = 2 * 5
+    height = 2.5 * 2 * 2.2, width = 2.5 * 5
   )
 }
 ```

@@ -1,5 +1,5 @@
 #' @export
-plot_trend_map_TS <- function(df_in, ls_metric) {
+plot_trend_map_TS <- function(df_in, ls_metric, trans = F, trans_power = 2) {
   ls_p_map <- list()
   for (m in ls_metric) {
     df <- df_in %>%
@@ -54,6 +54,7 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
       p_map <- p_map +
         scale_fill_gradient2(
           low = "red", mid = "white", high = "blue", midpoint = 0,
+          transform = if (trans) signed_root_trans(trans_power) else "identity",
           breaks = c(-8, -4, 0, 4),
           labels = c("-8  Earlier", "-4", "0", "4  Later")
         ) +
@@ -63,6 +64,7 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
       p_map <- p_map +
         scale_fill_gradient2(
           low = "red", mid = "white", high = "blue", midpoint = 0,
+          transform = if (trans) signed_root_trans(trans_power) else "identity",
           breaks = c(-8, -4, 0, 4),
           labels = c("-8  Earlier", "-4", "0", "4  Later")
         ) +
@@ -72,6 +74,7 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
       p_map <- p_map +
         scale_fill_gradient2(
           low = "red", mid = "white", high = "blue", midpoint = 0,
+          transform = if (trans) signed_root_trans(trans_power) else "identity",
           breaks = c(-2, 0, 2, 5),
           labels = c("-2  Earlier", "0", "2", "5  Later")
         ) +
@@ -81,6 +84,7 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
       p_map <- p_map +
         scale_fill_gradient2(
           low = "red", mid = "white", high = "blue", midpoint = 0,
+          transform = if (trans) signed_root_trans(trans_power) else "identity",
           breaks = c(-20, -10, 0, 5),
           labels = c("-20  Earlier", "-10", "0", "5  Later")
         ) +
@@ -90,6 +94,7 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
       p_map <- p_map +
         scale_fill_gradient2(
           low = "blue", mid = "white", high = "red", midpoint = 0,
+          transform = if (trans) signed_root_trans(trans_power) else "identity",
           breaks = c(-5, 0, 5),
           labels = c("-5  Shorter", "0", "5  Longer")
         ) +
@@ -99,6 +104,7 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
       p_map <- p_map +
         scale_fill_gradient2(
           low = "blue", mid = "white", high = "red", midpoint = 0,
+          transform = if (trans) signed_root_trans(trans_power) else "identity",
           breaks = c(-10, 0, 10),
           labels = c("-10  Shorter", "0", "10  Longer")
         ) +
@@ -108,6 +114,7 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
       p_map <- p_map +
         scale_fill_gradient2(
           low = "blue", mid = "white", high = "red", midpoint = 0,
+          transform = if (trans) signed_root_trans(trans_power) else "identity",
           breaks = c(-0.4, -0.2, 0, 0.2),
           labels = c("-0.4  Lower", "-0.2", "0", "0.2  Higher")
         ) +
@@ -117,6 +124,7 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
       p_map <- p_map +
         scale_fill_gradient2(
           low = "blue", mid = "white", high = "red", midpoint = 0,
+          transform = if (trans) signed_root_trans(trans_power) else "identity",
           breaks = c(-0.2, -0.1, 0),
           labels = c("-0.2  Lower", "-0.1", "0")
         ) +
@@ -126,6 +134,7 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
       p_map <- p_map +
         scale_fill_gradient2(
           low = "blue", mid = "white", high = "red", midpoint = 0,
+          transform = if (trans) signed_root_trans(trans_power) else "identity",
           breaks = c(-0.2, -0.1, 0),
           labels = c("-0.2  Lower", "-0.1", "0")
         ) +
@@ -135,6 +144,7 @@ plot_trend_map_TS <- function(df_in, ls_metric) {
       p_map <- p_map +
         scale_fill_gradient2(
           low = "blue", mid = "white", high = "red", midpoint = 0,
+          transform = if (trans) signed_root_trans(trans_power) else "identity",
           breaks = c(-0.1, -0.05, 0, 0.05),
           labels = c("-0.1  Lower", "-0.05", "0", "0.05  Higher")
         ) +
