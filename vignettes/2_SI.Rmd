@@ -104,7 +104,8 @@ if (.figsave) {
   ggsave(
     str_c(.path$output, "figures/Figure_S1.png"),
     plot = p_ecoregion,
-    height = 8 * 0.618, width = 8
+    height = 8 * 0.618, width = 8,
+    device = png, type = "cairo"
   )
 }
 ```
@@ -117,13 +118,14 @@ if (.figsave) {
   ggsave(
     str_c(.path$output, "figures/Figure_S2.png"),
     plot = p_comm_pie,
-    height = 6 * 0.618, width = 6
+    height = 6 * 0.618, width = 6,
+    device = png, type = "cairo"
   )
 }
 ```
 
 # Fig. S3
-```{r fig-compare-curves, fig.height=8/5/0.618, fig.width=8/2, fig.cap="Figure S3. Pre-processing of raw fungal spore data. Gray dots are raw daily concentrations, while black lines are pre-processed data. Smoothing enhances the quality of the data by providing more stable and representative signals, enabling a clearer analysis of underlying trends and recurring patterns in spore season metrics. The Whittaker-Henderson smoother is particularly advantageous for its capabilities in auto-interpolating missing observations, adapting to data boundaries, and allowing for precise adjustment of smoothness levels (Eilers, 2003)."}
+```{r fig-compare-curves, fig.height=4*5*0.5, fig.width=4*2, fig.cap="Figure S3. Pre-processing of raw fungal spore data. Gray dots are raw daily concentrations, while black lines are pre-processed data. Smoothing enhances the quality of the data by providing more stable and representative signals, enabling a clearer analysis of underlying trends and recurring patterns in spore season metrics. The Whittaker-Henderson smoother is particularly advantageous for its capabilities in auto-interpolating missing observations, adapting to data boundaries, and allowing for precise adjustment of smoothness levels (Eilers, 2003)."}
 if (.fulldata) {
   df_ts <- read_rds(str_c(.path$intermediate, "ts.rds"))
   p_curves <- plot_ts(df_ts)
@@ -132,7 +134,8 @@ if (.fulldata) {
     ggsave(
       str_c(.path$output, "figures/Figure_S3.png"),
       plot = p_curves,
-      height = 8 / 5 / 0.618, width = 8 / 2
+      height = 4 * 5 * 0.5, width = 4 * 2,
+      device = png, type = "cairo"
     )
   }
 } else {
@@ -149,7 +152,8 @@ if (.fulldata) {
     ggsave(
       str_c(.path$output, "figures/Figure_S4.png"),
       plot = p_calendar_lon,
-      height = 8 * 1.618, width = 9
+      height = 8 * 1.618, width = 9,
+      device = png, type = "cairo"
     )
   }
 } else {
@@ -173,7 +177,8 @@ if (.figsave) {
   ggsave(
     str_c(.path$output, "figures/Figure_S5.png"),
     plot = p_sens_lambda,
-    height = 8, width = 8
+    height = 8, width = 8,
+    device = png, type = "cairo"
   )
 }
 ```
@@ -187,7 +192,8 @@ if (.figsave) {
   ggsave(
     str_c(.path$output, "figures/Figure_S6.png"),
     plot = p_trend_map_TS_si,
-    height = 9 * 0.618 * 5, width = 9 * 2
+    height = 9 * 0.618 * 5, width = 9 * 2,
+    device = png, type = "cairo"
   )
 }
 ```
@@ -200,7 +206,8 @@ if (.figsave) {
   ggsave(
     str_c(.path$output, "figures/Figure_S7.png"),
     plot = p_attr_ctnt_pred,
-    height = 2.5 * 2 * 2.2, width = 2.5 * 5
+    height = 2.5 * 2 * 2.2, width = 2.5 * 5,
+    device = png, type = "cairo"
   )
 }
 ```
@@ -225,7 +232,8 @@ if (.figsave) {
   ggsave(
     str_c(.path$output, "figures/Figure_S8.png"),
     plot = p_coef_6500,
-    height = 10 * 0.618, width = 10
+    height = 10 * 0.618, width = 10,
+    device = png, type = "cairo"
   )
 }
 ```
