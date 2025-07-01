@@ -3,8 +3,8 @@ plot_trend_map_TS <- function(df_in, ls_metric, trans = F, trans_power = 2) {
   ls_p_map <- list()
   for (m in ls_metric) {
     df <- df_in %>%
-      filter(metric == m) %>% 
-      distinct(lon, lat, slope, Nyear) 
+      filter(metric == m) %>%
+      distinct(lon, lat, slope, Nyear)
 
     p_map <- ggplot() +
       geom_polygon(data = map_data("state"), aes(x = long, y = lat, group = group), fill = "white") +
